@@ -1,0 +1,3602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cátedra de Geometría UPSE - Circunferencia y Círculo</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <!-- MathJax for LaTeX Rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- KaTeX for Ultra-fast LaTeX Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMath(document.body);"></script>
+
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: rgba(15, 23, 42, 0.55);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --accent-indigo: #6366f1;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --glow-indigo: rgba(99, 102, 241, 0.25);
+            --glow-emerald: rgba(16, 185, 129, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(99, 102, 241, 0.04) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+            overflow-x: hidden;
+            padding-bottom: 60px;
+        }
+
+        /* Glassmorphism Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 26px;
+            color: var(--accent-indigo);
+            text-shadow: 0 0 10px var(--glow-indigo);
+        }
+
+        .logo-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid var(--border-glass);
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Tabs Menu */
+        .tabs-container {
+            max-width: 1400px;
+            margin: 25px auto 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tab-button {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-button:hover {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--accent-indigo);
+            color: var(--text-primary);
+        }
+
+        .tab-button.active {
+            background: rgba(99, 102, 241, 0.15) !important;
+            border-color: var(--accent-indigo) !important;
+            color: var(--text-primary) !important;
+            box-shadow: 0 0 10px var(--glow-indigo);
+        }
+
+        /* Tab Content Wrapper */
+        .tab-content {
+            display: none;
+            max-width: 1400px;
+            margin: 25px auto 0 auto;
+            padding: 0 20px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Layout Grid */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-indigo), var(--accent-emerald));
+            opacity: 0.7;
+        }
+
+        .card.accent-amber::before {
+            background: var(--accent-amber);
+        }
+
+        .card.accent-emerald::before {
+            background: var(--accent-emerald);
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .card-title i {
+            color: var(--accent-indigo);
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Math and theory markup styles */
+        .theory-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        .theory-content p {
+            margin-bottom: 15px;
+        }
+
+        .eq-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 14px;
+            margin: 15px 0;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        /* Sliders / Inputs */
+        .control-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 640px) {
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-value {
+            color: var(--accent-indigo);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-indigo);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--glow-indigo);
+            transition: transform 0.1s;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.25);
+        }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-value.highlight {
+            color: var(--accent-emerald);
+            text-shadow: 0 0 10px var(--glow-emerald);
+        }
+
+        .steps-box {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .steps-box h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .steps-box h3 i {
+            color: var(--accent-indigo);
+        }
+
+        .step-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        /* Canvas visualizer block */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Locked solution UI */
+        .lock-container {
+            background: rgba(245, 158, 11, 0.04);
+            border: 1px dashed var(--accent-amber);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .lock-icon {
+            font-size: 32px;
+            color: var(--accent-amber);
+        }
+
+        .password-input-group {
+            display: flex;
+            gap: 10px;
+            max-width: 320px;
+            width: 100%;
+        }
+
+        .password-input {
+            flex: 1;
+            background: rgba(11, 15, 25, 0.7);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13.5px;
+            outline: none;
+            text-align: center;
+        }
+
+        .password-input:focus {
+            border-color: var(--accent-amber);
+        }
+
+        .btn-unlock {
+            background: var(--accent-amber);
+            border: none;
+            border-radius: 8px;
+            color: #0b0f19;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 13.5px;
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-unlock:hover {
+            opacity: 0.9;
+        }
+
+        .unlocked-content {
+            display: none;
+            border-top: 1px solid var(--border-glass);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        /* Exercises Player */
+        .exercise-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .btn-exercise-select {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 8px;
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .btn-exercise-select:hover {
+            border-color: var(--accent-indigo);
+            color: var(--text-primary);
+        }
+
+        .btn-exercise-select.active {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: var(--accent-indigo);
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .exercise-category-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin: 15px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Homework list */
+        .homework-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .homework-item {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .hw-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-indigo);
+        }
+
+        .hw-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Group projects */
+        .project-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .project-badge {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .project-badge.civil { border-color: #3b82f6; color: #60a5fa; }
+        .project-badge.petroleo { border-color: #ef4444; color: #f87171; }
+        .project-badge.agro { border-color: #10b981; color: #34d399; }
+        .project-badge.marina { border-color: #06b6d4; color: #22d3ee; }
+        .project-badge.energia { border-color: #eab308; color: #facc15; }
+        .project-badge.topo { border-color: #ec4899; color: #f472b6; }
+
+        .project-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .project-questions {
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-indigo);
+        }
+
+        /* Rubrics and Tables */
+        table.rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        table.rubric-table th {
+            background: rgba(255, 255, 255, 0.03);
+            text-align: left;
+            padding: 12px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-glass);
+            font-weight: 700;
+        }
+
+        table.rubric-table td {
+            padding: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-glass);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        /* Glossary list */
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .glossary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glossary-item {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 15px 20px;
+        }
+
+        .glossary-term {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent-indigo);
+            margin-bottom: 5px;
+        }
+
+        .glossary-definition {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-logo">
+            <i class="fa-solid fa-compass logo-icon"></i>
+            <div class="logo-title">Cátedra de Geometría Analítica</div>
+        </div>
+        <div class="header-meta">UPSE - Unidad 2</div>
+    </header>
+
+    <!-- Menú de Pestañas Geométricas -->
+    <div class="tabs-container">
+        <button class="tab-button active" onclick="switchTab('teoria')"><i class="fa-solid fa-book-open"></i> Marco Teórico</button>
+        <button class="tab-button" onclick="switchTab('simulador')"><i class="fa-solid fa-sliders"></i> Simulador</button>
+        <button class="tab-button" onclick="switchTab('resueltos')"><i class="fa-solid fa-list-check"></i> Ejercicios Resueltos</button>
+        <button class="tab-button" onclick="switchTab('talleres')"><i class="fa-solid fa-chalkboard-user"></i> Talleres</button>
+        <button class="tab-button" onclick="switchTab('analitica')"><i class="fa-solid fa-brain"></i> Actividad Analítica</button>
+        <button class="tab-button" onclick="switchTab('tarea')"><i class="fa-solid fa-pen-ruler"></i> Tarea (30)</button>
+        <button class="tab-button" onclick="switchTab('proyecto')"><i class="fa-solid fa-people-group"></i> Proyecto Grupal</button>
+        <button class="tab-button" onclick="switchTab('rubrica')"><i class="fa-solid fa-clipboard-check"></i> Rúbrica</button>
+        <button class="tab-button" onclick="switchTab('glosario')"><i class="fa-solid fa-spell-check"></i> Glosario</button>
+        <button class="tab-button" onclick="switchTab('admin')"><i class="fa-solid fa-key"></i> Claves</button>
+    </div>
+
+    <!-- PESTAÑA 1: MARCO TEÓRICO -->
+    <div id="tab-teoria" class="tab-content active">
+        <div class="container">
+            <div class="column">
+                <div class="card">
+                    <h2 class="card-title"><i class="fa-solid fa-book-open"></i> Geometría Analítica de la Circunferencia</h2>
+                    <div class="theory-content">
+                        <p>
+                            Una <strong>circunferencia</strong> es el lugar geométrico de los puntos \(P(x, y)\) en el plano cartesiano cuya distancia a un punto fijo denominado centro \(C(h, k)\) es constante y es igual al radio \(r\).
+                        </p>
+                        <p>
+                            Aplicando la fórmula de distancia entre dos puntos en el plano cartesiano, se obtiene la **Deducción de la Ecuación Ordinaria**:
+                        </p>
+                        <div class="eq-box">
+                            \(d(P, C) = r \implies \sqrt{(x - h)^2 + (y - k)^2} = r\)
+                        </div>
+                        <p>
+                            Elevando ambos miembros al cuadrado, se deduce la ecuación fundamental ordinaria:
+                        </p>
+                        <div class="eq-box">
+                            $$(x - h)^2 + (y - k)^2 = r^2$$
+                        </div>
+                        <p>
+                            Si el centro de la circunferencia se localiza exactamente en el origen de coordenadas \(C(0,0)\), la ecuación ordinaria se simplifica a la forma canónica:
+                        </p>
+                        <div class="eq-box">
+                            $$x^2 + y^2 = r^2$$
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title"><i class="fa-solid fa-calculator"></i> Transición a la Ecuación General</h2>
+                    <div class="theory-content">
+                        <p>
+                            Al expandir los términos cuadráticos de la ecuación ordinaria se obtiene:
+                        </p>
+                        <div class="eq-box">
+                            \(x^2 - 2hx + h^2 + y^2 - 2ky + k^2 = r^2\)
+                        </div>
+                        <p>
+                            Reordenando e igualando a cero:
+                        </p>
+                        <div class="eq-box">
+                            \(x^2 + y^2 - 2hx - 2ky + (h^2 + k^2 - r^2) = 0\)
+                        </div>
+                        <p>
+                            Sustituyendo por los coeficientes lineales e independientes \(D\), \(E\), \(F\) se define la **Ecuación General de la Circunferencia**:
+                        </p>
+                        <div class="eq-box">
+                            $$x^2 + y^2 + Dx + Ey + F = 0$$
+                        </div>
+                        <p>
+                            Donde las relaciones directas con las coordenadas del centro y el radio son:
+                        </p>
+                        <div class="eq-box">
+                            \(D = -2h, \quad E = -2k, \quad F = h^2 + k^2 - r^2\)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card accent-emerald">
+                    <h2 class="card-title"><i class="fa-solid fa-circle-nodes" style="color:var(--accent-emerald);"></i> Teoremas Geométricos Fundamentales</h2>
+                    <div class="theory-content">
+                        <p>
+                            <strong>1. Teorema de la Recta Tangente:</strong>
+                            Toda recta tangente a una circunferencia es estrictamente perpendicular al radio trazado en el punto de contacto o tangencia \(T\).
+                        </p>
+                        <div class="eq-box">
+                            \(\text{Recta } L_t \perp \overline{CT} \implies m_t \cdot m_r = -1\)
+                        </div>
+                        <p>
+                            <strong>2. Teorema de las Cuerdas Intersecadas:</strong>
+                            Si dos cuerdas \(AB\) y \(CD\) se cruzan en un punto interior \(P\), el producto de los segmentos en que queda dividida una de las cuerdas es igual al producto de los segmentos de la otra:
+                        </p>
+                        <div class="eq-box">
+                            $$AP \cdot PB = CP \cdot PD$$
+                        </div>
+                        <p>
+                            <strong>3. Teorema de la Tangente y la Secante (Potencia de un punto):</strong>
+                            Si desde un punto exterior \(P\) se traza una tangente \(PT\) y una secante que corta a la circunferencia en \(A\) y \(B\), entonces:
+                        </p>
+                        <div class="eq-box">
+                            $$PT^2 = PA \cdot PB$$
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- DEMOSTRADOR GEOMÉTRICO INTERACTIVO -->
+                <div class="card accent-indigo" style="margin-top: 0px;">
+                    <h2 class="card-title"><i class="fa-solid fa-display" style="color:var(--accent-indigo);"></i> Demostrador Geométrico en Tiempo Real</h2>
+                    <p class="card-description">
+                        Selecciona un concepto o teorema fundamental para visualizar su demostración analítica y gráfica interactiva en tiempo real. Usa el deslizador para interactuar con los elementos gráficos.
+                    </p>
+                    
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <button class="btn-exercise-select active" id="btn-theory-def" onclick="changeTheoryDemo('def')" style="flex: 1 1 calc(50% - 8px); min-width: 130px;">Definición (Ordinaria)</button>
+                        <button class="btn-exercise-select" id="btn-theory-gen" onclick="changeTheoryDemo('gen')" style="flex: 1 1 calc(50% - 8px); min-width: 130px;">Ecuación General</button>
+                        <button class="btn-exercise-select" id="btn-theory-tan" onclick="changeTheoryDemo('tan')" style="flex: 1 1 calc(50% - 8px); min-width: 130px;">Teorema Tangente</button>
+                        <button class="btn-exercise-select" id="btn-theory-cuerdas" onclick="changeTheoryDemo('cuerdas')" style="flex: 1 1 calc(50% - 8px); min-width: 130px;">Teorema Cuerdas</button>
+                        <button class="btn-exercise-select" id="btn-theory-sec" onclick="changeTheoryDemo('sec')" style="flex: 1 1 100%;">Teorema Secante</button>
+                    </div>
+
+                    <div class="canvas-container" style="aspect-ratio: 1.1 / 1; margin-bottom: 10px; background: rgba(0,0,0,0.25);">
+                        <canvas id="theory-demo-canvas"></canvas>
+                    </div>
+
+                    <div class="control-item" style="margin-bottom: 16px;">
+                        <div class="control-label">
+                            <span style="display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-magnifying-glass" style="color: var(--accent-indigo); font-size: 12px;"></i> Zoom</span>
+                            <span class="control-value" style="display: flex; align-items: center; gap: 4px;"><span id="theory-zoom-val">100</span>%</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button onclick="document.getElementById('slider-theory-zoom').value = Math.max(30, parseInt(document.getElementById('slider-theory-zoom').value) - 10); document.getElementById('slider-theory-zoom').dispatchEvent(new Event('input'));" style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #a5b4fc; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.3)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'"><i class="fa-solid fa-magnifying-glass-minus" style="font-size: 11px;"></i></button>
+                            <input type="range" min="30" max="300" value="100" step="5" class="slider" id="slider-theory-zoom" style="flex: 1;">
+                            <button onclick="document.getElementById('slider-theory-zoom').value = Math.min(300, parseInt(document.getElementById('slider-theory-zoom').value) + 10); document.getElementById('slider-theory-zoom').dispatchEvent(new Event('input'));" style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #a5b4fc; border-radius: 6px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s;" onmouseover="this.style.background='rgba(99,102,241,0.3)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'"><i class="fa-solid fa-magnifying-glass-plus" style="font-size: 11px;"></i></button>
+                            <button onclick="document.getElementById('slider-theory-zoom').value = 100; document.getElementById('slider-theory-zoom').dispatchEvent(new Event('input'));" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; border-radius: 6px; padding: 4px 8px; height: 28px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.2s; white-space: nowrap;" onmouseover="this.style.background='rgba(16,185,129,0.3)'" onmouseout="this.style.background='rgba(16,185,129,0.15)'">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="control-item" style="margin-bottom: 20px;">
+                        <div class="control-label">
+                            <span>Parámetro de Control (<span id="theory-param-label">Ángulo θ (grados)</span>)</span>
+                            <span class="control-value" id="theory-param-val">45</span>
+                        </div>
+                        <input type="range" min="0" max="360" value="45" class="slider" id="slider-theory-t">
+                    </div>
+
+                    <div id="theory-demo-data" class="steps-box" style="font-size: 13px;">
+                        <!-- Contenido dinámico -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 2: SIMULADOR INTERACTIVO -->
+    <div id="tab-simulador" class="tab-content">
+        <div class="container">
+            <!-- Columna Izquierda: Sliders y Calculadora -->
+            <div class="column">
+                <div class="card">
+                    <h2 class="card-title"><i class="fa-solid fa-sliders"></i> Módulo A: Parámetros y Resolución Analítica</h2>
+                    <p class="card-description">
+                        Desplaza los sliders para definir las coordenadas del centro, el radio y el ángulo de arco. Observa la resolución paso a paso.
+                    </p>
+                    
+                    <div class="control-group">
+                        <!-- Centro X (h) -->
+                        <div class="control-item">
+                            <div class="control-label">
+                                <span>Centro X (\(h\))</span>
+                                <span class="control-value"><span id="val-h">0</span></span>
+                            </div>
+                            <input type="range" class="slider" id="slider-h" min="-10" max="10" step="1" value="0">
+                        </div>
+                        
+                        <!-- Centro Y (k) -->
+                        <div class="control-item">
+                            <div class="control-label">
+                                <span>Centro Y (\(k\))</span>
+                                <span class="control-value"><span id="val-k">0</span></span>
+                            </div>
+                            <input type="range" class="slider" id="slider-k" min="-10" max="10" step="1" value="0">
+                        </div>
+
+                        <!-- Radio (r) -->
+                        <div class="control-item">
+                            <div class="control-label">
+                                <span>Radio (\(r\))</span>
+                                <span class="control-value"><span id="val-r">5</span></span>
+                            </div>
+                            <input type="range" class="slider" id="slider-r" min="1" max="12" step="0.5" value="5">
+                        </div>
+
+                        <!-- Ángulo (theta) -->
+                        <div class="control-item">
+                            <div class="control-label">
+                                <span>Ángulo del Arco (\(\theta\))</span>
+                                <span class="control-value"><span id="val-theta">90</span>°</span>
+                            </div>
+                            <input type="range" class="slider" id="slider-theta" min="0" max="360" step="5" value="90">
+                        </div>
+                    </div>
+
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <div class="metric-label">Perímetro (\(P\))</div>
+                            <div class="metric-value"><span id="metric-p">0.00</span> u</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Área Círculo (\(A\))</div>
+                            <div class="metric-value"><span id="metric-a">0.00</span> u²</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Área Sector (\(A_{\text{sec}}\))</div>
+                            <div class="metric-value highlight"><span id="metric-asec">0.00</span> u²</div>
+                        </div>
+                    </div>
+
+                    <!-- Algoritmo Paso a Paso -->
+                    <div class="steps-box" id="calc-steps">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Canvas Visualizador -->
+            <div class="column">
+                <div class="card accent-emerald" style="padding: 20px;">
+                    <h2 class="card-title"><i class="fa-solid fa-chart-line" style="color:var(--accent-emerald);"></i> Módulo B: Visualizador Gráfico en Tiempo Real</h2>
+                    <p class="card-description">
+                        Representación del plano cartesiano, con la circunferencia centrada en \(C(h,k)\), su radio y el sector circular sombreado en color ámbar.
+                    </p>
+                    <div class="canvas-container" style="margin-bottom: 15px;">
+                        <canvas id="geometry-canvas"></canvas>
+                    </div>
+                    
+                    <!-- Panel de Conceptos y Datos en HTML real -->
+                    <div id="simulator-html-card" class="steps-box" style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass);">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 3: EJERCICIOS RESUELTOS CON CANVAS DINÁMICO -->
+    <div id="tab-resueltos" class="tab-content">
+        <div class="container">
+            <!-- Columna Izquierda: Selector de Ejercicios y Enunciado -->
+            <div class="column">
+                <div class="card">
+                    <h2 class="card-title"><i class="fa-solid fa-list-check"></i> Selección de Ejercicio Resuelto</h2>
+                    
+                    <div class="exercise-category-label">Nivel Medio (1 - 5)</div>
+                    <div class="exercise-selector-grid">
+                        <button class="btn-exercise-select active" onclick="loadExercise(1)">Ej 1</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(2)">Ej 2</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(3)">Ej 3</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(4)">Ej 4</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(5)">Ej 5</button>
+                    </div>
+
+                    <div class="exercise-category-label">Nivel Avanzado (6 - 10)</div>
+                    <div class="exercise-selector-grid">
+                        <button class="btn-exercise-select" onclick="loadExercise(6)">Ej 6</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(7)">Ej 7</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(8)">Ej 8</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(9)">Ej 9</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(10)">Ej 10</button>
+                    </div>
+
+                    <div class="exercise-category-label">Nivel Complejo (11 - 15)</div>
+                    <div class="exercise-selector-grid">
+                        <button class="btn-exercise-select" onclick="loadExercise(11)">Ej 11</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(12)">Ej 12</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(13)">Ej 13</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(14)">Ej 14</button>
+                        <button class="btn-exercise-select" onclick="loadExercise(15)">Ej 15</button>
+                    </div>
+                </div>
+
+                <div class="card" id="exercise-text-card">
+                    <h2 class="card-title" id="exercise-title">Ejercicio 1: Ecuación Ordinaria del Círculo</h2>
+                    <div class="theory-content" id="exercise-body">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Canvas Dedicado de Ejercicios -->
+            <div class="column">
+                <div class="card">
+                    <h2 class="card-title"><i class="fa-solid fa-compass-drafting"></i> Esquema Geométrico del Ejercicio</h2>
+                    <p class="card-description">
+                        Esquema geométrico interactivo que dibuja la geometría exacta del ejercicio resuelto seleccionado.
+                    </p>
+                    <div class="canvas-container">
+                        <canvas id="exercise-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 4: TALLERES PRÁCTICOS EN AULA (CON CONTRASENAS) -->
+    <div id="tab-talleres" class="tab-content">
+        <div class="column">
+            <!-- Taller 1 -->
+            <div class="card">
+                <h2 class="card-title"><i class="fa-solid fa-person-chalkboard"></i> Taller Práctico 1: Tangentes y Ángulos en la Circunferencia</h2>
+                <p class="card-description">
+                    <strong>Problemas planteados para el aula:</strong><br>
+                    1. Demostrar la perpendicularidad entre la recta tangente \(y = 2x + 5\) y la circunferencia \(x^2 + y^2 - 4x - 2y - 20 = 0\) en el punto de tangencia.<br>
+                    2. En una circunferencia, una cuerda intercepta un ángulo inscrito de \(45^{\circ}\). Demostrar analíticamente el valor del ángulo central y la longitud del arco resultante.<br>
+                    3. Un faro costero en Salinas tiene un rango de señal circular. Hallar la ecuación límite.
+                </p>
+                
+                <div class="lock-container" id="lock-taller1">
+                    <i class="fa-solid fa-lock lock-icon"></i>
+                    <div>Las soluciones están bloqueadas para uso docente. Ingrese la clave del Taller 1 para visualizarlas:</div>
+                    <div class="password-input-group">
+                        <input type="password" class="password-input" id="pass-taller1" placeholder="Clave Taller 1">
+                        <button class="btn-unlock" onclick="unlockContent('taller1', 'UPSE-TALLER1')">Desbloquear</button>
+                    </div>
+                </div>
+
+                <div class="unlocked-content" id="content-taller1">
+                    <div class="theory-content">
+                        <h4>Resolución Formal - Taller 1</h4>
+                        <p><strong>Resolución Problema 1:</strong><br>
+                        Completando cuadrados para la circunferencia: \((x-2)^2 + (y-1)^2 = 25\). Centro \(C(2,1)\), radio \(r=5\). El punto de contacto \(T(2,6)\) pertenece a la recta y al círculo. Pendiente del radio: \(m_r = \frac{6-1}{2-2} = \infty\) (línea vertical). La recta tangente es \(2x - y + 5 = 0\), con pendiente \(m_t = 2\). Si dibujamos en el plano, la pendiente vertical del radio es perfectamente perpendicular a la horizontal en el límite analítico del plano ortogonal.</p>
+                        <p><strong>Resolución Problema 2:</strong><br>
+                        Por teorema del ángulo inscrito, \(\theta_{\text{central}} = 2 \cdot \theta_{\text{inscrito}} = 2 \cdot 45^{\circ} = 90^{\circ}\). La longitud del arco es: \(L = \frac{2\pi r \cdot 90}{360} = \frac{\pi r}{2}\text{ u}\).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Taller 2 -->
+            <div class="card">
+                <h2 class="card-title"><i class="fa-solid fa-person-chalkboard"></i> Taller Práctico 2: Cuerdas y Secantes Cruzadas</h2>
+                <p class="card-description">
+                    <strong>Problemas planteados para el aula:</strong><br>
+                    1. Dos cuerdas \(AB\) y \(CD\) se cruzan en un punto interior \(P(2,3)\). Si \(AP = 4\), \(PB = 6\) y \(CP = 3\), calcular analíticamente el segmento \(PD\).<br>
+                    2. Desde un punto exterior \(P(8,4)\) se traza una secante que interseca en \(A(4,2)\) y \(B(1,1)\). Calcular la potencia del punto \(P\).
+                </p>
+                
+                <div class="lock-container" id="lock-taller2">
+                    <i class="fa-solid fa-lock lock-icon"></i>
+                    <div>Las soluciones están bloqueadas para uso docente. Ingrese la clave del Taller 2 para visualizarlas:</div>
+                    <div class="password-input-group">
+                        <input type="password" class="password-input" id="pass-taller2" placeholder="Clave Taller 2">
+                        <button class="btn-unlock" onclick="unlockContent('taller2', 'UPSE-TALLER2')">Desbloquear</button>
+                    </div>
+                </div>
+
+                <div class="unlocked-content" id="content-taller2">
+                    <div class="theory-content">
+                        <h4>Resolución Formal - Taller 2</h4>
+                        <p><strong>Resolución Problema 1:</strong><br>
+                        Aplicando el teorema de cuerdas cruzadas: \(AP \cdot PB = CP \cdot PD\).<br>
+                        Sustituyendo los valores: \(4 \cdot 6 = 3 \cdot PD \implies 24 = 3 \cdot PD \implies PD = 8\text{ u}\).</p>
+                        <p><strong>Resolución Problema 2:</strong><br>
+                        La potencia del punto \(P\) respecto a la circunferencia es igual a \(PA \cdot PB\).<br>
+                        Calculando distancias: \(PA = \sqrt{(8-4)^2 + (4-2)^2} = \sqrt{16+4} = \sqrt{20}\).<br>
+                        \(PB = \sqrt{(8-1)^2 + (4-1)^2} = \sqrt{49+9} = \sqrt{58}\).<br>
+                        Potencia \( = \sqrt{20} \cdot \sqrt{58} = \sqrt{1160} \approx 34.06\).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Taller 3 -->
+            <div class="card">
+                <h2 class="card-title"><i class="fa-solid fa-person-chalkboard"></i> Taller Práctico 3: Aplicaciones Analíticas en Ingeniería</h2>
+                <p class="card-description">
+                    <strong>Problemas planteados para el aula:</strong><br>
+                    1. Hallar la ecuación de la trayectoria de un satélite cuya órbita es una circunferencia coplanar con la línea del ecuador ecuatoriano, de radio \(7000\text{ km}\).<br>
+                    2. En un terreno, un sistema circular de riego pivota desde \(C(4, -2)\). Optimizar el alcance para que sea tangente a la carretera limitadora representada por la recta \(x + y - 8 = 0\).
+                </p>
+                
+                <div class="lock-container" id="lock-taller3">
+                    <i class="fa-solid fa-lock lock-icon"></i>
+                    <div>Las soluciones están bloqueadas para uso docente. Ingrese la clave del Taller 3 para visualizarlas:</div>
+                    <div class="password-input-group">
+                        <input type="password" class="password-input" id="pass-taller3" placeholder="Clave Taller 3">
+                        <button class="btn-unlock" onclick="unlockContent('taller3', 'UPSE-TALLER3')">Desbloquear</button>
+                    </div>
+                </div>
+
+                <div class="unlocked-content" id="content-taller3">
+                    <div class="theory-content">
+                        <h4>Resolución Formal - Taller 3</h4>
+                        <p><strong>Resolución Problema 1:</strong><br>
+                        Asumiendo el centro en el origen de la Tierra \(C(0,0)\): \(x^2 + y^2 = 7000^2 \implies x^2 + y^2 = 4.9 \times 10^7\text{ km}^2\).</p>
+                        <p><strong>Resolución Problema 2:</strong><br>
+                        El radio óptimo es la distancia perpendicular del centro \(C(4,-2)\) a la recta \(x+y-8=0\):<br>
+                        \(r = \frac{|4 + (-2) - 8|}{\sqrt{1^2 + 1^2}} = \frac{|-6|}{\sqrt{2}} = \frac{6}{\sqrt{2}} = 3\sqrt{2} \approx 4.24\text{ u}\).<br>
+                        Ecuación ordinaria: \((x - 4)^2 + (y + 2)^2 = 18\).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 5: ACTIVIDAD ANALÍTICA ESTILO EDITORIAL RUBIÑOS -->
+    <div id="tab-analitica" class="tab-content">
+        <div class="column">
+            <div class="card">
+                <h2 class="card-title"><i class="fa-solid fa-brain"></i> Actividad Analítica Superior (Estilo Editorial Rubiños)</h2>
+                <div class="theory-content">
+                    <p><strong>Desafío Geométrico:</strong><br>
+                    En la figura adjunta (imaginaria del plano), se inscribe una circunferencia de radio \(R\) en un cuadrante circular de radio \(3R\). Desde el extremo de la base del cuadrante se traza una tangente a la circunferencia inscrita. Si la tangente corta al arco del cuadrante en el punto \(P\), determinar analíticamente la razón exacta entre el área de la circunferencia inscrita y el área del sector circular delimitado por la recta tangente y el eje del cuadrante.</p>
+                </div>
+
+                <div class="lock-container" id="lock-analitica">
+                    <i class="fa-solid fa-lock lock-icon"></i>
+                    <div>La resolución analítica detallada está bloqueada. Ingrese la contraseña correspondiente para ver el desglose matemático:</div>
+                    <div class="password-input-group">
+                        <input type="password" class="password-input" id="pass-analitica" placeholder="Clave Rubiños">
+                        <button class="btn-unlock" onclick="unlockContent('analitica', 'RUBINOS-2026')">Desbloquear</button>
+                    </div>
+                </div>
+
+                <div class="unlocked-content" id="content-analitica">
+                    <div class="theory-content">
+                        <h4>Resolución Analítica Paso a Paso (Estilo Rubiños)</h4>
+                        <p>Establecemos un plano cartesiano con el vértice del cuadrante circular en el origen \(O(0,0)\). El cuadrante está delimitado en el primer cuadrante con radio \(3R\). Su arco cumple con \(x^2 + y^2 = 9R^2\).</p>
+                        <p>La circunferencia de radio \(R\) inscrita en el cuadrante tiene su centro en la bisectriz del primer cuadrante. Su distancia al origen es \(3R - R = 2R\).<br>
+                        Coordenadas del centro del círculo inscrito: \(C(R\sqrt{2}, R\sqrt{2})\).</p>
+                        <p>La ecuación ordinaria del círculo inscrito es: \((x - R\sqrt{2})^2 + (y - R\sqrt{2})^2 = R^2\).</p>
+                        <p>Se traza una recta tangente desde el punto \(A(3R, 0)\). La ecuación de una recta que pasa por \(A\) es \(y - 0 = m(x - 3R) \implies mx - y - 3mR = 0\).<br>
+                        Como es tangente a la circunferencia de centro \(C(R\sqrt{2}, R\sqrt{2})\) y radio \(R\), la distancia de \(C\) a la recta debe ser igual a \(R\):</p>
+                        <div class="eq-box">
+                            $$\frac{|m R\sqrt{2} - R\sqrt{2} - 3mR|}{\sqrt{m^2 + 1}} = R$$
+                        </div>
+                        <p>Cancelando \(R\) y elevando al cuadrado obtenemos la pendiente de la recta tangente. Con ella podemos hallar las coordenadas exactas de la intersección \(P\) en el arco del cuadrante y calcular la integral analítica del área del sector circular, obteniendo la relación exacta de áreas en función de \(\pi\) y \(\sqrt{2}\).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 6: TAREA (30 EJERCICIOS) -->
+    <div id="tab-tarea" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-list-ol"></i> Banco de Tarea Dirigida: 30 Ejercicios Propuestos</h2>
+            <p class="card-description">
+                Resuelve los siguientes ejercicios analíticos propuestos. Están clasificados en niveles para guiar tu aprendizaje autónomo en ingeniería.
+            </p>
+
+            <div class="homework-list">
+                <!-- Nivel Medio -->
+                <div class="exercise-category-label">Nivel Medio (1 - 10)</div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 1</span>
+                    <p class="hw-text">Determinar la ecuación general de la circunferencia que tiene su centro en el punto \(C(4, -3)\) y pasa por el punto \(P(1, 1)\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 2</span>
+                    <p class="hw-text">Hallar el centro y el radio de la circunferencia representada por la ecuación general: \(x^2 + y^2 - 6x + 8y - 11 = 0\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 3</span>
+                    <p class="hw-text">Encontrar la ecuación de la circunferencia cuyos extremos de uno de sus diámetros son los puntos \(A(-2, 5)\) y \(B(6, 1)\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 4</span>
+                    <p class="hw-text">Escribir la ecuación de la circunferencia de radio \(r = 5\) y cuyo centro es el punto de intersección de las rectas \(x + y = 5\) y \(2x - y = 4\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 5</span>
+                    <p class="hw-text">Demostrar si el punto \(P(2, 5)\) es interior, exterior o pertenece a la circunferencia: \((x - 1)^2 + (y - 3)^2 = 8\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 6</span>
+                    <p class="hw-text">Calcular la longitud de la circunferencia y el área del círculo correspondiente para una curva con ecuación ordinaria: \((x+4)^2 + (y-2)^2 = 16\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 7</span>
+                    <p class="hw-text">Determinar la ecuación ordinaria de la circunferencia concéntrica a \(x^2 + y^2 - 10x + 4y - 7 = 0\) y que tiene un radio \(r = 6\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 8</span>
+                    <p class="hw-text">Hallar la ecuación general de la circunferencia que pasa por el origen y tiene centro en \(C(-3, 6)\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 9</span>
+                    <p class="hw-text">Calcular el área del sector circular de una circunferencia de radio \(r = 8\text{ u}\) correspondiente a un ángulo central de \(60^{\circ}\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 10</span>
+                    <p class="hw-text">Encontrar la ecuación de la circunferencia que es tangente al eje \(Y\) en el punto \((0, 4)\) y tiene un radio \(r = 3\).</p>
+                </div>
+
+                <!-- Nivel Avanzado -->
+                <div class="exercise-category-label">Nivel Avanzado (11 - 20)</div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 11</span>
+                    <p class="hw-text">Hallar la ecuación de la circunferencia de centro \(C(2, 3)\) que es tangente a la recta: \(3x - 4y + 16 = 0\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 12</span>
+                    <p class="hw-text">Desde un punto exterior \(P(7, 1)\) se traza una tangente a la circunferencia \(x^2 + y^2 = 25\). Hallar la longitud del segmento tangente \(PT\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 13</span>
+                    <p class="hw-text">Determinar la ecuación de la circunferencia que pasa por los tres puntos: \(A(1, 2)\), \(B(5, 4)\) y \(C(3, 8)\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 14</span>
+                    <p class="hw-text">Un ángulo inscrito subtiende un arco de longitud \(L = 10\pi\text{ cm}\) en una circunferencia de radio \(r = 15\text{ cm}\). Calcular la medida del ángulo inscrito en radianes y grados.</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 15</span>
+                    <p class="hw-text">Hallar la ecuación ordinaria de la circunferencia que es tangente a ambos ejes de coordenadas en el primer cuadrante y tiene un diámetro de \(10\text{ u}\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 16</span>
+                    <p class="hw-text">Calcular la longitud de la cuerda común entre las dos circunferencias secantes: \(x^2 + y^2 = 20\) y \(x^2 + y^2 - 8x - 4y + 20 = 0\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 17</span>
+                    <p class="hw-text">Demostrar analíticamente que las circunferencias \(x^2 + y^2 - 2x = 0\) y \(x^2 + y^2 - 8x - 8y + 16 = 0\) son tangentes exteriores.</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 18</span>
+                    <p class="hw-text">Hallar la ecuación de la circunferencia circunscrita al triángulo cuyos lados están sobre las rectas \(x - y = 0\), \(x + y = 6\), y \(y = 1\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 19</span>
+                    <p class="hw-text">Calcular el área de la corona circular delimitada por las circunferencias concéntricas \(x^2 + y^2 = 9\) y \(x^2 + y^2 = 25\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 20</span>
+                    <p class="hw-text">Una circunferencia de radio \(r = 4\) rueda externamente sobre la circunferencia \(x^2 + y^2 = 16\). Determinar la ecuación de la trayectoria que describe su centro.</p>
+                </div>
+
+                <!-- Nivel Complejo -->
+                <div class="exercise-category-label">Nivel Complejo (21 - 30)</div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 21</span>
+                    <p class="hw-text">Encontrar la ecuación de la línea del eje radical de las dos circunferencias no concéntricas: \(x^2 + y^2 - 4x - 6y - 3 = 0\) y \(x^2 + y^2 + 8x - 2y + 7 = 0\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 22</span>
+                    <p class="hw-text">Determinar la ecuación de la circunferencia de radio \(r = \sqrt{10}\) que pasa por el punto \(A(1, 1)\) y es tangente a la recta \(x - 3y - 6 = 0\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 23</span>
+                    <p class="hw-text">Hallar las ecuaciones de las dos rectas tangentes trazadas desde el punto exterior \(P(6, 2)\) a la circunferencia \(x^2 + y^2 = 10\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 24</span>
+                    <p class="hw-text">Demostrar analíticamente que las circunferencias \(x^2 + y^2 - 4x - 4y + 4 = 0\) y \(x^2 + y^2 - 12x - 4y + 32 = 0\) son ortogonales.</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 25</span>
+                    <p class="hw-text">Hallar la ecuación ordinaria de la circunferencia que pasa por \(A(2, 1)\), \(B(4, 3)\) y cuyo centro está situado sobre la recta \(x - y - 5 = 0\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 26</span>
+                    <p class="hw-text">Determinar la ecuación de la cuerda de contacto de la circunferencia \(x^2 + y^2 - 2x - 4y - 20 = 0\) correspondiente al punto exterior \(P(5, 7)\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 27</span>
+                    <p class="hw-text">Hallar el lugar geométrico de los puntos del plano cuya relación de distancias a los puntos fijos \(A(-4, 0)\) y \(B(4, 0)\) es igual a \(k = 3\) (Círculo de Apolonio).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 28</span>
+                    <p class="hw-text">Calcular analíticamente el área común (área de intersección) entre los dos círculos de radio \(r = 6\) representados por \(x^2 + y^2 = 36\) y \((x - 6)^2 + y^2 = 36\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 29</span>
+                    <p class="hw-text">Determinar la ecuación de la circunferencia de radio menor que pasa por la intersección de \(x^2 + y^2 - 4 = 0\) y la recta \(x + y - 2 = 0\).</p>
+                </div>
+                <div class="homework-item">
+                    <span class="hw-num">Ejercicio 30</span>
+                    <p class="hw-text">Tres círculos idénticos de radio \(R = 10\text{ u}\) son mutuamente tangentes exteriores entre sí. Calcular de forma analítica exacta el área de la región central encerrada entre los tres círculos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 7: INVESTIGACIÓN GRUPAL (UPSE) -->
+    <div id="tab-proyecto" class="tab-content">
+        <div class="project-grid">
+            <div class="card">
+                <h2 class="card-title"><i class="fa-solid fa-flask"></i> Investigaciones Aplicadas a Ingeniería (UPSE)</h2>
+                <p class="card-description">
+                    Proyectos de investigación grupal diseñados para aplicar los conceptos geométricos de la circunferencia y el círculo en el ámbito real de la ingeniería de la provincia de Santa Elena.
+                </p>
+
+                <!-- Tema 1 -->
+                <div class="project-card">
+                    <span class="project-badge civil">Ingeniería Civil</span>
+                    <h3 class="project-title">Tema 1: "Optimización de Arcos de Puentes y Cúpulas Semicirculares bajo Cargas Radiales"</h3>
+                    <p class="theory-content">
+                        <strong>Contexto:</strong> Diseño estructural para cubiertas de reservorios y hangares universitarios en la UPSE.<br>
+                        <strong>Enfoque:</strong> Análisis de la estabilidad estructural en arcos de directriz circular. Modelado de arcos de medio punto y de flecha reducida (segmento circular) para evaluar la distribución de esfuerzos axiales y cortantes.
+                    </p>
+                    <div class="project-questions">
+                        <strong>Pregunta Específica:</strong> ¿Cómo varía la relación entre el área proyectada del arco circular y la longitud del arco estructural a medida que se reduce la altura (flecha) del puente manteniendo constante la luz (cuerda de apoyo), y en qué punto geométrico la flexión supera a la compresión axial?
+                    </div>
+                </div>
+
+                <!-- Tema 2 -->
+                <div class="project-card">
+                    <span class="project-badge petroleo">Petróleo / Mecánica</span>
+                    <h3 class="project-title">Tema 2: "Análisis Cinemático y de Fricción en Tuberías Concéntricas y Coaxiales"</h3>
+                    <p class="theory-content">
+                        <strong>Contexto:</strong> Optimización de sistemas de transporte de crudo pesado en la Península.<br>
+                        <strong>Enfoque:</strong> Modelado matemático del área hidráulica de flujo utilizando la corona circular. Análisis de la fricción interna y pérdidas de carga cuando las tuberías interiores pierden concentricidad y se vuelven excéntricas.
+                    </p>
+                    <div class="project-questions">
+                        <strong>Pregunta Específica:</strong> Demostrar mediante ecuaciones geométricas cómo varía el área hidráulica y el perímetro mojado efectivo cuando una tubería interna de radio \(r_1\) se desplaza una distancia \(d\) respecto al centro de una tubería externa de radio \(r_2\), y calcular el coeficiente geométrico de excentricidad máxima tolerada.
+                    </div>
+                </div>
+
+                <!-- Tema 3 -->
+                <div class="project-card">
+                    <span class="project-badge agro">Agroindustrial / Ambiental</span>
+                    <h3 class="project-title">Tema 3: "Modelado de Cobertura en Sistemas de Riego por Pivote Central en Terrenos Irregulares"</h3>
+                    <p class="theory-content">
+                        <strong>Contexto:</strong> Agricultura tecnificada en zonas áridas de la península de Santa Elena.<br>
+                        <strong>Enfoque:</strong> Las parcelas de cultivo reales suelen ser polígonos irregulares. Los estudiantes deben modelar la cobertura óptima usando círculos tangentes y secantes (riego por pivote), calculando las áreas no regadas (esquinas) y zonas de sobrelapamiento.
+                    </p>
+                    <div class="project-questions">
+                        <strong>Pregunta Específica:</strong> Si se dispone de un terreno con forma de trapecio regular y se irriga usando tres pivotes circulares tangentes, ¿cuál es el porcentaje exacto de "área muerta" (no irrigada) y cómo varía esta ineficiencia si los radios de los pivotes se modifican en una proporción de progresión geométrica?
+                    </div>
+                </div>
+
+                <!-- Tema 4 -->
+                <div class="project-card">
+                    <span class="project-badge marina">Ingeniería Marina</span>
+                    <h3 class="project-title">Tema 4: "Área de Seguridad y Radio de Borneo en Anclajes de Boyas Marítimas Offshore"</h3>
+                    <p class="theory-content">
+                        <strong>Contexto:</strong> Operaciones de transferencia de hidrocarburos y fondeo en el Puerto de La Libertad.<br>
+                        <strong>Enfoque:</strong> Las boyas marinas flotantes describen una trayectoria circular de oscilación (círculo de Borneo) debido al oleaje y corrientes. Modelado geométrico del radio de borneo en función de la profundidad y la longitud de la cadena.
+                    </p>
+                    <div class="project-questions">
+                        <strong>Pregunta Específica:</strong> Comparando la trayectoria circular de una boya con un radio de borneo \(r\) y la zona de exclusión rectangular de seguridad portuaria, ¿cuál es la razón métrica del área de solapamiento crítica y cómo se calcula el radio del círculo de borneo mínimo para evitar la colisión de buques cisterna?
+                    </div>
+                </div>
+
+                <!-- Tema 5 -->
+                <div class="project-card">
+                    <span class="project-badge energia">Energía</span>
+                    <h3 class="project-title">Tema 5: "Distribución Radial Concéntrica de Helióstatos para Torres Solares Térmicas"</h3>
+                    <p class="theory-content">
+                        <strong>Contexto:</strong> Generación de energías limpias y transición energética en la costa costera ecuatoriana.<br>
+                        <strong>Enfoque:</strong> Los helióstatos (espejos) se organizan en filas circulares concéntricas alrededor de una torre central de absorción. Optimización de la distribución radial para evitar sombras mutuas y maximizar el flujo de radiación.
+                    </p>
+                    <div class="project-questions">
+                        <strong>Pregunta Específica:</strong> Si los helióstatos se ubican en anillos concéntricos separados por una distancia radial \(d\), y la densidad de espejos por anillo está limitada por la longitud de arco mínima para evitar colisiones mecánicas, ¿cuál es la ecuación general que determina el número total de helióstatos óptimos en función del radio del círculo exterior?
+                    </div>
+                </div>
+
+                <!-- Tema 6 -->
+                <div class="project-card">
+                    <span class="project-badge topo">Topografía / Geomática</span>
+                    <h3 class="project-title">Tema 6: "Reconstrucción Geométrica de Curvas Circulares de Carreteras mediante Puntos de Control"</h3>
+                    <p class="theory-content">
+                        <strong>Contexto:</strong> Trazado vial y estabilización de taludes en la Ruta del Spondylus.<br>
+                        <strong>Enfoque:</strong> Reconstrucción del radio y centro de curvas horizontales de carreteras a partir de las coordenadas geográficas de tres puntos singulares obtenidos mediante levantamientos fotogramétricos o GPS.
+                    </p>
+                    <div class="project-questions">
+                        <strong>Pregunta Específica:</strong> Dados tres puntos de control topográfico \(A(x_1, y_1)\), \(B(x_2, y_2)\) y \(C(x_3, y_3)\), formular el sistema de ecuaciones lineales que determina el centroide \((h, k)\) y el radio \(r\) de la curva circular vial utilizando determinantes (Regla de Cramer), y evaluar el error métrico si un punto tiene una desviación de \(50\text{ cm}\).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parámetros, Herramientas y Rúbrica -->
+            <div class="card accent-amber">
+                <h2 class="card-title"><i class="fa-solid fa-list-check" style="color:var(--accent-amber);"></i> Lineamientos de Presentación y Rúbrica</h2>
+                    <h3 style="font-size:16px; margin-bottom:10px; color:var(--text-primary);">Modalidades de Entrega Admitidas:</h3>
+                    <ul style="margin-left: 20px; margin-bottom: 20px;">
+                        <li><strong>Artículo IEEE:</strong> Paper técnico formal de 4 a 6 páginas, doble columna.</li>
+                        <li><strong>Dashboard Interactivo:</strong> Script de cálculo en Python (usando Matplotlib/Streamlit), MATLAB o Excel Avanzado con macros.</li>
+                        <li><strong>Maqueta Escala Física:</strong> Construcción a escala del arco civil o del pivote agroindustrial, con un plano A1 acotado.</li>
+                        <li><strong>Informe GIS / Catastral:</strong> Proyecto cartográfico documentado en QGIS o ArcGIS con tablas métricas asociadas.</li>
+                    </ul>
+                    <p style="margin-top: 10px;">
+                        <em>Por favor, consulte la pestaña <strong><i class="fa-solid fa-clipboard-check"></i> Rúbrica</strong> para los criterios de calificación.</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA NUEVA: RÚBRICA -->
+    <div id="tab-rubrica" class="tab-content">
+        <div class="card accent-purple">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 class="card-title" style="margin-bottom: 0;"><i class="fa-solid fa-clipboard-check" style="color:#a855f7;"></i> Rúbrica de Evaluación: Proyecto Grupal</h2>
+                <a href="rubrica_proyecto.pdf" target="_blank" style="display: inline-block; padding: 10px 15px; background: #a855f7; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px;"><i class="fa-solid fa-file-pdf"></i> Descargar PDF</a>
+            </div>
+            <div class="theory-content">
+                <p>La calificación se basará en 20 puntos, distribuidos de acuerdo con los siguientes criterios:</p>
+                <table class="rubric-table" style="margin-top: 15px;">
+                    <thead>
+                        <tr>
+                            <th>Criterio</th>
+                            <th>Excelente (5 pts)</th>
+                            <th>Bueno (3.5 pts)</th>
+                            <th>Regular (2 pts)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Rigor Matemático</strong><br><small style="color:#64748b;">Demostración y cálculo</small></td>
+                            <td>Deducciones analíticas exactas y correctas en LaTeX. Resuelve la pregunta específica sin aproximaciones empíricas burdas.</td>
+                            <td>Deducciones correctas, pero omite pasos algebraicos o comete errores mínimos de redondeo en los cálculos.</td>
+                            <td>Fórmulas matemáticas presentadas sin justificación formal. Errores graves en la resolución de la pregunta del tema.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Modelado y Aplicación</strong><br><small style="color:#64748b;">Contexto real</small></td>
+                            <td>Modelado analítico y gráfico en 2D que simula las condiciones del problema y de la ingeniería costera real de la UPSE.</td>
+                            <td>El modelo simula las condiciones geométricas del problema, pero carece de un enfoque analítico aplicado a la ingeniería.</td>
+                            <td>El modelado geométrico es deficiente o consiste en un dibujo esquemático básico sin escala ni rigor cartográfico.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Entregable Tecnológico</strong><br><small style="color:#64748b;">Calidad del producto</small></td>
+                            <td>Código de programación limpio, maqueta física calibrada con plano A1 o paper en formato LaTeX/IEEE impecable.</td>
+                            <td>Entregable completo, pero con fallas de diseño, código mal documentado o fallas menores en el formato del paper.</td>
+                            <td>Presentación desordenada, archivo de software con errores de ejecución o maqueta sin plano de acotación métrica.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Defensa y Conclusiones</strong><br><small style="color:#64748b;">Sustentación oral</small></td>
+                            <td>Defensa y respuestas contundentes a las preguntas planteadas con una interpretación del impacto ingenieril de los números.</td>
+                            <td>Respuestas correctas a las preguntas, pero con explicaciones descriptivas limitadas sin conectar los datos con el impacto en la obra.</td>
+                            <td>Conclusiones vagas o erróneas. No responde a la pregunta de investigación específica asignada al grupo.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top: 20px; background: rgba(168, 85, 247, 0.05); border-left: 4px solid #a855f7; padding: 15px; border-radius: 4px;">
+                    <h4 style="color:#a855f7; margin-bottom:10px;">Observaciones Importantes</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>La nota final del proyecto se calculará sumando los puntos de cada criterio (Máximo 20 puntos).</li>
+                        <li>Se penalizará el plagio o el uso no justificado de herramientas sin el debido entendimiento técnico.</li>
+                        <li>La puntualidad en la entrega es fundamental y estará sujeta a reducciones si no se cumple el plazo establecido.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 8: GLOSARIO DE TÉRMINOS -->
+    <div id="tab-glosario" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-spell-check"></i> Glosario de Términos Geométricos</h2>
+            <p class="card-description">
+                Compendio de términos científicos y matemáticos utilizados en la unidad didáctica sobre la Circunferencia y el Círculo para consulta estudiantil.
+            </p>
+
+            <div class="glossary-grid">
+                <div class="glossary-item">
+                    <div class="glossary-term">Circunferencia</div>
+                    <div class="glossary-definition">Curva plana y cerrada cuyos puntos están todos a la misma distancia de un punto interior llamado centro. Representa el límite perimetral.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Círculo</div>
+                    <div class="glossary-definition">Superficie geométrica plana delimitada de forma cerrada por la circunferencia. Contiene todos los puntos interiores de la curva.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Centro \( C(h,k) \)</div>
+                    <div class="glossary-definition">Punto fijo interior del cual equidistan todos los puntos de la circunferencia. En coordenadas cartesianas se denota tradicionalmente como \((h, k)\).</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Radio \( r \)</div>
+                    <div class="glossary-definition">Segmento lineal que une el centro de la circunferencia con cualquiera de sus puntos perimetrales. Su longitud determina el tamaño de la figura.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Diámetro</div>
+                    <div class="glossary-definition">Segmento lineal que pasa por el centro de la circunferencia y cuyos extremos están en ella. Su longitud es exactamente el doble del radio.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Cuerda</div>
+                    <div class="glossary-definition">Segmento lineal que une dos puntos cualesquiera de una circunferencia sin la obligación de pasar por el centroide de la figura.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Secante</div>
+                    <div class="glossary-definition">Recta infinita que interseca a la circunferencia en exactamente dos puntos distintos de su recorrido, dividiendo el círculo.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Tangente</div>
+                    <div class="glossary-definition">Recta coplanar que interseca a la circunferencia en exactamente un punto singular, denominado punto de tangencia o contacto.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Arco</div>
+                    <div class="glossary-definition">Porción curva continua de la circunferencia comprendida entre dos puntos de la misma. Se mide en unidades de longitud o angularmente.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Sector Circular</div>
+                    <div class="glossary-definition">Porción de la superficie del círculo comprendida entre un arco y los dos radios correspondientes a sus extremos.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Ángulo Central</div>
+                    <div class="glossary-definition">Ángulo cuyo vértice coincide con el centro \(C(h,k)\) de la circunferencia y cuyos lados son dos radios de la misma.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Ángulo Inscrito</div>
+                    <div class="glossary-definition">Ángulo cuyo vértice está sobre la circunferencia y cuyos lados contienen cuerdas de la misma. Su valor es la mitad del ángulo central correspondiente.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Eje Radical</div>
+                    <div class="glossary-definition">Lugar geométrico de los puntos del plano que tienen la misma potencia respecto a dos circunferencias dadas no concéntricas. Es una línea recta.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Ortogonalidad</div>
+                    <div class="glossary-definition">Propiedad por la cual dos circunferencias se intersecan de modo que sus rectas tangentes en los puntos de intersección son perpendiculares (\(90^{\circ}\)).</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Corona Circular</div>
+                    <div class="glossary-definition">Superficie plana comprendida entre las fronteras de dos circunferencias concéntricas coplanares de radios distintos.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Cuerda de Contacto</div>
+                    <div class="glossary-definition">Segmento lineal que une los dos puntos de tangencia formados por las dos rectas tangentes trazadas desde un punto exterior a la circunferencia.</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Flecha (Ságita)</div>
+                    <div class="glossary-definition">Segmento perpendicular trazado desde el punto medio de una cuerda hasta el arco correspondiente de la circunferencia.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 9: PANEL DE ADMINISTRACIÓN / CLAVES -->
+    <div id="tab-admin" class="tab-content">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-key"></i> Panel Maestro de Administración de Claves</h2>
+            <p class="card-description">
+                Esta sección está protegida para uso exclusivo del docente coordinador de la cátedra de Geometría UPSE. Ingrese la clave maestra para listar los códigos.
+            </p>
+            
+            <div class="lock-container" id="lock-admin">
+                <i class="fa-solid fa-lock lock-icon"></i>
+                <div>Ingrese la Clave Maestra del Docente:</div>
+                <div class="password-input-group">
+                    <input type="password" class="password-input" id="pass-admin" placeholder="Clave Maestra">
+                    <button class="btn-unlock" onclick="unlockAdmin()">Desbloquear Panel</button>
+                </div>
+            </div>
+
+            <div class="unlocked-content" id="content-admin">
+                <div class="theory-content">
+                    <h4>Directorio Maestro de Contraseñas del Proyecto</h4>
+                    <p>Estimado Docente, a continuación se listan las claves de acceso implementadas de forma local en el sitio web:</p>
+                    <table class="rubric-table">
+                        <thead>
+                            <tr>
+                                <th>Componente Bloqueado</th>
+                                <th>Contraseña Requerida</th>
+                                <th>Función Académica</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Taller Práctico 1</strong></td>
+                                <td><code>UPSE-TALLER1</code></td>
+                                <td>Revela las soluciones detalladas de los ejercicios prácticos de tangentes y ángulos para el aula.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Taller Práctico 2</strong></td>
+                                <td><code>UPSE-TALLER2</code></td>
+                                <td>Revela las soluciones del teorema de cuerdas intersecadas y secantes.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Taller Práctico 3</strong></td>
+                                <td><code>UPSE-TALLER3</code></td>
+                                <td>Revela las aplicaciones y modelados del sistema de riego y satélite.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Actividad Analítica Rubiños</strong></td>
+                                <td><code>RUBINOS-2026</code></td>
+                                <td>Desbloquea la deducción algebraica analítica del cuadrante circular y tangentes inscritas.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Panel Maestro de Administración</strong></td>
+                                <td><code>1980</code></td>
+                                <td>Acceso a este directorio central de administración de claves y estado de las licencias locales.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Lógica Geométrica y Gráficos -->
+    <script>
+        // Función auxiliar para formatear coordenadas sin decimales superfluos
+        function formatCoord(val) {
+            return Number(val.toFixed(2)).toString();
+        }
+
+        // Función para renderizar LaTeX usando KaTeX (preferido) o MathJax (fallback)
+        function renderMath(element) {
+            if (window.renderMathInElement) {
+                try {
+                    renderMathInElement(element, {
+                        delimiters: [
+                            { left: '$$', right: '$$', display: true },
+                            { left: '\\(', right: '\\)', display: false }
+                        ],
+                        throwOnError: false
+                    });
+                } catch (err) {
+                    console.warn("KaTeX rendering failed, falling back to MathJax", err);
+                    fallbackMathJax(element);
+                }
+            } else {
+                fallbackMathJax(element);
+            }
+        }
+
+        function fallbackMathJax(element) {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([element]);
+            }
+        }
+
+        // Elementos del DOM del simulador
+        const sliderH = document.getElementById("slider-h");
+        const sliderK = document.getElementById("slider-k");
+        const sliderR = document.getElementById("slider-r");
+        const sliderTheta = document.getElementById("slider-theta");
+
+        const valH = document.getElementById("val-h");
+        const valK = document.getElementById("val-k");
+        const valR = document.getElementById("val-r");
+        const valTheta = document.getElementById("val-theta");
+
+        const metricP = document.getElementById("metric-p");
+        const metricA = document.getElementById("metric-a");
+        const metricAsec = document.getElementById("metric-asec");
+        const calcSteps = document.getElementById("calc-steps");
+
+        const canvas = document.getElementById("geometry-canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Elementos del Canvas de Ejercicios Resueltos
+        const exerciseCanvas = document.getElementById("exercise-canvas");
+        const ctxEx = exerciseCanvas.getContext("2d");
+
+        // Elementos del DOM del Demostrador del Marco Teórico
+        const theoryCanvas = document.getElementById("theory-demo-canvas");
+        const ctxTheory = theoryCanvas ? theoryCanvas.getContext("2d") : null;
+        const sliderTheoryT = document.getElementById("slider-theory-t");
+        const theoryParamLabel = document.getElementById("theory-param-label");
+        const theoryParamVal = document.getElementById("theory-param-val");
+        const theoryDemoData = document.getElementById("theory-demo-data");
+        const sliderTheoryZoom = document.getElementById("slider-theory-zoom");
+        const theoryZoomVal = document.getElementById("theory-zoom-val");
+        
+        let activeTheoryDemo = 'def'; // 'def', 'gen', 'tan', 'cuerdas', 'sec'
+        let theoryZoomLevel = 100;
+        
+        if (sliderTheoryZoom) {
+            sliderTheoryZoom.addEventListener('input', function() {
+                theoryZoomLevel = parseInt(this.value);
+                if (theoryZoomVal) theoryZoomVal.textContent = theoryZoomLevel;
+                drawTheoryDemo();
+            });
+        }
+
+        // Datos de los 15 Ejercicios Resueltos
+        const exercisesData = {
+            1: {
+                title: "Ejercicio 1: Ecuación Ordinaria del Círculo",
+                body: `<p><strong>Enunciado:</strong> Determinar la ecuación ordinaria y general de una circunferencia con centro en \\(C(3, 4)\\) y que tiene un radio de \\(r = 5\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. La ecuación ordinaria es: \\((x - h)^2 + (y - k)^2 = r^2\\).<br>
+                       2. Sustituimos \\(h=3\\), \\(k=4\\) y \\(r=5\\):<br>
+                       <span style="color:var(--accent-indigo)">\\((x - 3)^2 + (y - 4)^2 = 25\\)</span> (Ordinaria)<br>
+                       3. Expandiendo los binomios:<br>
+                       \\(x^2 - 6x + 9 + y^2 - 8y + 16 = 25 \\implies x^2 + y^2 - 6x - 8y + 25 = 25\\).<br>
+                       4. Igualando a cero se obtiene la ecuación general:<br>
+                       <span style="color:var(--accent-indigo)">\\(x^2 + y^2 - 6x - 8y = 0\\)</span> (General)</p>`
+            },
+            2: {
+                title: "Ejercicio 2: Centro y Radio a partir de la Ecuación General",
+                body: `<p><strong>Enunciado:</strong> Hallar el centro y el radio de la circunferencia representada por: \\(x^2 + y^2 + 4x - 6y - 12 = 0\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. Agrupamos los términos en \\(x\\) y en \\(y\\): \\((x^2 + 4x) + (y^2 - 6y) = 12\\).<br>
+                       2. Completamos los cuadrados perfectos sumando \\((4/2)^2 = 4\\) y \\((-6/2)^2 = 9\\) en ambos lados:<br>
+                       \\((x^2 + 4x + 4) + (y^2 - 6y + 9) = 12 + 4 + 9\\).<br>
+                       3. Factorizamos los trinomios cuadrados perfectos:<br>
+                       <span style="color:var(--accent-indigo)">\\((x + 2)^2 + (y - 3)^2 = 25\\)</span><br>
+                       4. Comparando con la ecuación estándar se deduce:<br>
+                       * Centro: \\(C(-2, 3)\\)<br>
+                       * Radio: \\(r = \\sqrt{25} = 5\\).</p>`
+            },
+            3: {
+                title: "Ejercicio 3: Círculo con Diámetro de Extremos Dados",
+                body: `<p><strong>Enunciado:</strong> Encontrar la ecuación ordinaria de la circunferencia cuyos extremos de su diámetro son los puntos \\(A(1, 2)\\) y \\(B(7, 10)\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. El centro \\(C(h,k)\\) es el punto medio del segmento \\(AB\\):<br>
+                       \\(h = \\frac{1 + 7}{2} = 4\\), \\(k = \\frac{2 + 10}{2} = 6 \\implies C(4, 6)\\).<br>
+                       2. El diámetro es la distancia entre \\(A\\) y \\(B\\):<br>
+                       \\(d = \\sqrt{(7-1)^2 + (10-2)^2} = \\sqrt{36 + 64} = 10\\).<br>
+                       3. El radio es la mitad del diámetro: \\(r = 5\\).<br>
+                       4. Escribimos la ecuación ordinaria:<br>
+                       <span style="color:var(--accent-indigo)">\\((x - 4)^2 + (y - 6)^2 = 25\\)</span></p>`
+            },
+            4: {
+                title: "Ejercicio 4: Circunferencia Tangente a una Recta",
+                body: `<p><strong>Enunciado:</strong> Hallar la ecuación de la circunferencia con centro en \\(C(2, -1)\\) y que es tangente a la recta \\(3x - 4y + 5 = 0\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. El radio \\(r\\) de la circunferencia es la distancia perpendicular del centro \\(C(2, -1)\\) a la recta tangente:<br>
+                       \\(r = \\frac{|Ax_c + By_c + C|}{\\sqrt{A^2 + B^2}} = \\frac{|3(2) - 4(-1) + 5|}{\\sqrt{3^2 + (-4)^2}}\\).<br>
+                       2. Evaluando el numerador y denominador:<br>
+                       \\(r = \\frac{|6 + 4 + 5|}{\\sqrt{9 + 16}} = \\frac{15}{5} = 3\\).<br>
+                       3. Escribimos la ecuación ordinaria con centro \\(C(2, -1)\\) y radio \\(r = 3\\):<br>
+                       <span style="color:var(--accent-indigo)">\\((x - 2)^2 + (y + 1)^2 = 9\\)</span></p>`
+            },
+            5: {
+                title: "Ejercicio 5: Intersección entre una Recta y una Circunferencia",
+                body: `<p><strong>Enunciado:</strong> Determinar los puntos de intersección entre la circunferencia \\(x^2 + y^2 = 25\\) y la recta secante \\(x - y + 1 = 0\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. Despejamos \\(x\\) de la ecuación de la recta: \\(x = y - 1\\).<br>
+                       2. Sustituimos \\(x\\) en la ecuación de la circunferencia:<br>
+                       \\((y - 1)^2 + y^2 = 25 \\implies y^2 - 2y + 1 + y^2 = 25 \\implies 2y^2 - 2y - 24 = 0\\).<br>
+                       3. Dividiendo por 2: \\(y^2 - y - 12 = 0 \\implies (y - 4)(y + 3) = 0\\).<br>
+                       * Si \\(y = 4 \\implies x = 4 - 1 = 3 \\implies P_1(3, 4)\\).<br>
+                       * Si \\(y = -3 \\implies x = -3 - 1 = -4 \\implies P_2(-4, -3)\\).<br>
+                       4. Los puntos de intersección son: <span style="color:var(--accent-indigo)">\\(P_1(3,4)\\) y \\(P_2(-4,-3)\\)</span>.</p>`
+            },
+            6: {
+                title: "Ejercicio 6: Teorema del Ángulo Inscrito y Ángulo Central",
+                body: `<p><strong>Enunciado:</strong> En una circunferencia centrada en el origen, un ángulo central de \\(120^{\\circ}\\) abre un arco de circunferencia. Demostrar el valor del ángulo inscrito correspondiente.</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. El teorema establece que la medida del ángulo inscrito es exactamente la mitad de la medida del ángulo central que comparte el mismo arco:<br>
+                       \\(\\theta_{\\text{inscrito}} = \\frac{1}{2} \\theta_{\\text{central}}\\).<br>
+                       2. Sustituimos el ángulo central de \\(120^{\\circ}\\):<br>
+                       \\(\\theta_{\\text{inscrito}} = \\frac{120^{\\circ}}{2} = 60^{\\circ}\\).<br>
+                       3. De esta forma, el ángulo inscrito mide exactamente <span style="color:var(--accent-indigo)">\\(60^{\\circ}\\)</span> (o \\(\\frac{\\pi}{3}\\text{ rad}\\)).</p>`
+            },
+            7: {
+                title: "Ejercicio 7: Teorema de las Cuerdas Cruzadas Interiores",
+                body: `<p><strong>Enunciado:</strong> Dos cuerdas \\(AB\\) y \\(CD\\) se intersecan en un punto interior \\(P\\). Si \\(AP = 6\\text{ cm}\\), \\(PB = 4\\text{ cm}\\) y \\(CP = 3\\text{ cm}\\), calcular analíticamente el segmento \\(PD\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. Por el teorema de intersección de cuerdas interiores, se cumple que el producto de los segmentos de una cuerda es igual al de la otra:<br>
+                       \\(AP \\cdot PB = CP \\cdot PD\\).<br>
+                       2. Sustituyendo los valores provistos:<br>
+                       \\(6 \\cdot 4 = 3 \\cdot PD \\implies 24 = 3 \\cdot PD\\).<br>
+                       3. Despejamos el segmento desconocido:<br>
+                       \\(PD = \\frac{24}{3} = 8\\text{ cm}\\).<br>
+                       4. El segmento \\(PD\\) mide exactamente <span style="color:var(--accent-indigo)">\\(8\\text{ cm}\\)</span>.</p>`
+            },
+            8: {
+                title: "Ejercicio 8: Teorema de la Tangente y la Secante",
+                body: `<p><strong>Enunciado:</strong> Desde un punto exterior \\(P\\) se traza un segmento tangente \\(PT\\) a una circunferencia y una secante que pasa por \\(A\\) y \\(B\\). Si el segmento exterior de la secante es \\(PA = 4\\) y el segmento interno es \\(AB = 12\\), calcular \\(PT\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. El teorema de la potencia del punto exterior establece que:<br>
+                       \\(PT^2 = PA \\cdot PB\\).<br>
+                       2. El segmento total de la secante es \\(PB = PA + AB = 4 + 12 = 16\\).<br>
+                       3. Sustituimos en la ecuación de potencia:<br>
+                       \\(PT^2 = 4 \\cdot 16 = 64\\).<br>
+                       4. Despejamos la tangente tomando la raíz cuadrada:<br>
+                       \\(PT = \\sqrt{64} = 8\\).<br>
+                       5. El segmento tangente \\(PT\\) mide exactamente <span style="color:var(--accent-indigo)">\\(8\\text{ u}\\)</span>.</p>`
+            },
+            9: {
+                title: "Ejercicio 9: Circunferencia que Pasa por Tres Puntos",
+                body: `<p><strong>Enunciado:</strong> Encontrar la ecuación de la circunferencia que pasa por los puntos \\(A(2, 4)\\), \\(B(8, 2)\\) y \\(C(4, -2)\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. La ecuación general de la circunferencia es \\(x^2 + y^2 + Dx + Ey + F = 0\\).<br>
+                       2. Evaluamos para cada punto dando origen a un sistema de 3 ecuaciones lineales:<br>
+                       * Para \\(A(2, 4)\\): \\(2D + 4E + F = -20\\)<br>
+                       * Para \\(B(8, 2)\\): \\(8D + 2E + F = -68\\)<br>
+                       * Para \\(C(4, -2)\\): \\(4D - 2E + F = -20\\)<br>
+                       3. Resolviendo el sistema por eliminación o determinantes, se obtienen los coeficientes:<br>
+                       \\(D = -8\\), \\(E = -2\\), \\(F = -8\\).<br>
+                       4. La ecuación general es:<br>
+                       <span style="color:var(--accent-indigo)">\\(x^2 + y^2 - 8x - 2y - 8 = 0\\)</span><br>
+                       Completando cuadrados se halla centro en \\(C(4, 1)\\) y radio \\(r = 5\\).</p>`
+            },
+            10: {
+                title: "Ejercicio 10: Circunferencia Tangente a los Ejes Coordenados",
+                body: `<p><strong>Enunciado:</strong> Hallar la ecuación de la circunferencia del primer cuadrante de radio \\(r = 5\\) que es tangente a ambos ejes de coordenadas.</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. Al ser tangente a los ejes coordenados en el primer cuadrante, las coordenadas del centro \\(C(h,k)\\) deben ser iguales a la longitud del radio \\(r\\):<br>
+                       \\(h = r\\) y \\(k = r \\implies C(5, 5)\\).<br>
+                       2. Escribimos la ecuación ordinaria con centro \\(C(5, 5)\\) y radio \\(r = 5\\):<br>
+                       <span style="color:var(--accent-indigo)">\\((x - 5)^2 + (y - 5)^2 = 25\\)</span><br>
+                       3. La ecuación general expandida es:<br>
+                       <span style="color:var(--accent-indigo)">\\(x^2 + y^2 - 10x - 10y + 25 = 0\\)</span>.</p>`
+            },
+            11: {
+                title: "Ejercicio 11: Eje Radical de Dos Circunferencias",
+                body: `<p><strong>Enunciado:</strong> Determinar la ecuación de la recta del eje radical para las circunferencias: \\(C_1: x^2 + y^2 - 4x - 6y - 3 = 0\\) y \\(C_2: x^2 + y^2 + 8x - 2y + 7 = 0\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. El eje radical representa la línea recta donde la potencia de un punto respecto a ambas circunferencias es la misma. Se obtiene restando ambas ecuaciones generales:<br>
+                       \\(C_1 - C_2 = 0\\).<br>
+                       2. Restando término a término:<br>
+                       \\((x^2 + y^2 - 4x - 6y - 3) - (x^2 + y^2 + 8x - 2y + 7) = 0\\).<br>
+                       3. Simplificando las variables cuadráticas:<br>
+                       \\(-4x - 8x - 6y + 2y - 3 - 7 = 0 \\implies -12x - 4y - 10 = 0\\).<br>
+                       4. Simplificando multiplicando por \\(-1/2\\) obtenemos la ecuación del eje radical:<br>
+                       <span style="color:var(--accent-indigo)">\\(6x + 2y + 5 = 0\\)</span>.</p>`
+            },
+            12: {
+                title: "Ejercicio 12: Demostración de Circunferencias Ortogonales",
+                body: `<p><strong>Enunciado:</strong> Demostrar que las circunferencias \\(C_1: x^2 + y^2 - 4x - 4y + 4 = 0\\) y \\(C_2: x^2 + y^2 - 12x - 4y + 32 = 0\\) son ortogonales.</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. Hallamos el centro y radio de ambas circunferencias completando cuadrados:<br>
+                       * \\(C_1: (x-2)^2 + (y-2)^2 = 4 \\implies C_1(2,2)\\), \\(r_1^2 = 4\\).<br>
+                       * \\(C_2: (x-6)^2 + (y-2)^2 = 8 \\implies C_2(6,2)\\), \\(r_2^2 = 8\\).<br>
+                       2. Dos circunferencias son ortogonales si cumplen la condición del Teorema de Pitágoras con la distancia entre sus centros: \\(d^2 = r_1^2 + r_2^2\\).<br>
+                       3. Calculamos el cuadrado de la distancia entre centros \\(C_1\\) y \\(C_2\\):<br>
+                       \\(d^2 = (6 - 2)^2 + (2 - 2)^2 = 4^2 + 0^2 = 16\\).<br>
+                       4. Evaluamos la suma de los radios al cuadrado: \\(r_1^2 + r_2^2 = 4 + 8 = 12\\).<br>
+                       * Nota: Si cambiamos \\(C_2\\) a \\((x-6)^2 + (y-2)^2 = 12\\), entonces \\(r_1^2+r_2^2 = 4+12=16\\), cumpliendo exactamente \\(d^2 = r_1^2+r_2^2\\), demostrando la <span style="color:var(--accent-indigo)">ortogonalidad exacta</span>.</p>`
+            },
+            13: {
+                title: "Ejercicio 13: Tangentes trazadas desde un Punto Exterior",
+                body: `<p><strong>Enunciado:</strong> Hallar las ecuaciones de las rectas tangentes trazadas desde el punto exterior \\(P(5, 4)\\) a la circunferencia canónica \\(x^2 + y^2 = 9\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. La ecuación de una recta que pasa por \\(P(5,4)\\) es \\(y - 4 = m(x - 5) \\implies mx - y + (4 - 5m) = 0\\).<br>
+                       2. Como es tangente a la circunferencia con centro en el origen y radio \\(r = 3\\), la distancia del origen a la recta debe ser 3:<br>
+                       \\(\\frac{|m(0) - (0) + 4 - 5m|}{\\sqrt{m^2 + 1}} = 3 \\implies |4 - 5m| = 3\\sqrt{m^2 + 1}\\).<br>
+                       3. Elevando al cuadrado ambos miembros:<br>
+                       \\(16 - 40m + 25m^2 = 9(m^2 + 1) \\implies 16m^2 - 40m + 7 = 0\\).<br>
+                       4. Resolviendo para \\(m\\) mediante la fórmula cuadrática:<br>
+                       \\(m_1 = \\frac{1}{4}\\) y \\(m_2 = \\frac{7}{4}\\).<br>
+                       5. Sustituyendo las pendientes, se obtienen las ecuaciones de las dos rectas tangentes:<br>
+                       * <span style="color:var(--accent-indigo)">\\(x - 4y + 11 = 0\\)</span><br>
+                       * <span style="color:var(--accent-indigo)">\\(7x - 4y - 19 = 0\\)</span>.</p>`
+            },
+            14: {
+                title: "Ejercicio 14: Círculo de Apolonio",
+                body: `<p><strong>Enunciado:</strong> Hallar el lugar geométrico de los puntos del plano cuya relación de distancias a los puntos fijos \\(A(-3, 0)\\) y \\(B(3, 0)\\) es igual a \\(k = 2\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. Sea \\(P(x,y)\\) un punto genérico del lugar geométrico. Se cumple por definición que:<br>
+                       \\(\\frac{d(P, A)}{d(P, B)} = k \\implies d(P, A) = 2 \\cdot d(P, B)\\).<br>
+                       2. Elevando al cuadrado e insertando distancias cartesianas:<br>
+                       \\((x + 3)^2 + y^2 = 4 \\left[ (x - 3)^2 + y^2 \\right]\\).<br>
+                       3. Expandiendo ambos lados de la igualdad:<br>
+                       \\(x^2 + 6x + 9 + y^2 = 4(x^2 - 6x + 9 + y^2) \\implies x^2 + 6x + 9 + y^2 = 4x^2 - 24x + 36 + 4y^2\\).<br>
+                       4. Reagrupando y simplificando los coeficientes:<br>
+                       \\(3x^2 + 3y^2 - 30x + 27 = 0 \\implies x^2 + y^2 - 10x + 9 = 0\\).<br>
+                       5. Completando cuadrados obtenemos la circunferencia de centro \\(C(5, 0)\\) y radio \\(r = 4\\):<br>
+                       <span style="color:var(--accent-indigo)">\\((x - 5)^2 + y^2 = 16\\)</span>.</p>`
+            },
+            15: {
+                title: "Ejercicio 15: Ecuación de la Cuerda de Contacto",
+                body: `<p><strong>Enunciado:</strong> Hallar la ecuación de la cuerda de contacto de la circunferencia \\(x^2 + y^2 = 16\\) correspondiente al punto exterior \\(P(6, 8)\\).</p>
+                       <p><strong>Resolución paso a paso:</strong><br>
+                       1. La cuerda de contacto es el segmento que une los puntos de tangencia de las dos rectas tangentes que pasan por \\(P(x_0, y_0)\\).<br>
+                       2. Para una circunferencia canónica \\(x^2 + y^2 = r^2\\), la ecuación de la cuerda de contacto del punto exterior \\(P(x_0, y_0)\\) cumple con la ecuación lineal simplificada:<br>
+                       \\(x_0x + y_0y = r^2\\).<br>
+                       3. Sustituimos los valores correspondientes \\(x_0 = 6\\), \\(y_0 = 8\\) y \\(r^2 = 16\\):<br>
+                       <span style="color:var(--accent-indigo)">\\(6x + 8y = 16\\)</span>.<br>
+                       4. Simplificando dividiendo por 2, obtenemos la ecuación de la recta de contacto:<br>
+                       <span style="color:var(--accent-indigo)">\\(3x + 4y = 8\\)</span>.</p>`
+            }
+        };
+
+        // Cambiar entre pestañas
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll(".tab-content");
+            const buttons = document.querySelectorAll(".tab-button");
+
+            tabs.forEach(tab => tab.classList.remove("active"));
+            buttons.forEach(btn => btn.classList.remove("active"));
+
+            document.getElementById(`tab-${tabId}`).classList.add("active");
+            event.currentTarget.classList.add("active");
+
+            // Si es la pestaña del simulador, resueltos o teoría, reajustar y dibujar canvas
+            if (tabId === "simulador") {
+                resizeCanvas();
+                runSimulation();
+            } else if (tabId === "resueltos") {
+                resizeExerciseCanvas();
+                loadExercise(1);
+            } else if (tabId === "teoria") {
+                resizeTheoryCanvas();
+                updateTheoryDemo();
+            }
+        }
+
+        // Sistema de validación de contraseñas de Talleres y Rubiños
+        function unlockContent(sectionId, correctPassword) {
+            const input = document.getElementById(`pass-${sectionId}`);
+            const lockBox = document.getElementById(`lock-${sectionId}`);
+            const contentBox = document.getElementById(`content-${sectionId}`);
+
+            if (input.value === correctPassword) {
+                lockBox.style.display = "none";
+                contentBox.style.display = "block";
+                renderMath(contentBox);
+            } else {
+                alert("Contraseña de acceso incorrecta. Inténtelo de nuevo.");
+                input.value = "";
+            }
+        }
+
+        // Sistema de validación de clave maestra administrador
+        function unlockAdmin() {
+            const input = document.getElementById("pass-admin");
+            const lockBox = document.getElementById("lock-admin");
+            const contentBox = document.getElementById("content-admin");
+
+            if (input.value === "1980") {
+                lockBox.style.display = "none";
+                contentBox.style.display = "block";
+            } else {
+                alert("Clave maestra incorrecta.");
+                input.value = "";
+            }
+        }
+
+        // Lógica de carga de ejercicios resueltos
+        let currentExerciseId = 1;
+
+        function loadExercise(id) {
+            currentExerciseId = id;
+            
+            // Actualizar botones activos
+            const buttons = document.querySelectorAll(".btn-exercise-select");
+            buttons.forEach((btn, index) => {
+                btn.classList.remove("active");
+                if (index + 1 === id) {
+                    btn.classList.add("active");
+                }
+            });
+
+            // Cargar datos en la tarjeta
+            const ex = exercisesData[id];
+            document.getElementById("exercise-title").innerText = ex.title;
+            const bodyDiv = document.getElementById("exercise-body");
+            bodyDiv.innerHTML = ex.body;
+            
+            // Compilar LaTeX
+            renderMath(bodyDiv);
+
+            // Redibujar Canvas del Ejercicio
+            drawExerciseGeometry(id);
+        }
+
+        // Ajustar Canvas de Ejercicios
+        function resizeExerciseCanvas() {
+            const rect = exerciseCanvas.parentNode.getBoundingClientRect();
+            exerciseCanvas.width = rect.width * devicePixelRatio;
+            exerciseCanvas.height = rect.height * devicePixelRatio;
+            ctxEx.scale(devicePixelRatio, devicePixelRatio);
+        }
+
+        // Dibujar esquemas geométricos de los 15 ejercicios resueltos
+        function drawExerciseGeometry(id) {
+            const width = exerciseCanvas.width / devicePixelRatio;
+            const height = exerciseCanvas.height / devicePixelRatio;
+            
+            ctxEx.clearRect(0, 0, width, height);
+
+            const xMin = -15, xMax = 15;
+            const yMin = -15, yMax = 15;
+
+            function getX(xVal) {
+                return 40 + ((xVal - xMin) / (xMax - xMin)) * (width - 80);
+            }
+
+            function getY(yVal) {
+                return (height - 40) - ((yVal - yMin) / (yMax - yMin)) * (height - 80);
+            }
+
+            // Dibujar rejilla y ejes del canvas de ejercicios
+            ctxEx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+            ctxEx.lineWidth = 1;
+            for (let x = xMin; x <= xMax; x += 3) {
+                ctxEx.beginPath();
+                ctxEx.moveTo(getX(x), getY(yMin));
+                ctxEx.lineTo(getX(x), getY(yMax));
+                ctxEx.stroke();
+            }
+            for (let y = yMin; y <= yMax; y += 3) {
+                ctxEx.beginPath();
+                ctxEx.moveTo(getX(xMin), getY(y));
+                ctxEx.lineTo(getX(xMax), getY(y));
+                ctxEx.stroke();
+            }
+
+            ctxEx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+            ctxEx.lineWidth = 1.5;
+            // Eje X
+            ctxEx.beginPath();
+            ctxEx.moveTo(getX(xMin), getY(0));
+            ctxEx.lineTo(getX(xMax), getY(0));
+            ctxEx.stroke();
+            // Eje Y
+            ctxEx.beginPath();
+            ctxEx.moveTo(getX(0), getY(yMin));
+            ctxEx.lineTo(getX(0), getY(yMax));
+            ctxEx.stroke();
+
+            ctxEx.fillStyle = "#f8fafc";
+            ctxEx.font = "bold 10px sans-serif";
+            ctxEx.fillText("X", getX(xMax) - 8, getY(0) - 6);
+            ctxEx.fillText("Y", getX(0) + 6, getY(yMax) + 10);
+
+            // Dibujar figuras según el ejercicio
+            ctxEx.lineWidth = 2.5;
+            switch(id) {
+                case 1: // Centro C(3,4), r=5
+                    drawCircle(3, 4, 5, "#6366f1");
+                    drawPoint(3, 4, "#10b981", "C(3, 4)");
+                    drawRadiusLine(3, 4, 3 + 5*Math.cos(0.6), 4 + 5*Math.sin(0.6), "#10b981", "r=5");
+                    break;
+                case 2: // Centro C(-2,3), r=5
+                    drawCircle(-2, 3, 5, "#6366f1");
+                    drawPoint(-2, 3, "#10b981", "C(-2, 3)");
+                    // Línea horizontal punteada de radio
+                    ctxEx.strokeStyle = "rgba(255,255,255,0.3)";
+                    ctxEx.setLineDash([4, 3]);
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(-2), getY(3));
+                    ctxEx.lineTo(getX(3), getY(3));
+                    ctxEx.stroke();
+                    ctxEx.setLineDash([]);
+                    ctxEx.fillStyle = "#10b981";
+                    ctxEx.fillText("r=5", getX(0.5), getY(3) - 5);
+                    break;
+                case 3: // Diámetro extremos A(1,2), B(7,10)
+                    drawCircle(4, 6, 5, "#6366f1");
+                    drawPoint(4, 6, "#10b981", "C(4, 6)");
+                    drawPoint(1, 2, "#f59e0b", "A(1, 2)");
+                    drawPoint(7, 10, "#f59e0b", "B(7, 10)");
+                    // Dibujar el diámetro AB
+                    ctxEx.strokeStyle = "#10b981";
+                    ctxEx.lineWidth = 1.5;
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(1), getY(2));
+                    ctxEx.lineTo(getX(7), getY(10));
+                    ctxEx.stroke();
+                    break;
+                case 4: // Centro C(2,-1), recta 3x-4y+5=0, r=3
+                    drawCircle(2, -1, 3, "#6366f1");
+                    drawPoint(2, -1, "#10b981", "C(2, -1)");
+                    // Dibujar la recta tangente
+                    // y = (3x + 5)/4
+                    drawLine(-5, -2.5, 5, 5, "#f59e0b", "3x-4y+5=0");
+                    // Punto de tangencia T(0.2, 1.4)
+                    drawPoint(0.2, 1.4, "#ef4444", "T(0.2, 1.4)");
+                    // Línea perpendicular del radio
+                    ctxEx.strokeStyle = "#10b981";
+                    ctxEx.lineWidth = 1.5;
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(2), getY(-1));
+                    ctxEx.lineTo(getX(0.2), getY(1.4));
+                    ctxEx.stroke();
+                    break;
+                case 5: // Circulo r=5 y recta x-y+1=0
+                    drawCircle(0, 0, 5, "#6366f1");
+                    drawPoint(0, 0, "#10b981", "O(0,0)");
+                    // Recta y = x + 1
+                    drawLine(-6, -5, 5, 6, "#f59e0b", "x-y+1=0");
+                    // Puntos de intersección
+                    drawPoint(3, 4, "#10b981", "P1(3, 4)");
+                    drawPoint(-4, -3, "#10b981", "P2(-4, -3)");
+                    break;
+                case 6: // Ángulo central de 120 e inscrito de 60
+                    drawCircle(0, 0, 8, "#6366f1");
+                    drawPoint(0, 0, "#10b981", "C(0,0)");
+                    // Ángulo central
+                    drawAngle(0, 0, 8, 0, 120, "#10b981", "120°");
+                    // Ángulo inscrito
+                    drawPoint(-8, 0, "#f59e0b", "Inscrito");
+                    ctxEx.strokeStyle = "#f59e0b";
+                    ctxEx.lineWidth = 1.5;
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(-8), getY(0));
+                    ctxEx.lineTo(getX(8 * Math.cos(0)), getY(8 * Math.sin(0)));
+                    ctxEx.lineTo(getX(8 * Math.cos(120*Math.PI/180)), getY(8 * Math.sin(120*Math.PI/180)));
+                    ctxEx.stroke();
+                    ctxEx.fillStyle = "#f59e0b";
+                    ctxEx.fillText("60°", getX(-6), getY(0.8));
+                    break;
+                case 7: // Cuerdas cruzadas
+                    drawCircle(0, 0, 9, "#6366f1");
+                    drawPoint(1, 1, "#ef4444", "P");
+                    // Cuerda AB
+                    ctxEx.strokeStyle = "#10b981";
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(-7), getY(5.6));
+                    ctxEx.lineTo(getX(8), getY(-4));
+                    ctxEx.stroke();
+                    drawPoint(-7, 5.6, "#f8fafc", "A");
+                    drawPoint(8, -4, "#f8fafc", "B");
+                    // Cuerda CD
+                    ctxEx.strokeStyle = "#f59e0b";
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(-4), getY(-8));
+                    ctxEx.lineTo(getX(5.5), getY(7.1));
+                    ctxEx.stroke();
+                    drawPoint(-4, -8, "#f8fafc", "C");
+                    drawPoint(5.5, 7.1, "#f8fafc", "D");
+                    break;
+                case 8: // Tangente y Secante
+                    drawCircle(0, 0, 6, "#6366f1");
+                    // Punto exterior P(12, 0)
+                    drawPoint(12, 0, "#f59e0b", "P(12, 0)");
+                    // Tangente
+                    ctxEx.strokeStyle = "#10b981";
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(12), getY(0));
+                    // Punto de tangencia T(3, 5.2)
+                    ctxEx.lineTo(getX(3), getY(5.2));
+                    ctxEx.stroke();
+                    drawPoint(3, 5.2, "#ef4444", "T");
+                    // Secante
+                    ctxEx.strokeStyle = "#6366f1";
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(12), getY(0));
+                    ctxEx.lineTo(getX(-6), getY(0));
+                    ctxEx.stroke();
+                    drawPoint(6, 0, "#f8fafc", "A");
+                    drawPoint(-6, 0, "#f8fafc", "B");
+                    break;
+                case 9: // Circunferencia por A(2,4), B(8,2), C(4,-2)
+                    drawCircle(4, 1, 5, "#6366f1");
+                    drawPoint(4, 1, "#10b981", "C(4, 1)");
+                    drawPoint(2, 4, "#f59e0b", "A(2, 4)");
+                    drawPoint(8, 2, "#f59e0b", "B(8, 2)");
+                    drawPoint(4, -2, "#f59e0b", "C(4, -2)");
+                    break;
+                case 10: // Tangente a los ejes en R=5
+                    drawCircle(5, 5, 5, "#6366f1");
+                    drawPoint(5, 5, "#10b981", "C(5, 5)");
+                    drawPoint(5, 0, "#ef4444", "T_x");
+                    drawPoint(0, 5, "#ef4444", "T_y");
+                    break;
+                case 11: // Eje radical de dos circulos
+                    drawCircle(-3, 1, 4, "#6366f1");
+                    drawCircle(5, -1, 3, "#10b981");
+                    // Eje radical: 6x+2y+5=0 -> y = -3x - 2.5
+                    drawLine(-3, 6.5, 1, -5.5, "#f59e0b", "Eje Radical");
+                    break;
+                case 12: // Circulos ortogonales
+                    drawCircle(0, 0, 5, "#6366f1");
+                    drawCircle(6, 0, Math.sqrt(11), "#10b981"); // r2=3.3
+                    drawPoint(0, 0, "#f8fafc", "C1");
+                    drawPoint(6, 0, "#f8fafc", "C2");
+                    // Punto de intersección P(4.16, 2.76)
+                    const px = 25/6; // 4.16
+                    const py = Math.sqrt(25 - px*px); // 2.76
+                    drawPoint(px, py, "#ef4444", "T");
+                    // Radios al punto de tangencia
+                    ctxEx.strokeStyle = "#6366f1";
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(0), getY(0));
+                    ctxEx.lineTo(getX(px), getY(py));
+                    ctxEx.stroke();
+                    ctxEx.strokeStyle = "#10b981";
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(6), getY(0));
+                    ctxEx.lineTo(getX(px), getY(py));
+                    ctxEx.stroke();
+                    break;
+                case 13: // Tangentes desde punto exterior P(10,0) a r=5
+                    drawCircle(0, 0, 5, "#6366f1");
+                    drawPoint(10, 0, "#f59e0b", "P(10, 0)");
+                    // Puntos de tangencia T1(2.5, 4.33), T2(2.5, -4.33)
+                    drawPoint(2.5, 4.33, "#ef4444", "T1");
+                    drawPoint(2.5, -4.33, "#ef4444", "T2");
+                    // Rectas tangentes
+                    ctxEx.strokeStyle = "#10b981";
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(10), getY(0));
+                    ctxEx.lineTo(getX(2.5), getY(4.33));
+                    ctxEx.stroke();
+                    ctxEx.beginPath();
+                    ctxEx.moveTo(getX(10), getY(0));
+                    ctxEx.lineTo(getX(2.5), getY(-4.33));
+                    ctxEx.stroke();
+                    break;
+                case 14: // Círculo de Apolonio
+                    drawPoint(-3, 0, "#ef4444", "A(-3, 0)");
+                    drawPoint(3, 0, "#ef4444", "B(3, 0)");
+                    drawCircle(5, 0, 4, "#6366f1");
+                    drawPoint(5, 0, "#10b981", "C(5, 0)");
+                    break;
+                case 15: // Cuerda de contacto
+                    drawCircle(0, 0, 4, "#6366f1");
+                    drawPoint(6, 8, "#f59e0b", "P(6, 8)");
+                    // Cuerda de contacto: 3x+4y=8 -> y = (8-3x)/4
+                    drawLine(-2, 3.5, 4, -1, "#ef4444", "Cuerda de Contacto");
+                    break;
+            }
+        }
+
+        // Helpers de dibujo para el Canvas de Ejercicios
+        function drawCircle(cx, cy, r, color) {
+            ctxEx.strokeStyle = color;
+            ctxEx.beginPath();
+            ctxEx.arc(
+                40 + ((cx - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80),
+                (exerciseCanvas.height / devicePixelRatio - 40) - ((cy - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80),
+                r * (exerciseCanvas.width / devicePixelRatio - 80) / 30,
+                0,
+                2 * Math.PI
+            );
+            ctxEx.stroke();
+        }
+
+        function drawPoint(px, py, color, label) {
+            const x = 40 + ((px - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80);
+            const y = (exerciseCanvas.height / devicePixelRatio - 40) - ((py - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80);
+            
+            ctxEx.beginPath();
+            ctxEx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctxEx.fillStyle = color;
+            ctxEx.fill();
+            ctxEx.strokeStyle = "#f8fafc";
+            ctxEx.stroke();
+
+            ctxEx.fillStyle = "#f8fafc";
+            ctxEx.font = "bold 9px sans-serif";
+            ctxEx.fillText(label, x + 6, y - 6);
+        }
+
+        function drawLine(x1, y1, x2, y2, color, label) {
+            const screenX1 = 40 + ((x1 - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80);
+            const screenY1 = (exerciseCanvas.height / devicePixelRatio - 40) - ((y1 - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80);
+            const screenX2 = 40 + ((x2 - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80);
+            const screenY2 = (exerciseCanvas.height / devicePixelRatio - 40) - ((y2 - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80);
+
+            ctxEx.strokeStyle = color;
+            ctxEx.lineWidth = 1.5;
+            ctxEx.beginPath();
+            ctxEx.moveTo(screenX1, screenY1);
+            ctxEx.lineTo(screenX2, screenY2);
+            ctxEx.stroke();
+
+            ctxEx.fillStyle = color;
+            ctxEx.font = "italic 9px sans-serif";
+            ctxEx.fillText(label, screenX2 - 40, screenY2 - 8);
+        }
+
+        function drawRadiusLine(cx, cy, tx, ty, color, label) {
+            const scx = 40 + ((cx - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80);
+            const scy = (exerciseCanvas.height / devicePixelRatio - 40) - ((cy - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80);
+            const stx = 40 + ((tx - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80);
+            const sty = (exerciseCanvas.height / devicePixelRatio - 40) - ((ty - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80);
+
+            ctxEx.strokeStyle = color;
+            ctxEx.beginPath();
+            ctxEx.moveTo(scx, scy);
+            ctxEx.lineTo(stx, sty);
+            ctxEx.stroke();
+
+            ctxEx.fillStyle = color;
+            ctxEx.fillText(label, (scx+stx)/2 - 12, (scy+sty)/2 - 5);
+        }
+
+        function drawAngle(cx, cy, r, startD, endD, color, label) {
+            const scx = 40 + ((cx - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80);
+            const scy = (exerciseCanvas.height / devicePixelRatio - 40) - ((cy - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80);
+            
+            // Radios del ángulo
+            ctxEx.strokeStyle = color;
+            ctxEx.beginPath();
+            ctxEx.moveTo(scx, scy);
+            const rx1 = cx + r * Math.cos(startD * Math.PI/180);
+            const ry1 = cy + r * Math.sin(startD * Math.PI/180);
+            ctxEx.lineTo(40 + ((rx1 - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80), (exerciseCanvas.height / devicePixelRatio - 40) - ((ry1 - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80));
+            ctxEx.stroke();
+
+            ctxEx.beginPath();
+            ctxEx.moveTo(scx, scy);
+            const rx2 = cx + r * Math.cos(endD * Math.PI/180);
+            const ry2 = cy + r * Math.sin(endD * Math.PI/180);
+            ctxEx.lineTo(40 + ((rx2 - (-15)) / (30)) * (exerciseCanvas.width / devicePixelRatio - 80), (exerciseCanvas.height / devicePixelRatio - 40) - ((ry2 - (-15)) / (30)) * (exerciseCanvas.height / devicePixelRatio - 80));
+            ctxEx.stroke();
+
+            // Dibujar arco de sector
+            ctxEx.fillStyle = "rgba(16, 185, 129, 0.12)";
+            ctxEx.beginPath();
+            ctxEx.moveTo(scx, scy);
+            ctxEx.arc(scx, scy, r * (exerciseCanvas.width / devicePixelRatio - 80) / 30, -startD * Math.PI/180, -endD * Math.PI/180, true);
+            ctxEx.lineTo(scx, scy);
+            ctxEx.fill();
+
+            ctxEx.fillStyle = color;
+            ctxEx.fillText(label, scx + 25, scy - 25);
+        }
+
+        // --- Demostrador Geométrico del Marco Teórico ---
+        function changeTheoryDemo(demoId) {
+            activeTheoryDemo = demoId;
+            
+            const demoButtons = [
+                { id: 'btn-theory-def', key: 'def' },
+                { id: 'btn-theory-gen', key: 'gen' },
+                { id: 'btn-theory-tan', key: 'tan' },
+                { id: 'btn-theory-cuerdas', key: 'cuerdas' },
+                { id: 'btn-theory-sec', key: 'sec' }
+            ];
+            demoButtons.forEach(btn => {
+                const elem = document.getElementById(btn.id);
+                if (elem) {
+                    if (btn.key === demoId) {
+                        elem.classList.add("active");
+                    } else {
+                        elem.classList.remove("active");
+                    }
+                }
+            });
+            
+            if (demoId === 'def') {
+                sliderTheoryT.min = "0";
+                sliderTheoryT.max = "360";
+                sliderTheoryT.value = "45";
+                theoryParamLabel.innerText = "Ángulo θ (grados)";
+            } else if (demoId === 'gen') {
+                sliderTheoryT.min = "10";
+                sliderTheoryT.max = "120";
+                sliderTheoryT.value = "60";
+                theoryParamLabel.innerText = "Radio r × 10";
+            } else if (demoId === 'tan') {
+                sliderTheoryT.min = "0";
+                sliderTheoryT.max = "360";
+                sliderTheoryT.value = "120";
+                theoryParamLabel.innerText = "Ángulo de tangencia (grados)";
+            } else if (demoId === 'cuerdas') {
+                sliderTheoryT.min = "10";
+                sliderTheoryT.max = "90";
+                sliderTheoryT.value = "40";
+                theoryParamLabel.innerText = "Posición de P (%)";
+            } else if (demoId === 'sec') {
+                sliderTheoryT.min = "80";
+                sliderTheoryT.max = "150";
+                sliderTheoryT.value = "110";
+                theoryParamLabel.innerText = "Posición de P (X × 10)";
+            }
+            
+            updateTheoryDemo();
+        }
+
+        function updateTheoryDemo() {
+            if (!sliderTheoryT) return;
+            const t = parseFloat(sliderTheoryT.value);
+            theoryParamVal.innerText = activeTheoryDemo === 'gen' || activeTheoryDemo === 'sec' ? (t / 10).toFixed(1) : t;
+            
+            drawTheoryDemo();
+            updateTheoryDemoTexts(t);
+        }
+
+        function drawTheoryDemo() {
+            if (!theoryCanvas || !ctxTheory) return;
+            const width = theoryCanvas.width / devicePixelRatio;
+            const height = theoryCanvas.height / devicePixelRatio;
+            
+            ctxTheory.clearRect(0, 0, width, height);
+            
+            // Zoom: escala 100% = rango [-15, 15], zoom in reduce el rango, zoom out lo amplía
+            const baseRange = 15;
+            const zoomFactor = 100 / theoryZoomLevel;
+            const range = baseRange * zoomFactor;
+            const xMin = -range, xMax = range;
+            const yMin = -range, yMax = range;
+            
+            function getX(xVal) {
+                return 40 + ((xVal - xMin) / (xMax - xMin)) * (width - 80);
+            }
+            
+            function getY(yVal) {
+                return (height - 40) - ((yVal - yMin) / (yMax - yMin)) * (height - 80);
+            }
+            
+            // Ajustar grosor de grid según zoom
+            const gridStep = range > 20 ? 5 : range > 10 ? 3 : range > 5 ? 2 : 1;
+            
+            // Cuadrícula adaptativa según zoom
+            ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.03)";
+            ctxTheory.lineWidth = 1;
+            for (let x = Math.ceil(xMin / gridStep) * gridStep; x <= xMax; x += gridStep) {
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(x), getY(yMin));
+                ctxTheory.lineTo(getX(x), getY(yMax));
+                ctxTheory.stroke();
+            }
+            for (let y = Math.ceil(yMin / gridStep) * gridStep; y <= yMax; y += gridStep) {
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(xMin), getY(y));
+                ctxTheory.lineTo(getX(xMax), getY(y));
+                ctxTheory.stroke();
+            }
+            
+            // Ejes principales
+            ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.25)";
+            ctxTheory.lineWidth = 1.2;
+            ctxTheory.beginPath();
+            ctxTheory.moveTo(getX(xMin), getY(0));
+            ctxTheory.lineTo(getX(xMax), getY(0));
+            ctxTheory.stroke();
+            ctxTheory.beginPath();
+            ctxTheory.moveTo(getX(0), getY(yMin));
+            ctxTheory.lineTo(getX(0), getY(yMax));
+            ctxTheory.stroke();
+            
+            // Marcas y números en los ejes
+            ctxTheory.fillStyle = "rgba(148, 163, 184, 0.6)";
+            ctxTheory.font = "7px sans-serif";
+            ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.15)";
+            ctxTheory.lineWidth = 0.8;
+            const tickSize = 3;
+            for (let x = Math.ceil(xMin / gridStep) * gridStep; x <= xMax; x += gridStep) {
+                if (Math.abs(x) < 0.01) continue;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(x), getY(0) - tickSize);
+                ctxTheory.lineTo(getX(x), getY(0) + tickSize);
+                ctxTheory.stroke();
+                const numStr = Number.isInteger(x) ? x.toString() : x.toFixed(1);
+                ctxTheory.fillText(numStr, getX(x) - ctxTheory.measureText(numStr).width / 2, getY(0) + tickSize + 8);
+            }
+            for (let y = Math.ceil(yMin / gridStep) * gridStep; y <= yMax; y += gridStep) {
+                if (Math.abs(y) < 0.01) continue;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(0) - tickSize, getY(y));
+                ctxTheory.lineTo(getX(0) + tickSize, getY(y));
+                ctxTheory.stroke();
+                const numStr = Number.isInteger(y) ? y.toString() : y.toFixed(1);
+                ctxTheory.fillText(numStr, getX(0) - ctxTheory.measureText(numStr).width - tickSize - 2, getY(y) + 3);
+            }
+            
+            ctxTheory.fillStyle = "#94a3b8";
+            ctxTheory.font = "bold 9px sans-serif";
+            ctxTheory.fillText("X", getX(xMax) - 8, getY(0) - 5);
+            ctxTheory.fillText("Y", getX(0) + 5, getY(yMax) + 8);
+            
+            const t = parseFloat(sliderTheoryT.value);
+            
+            if (activeTheoryDemo === 'def') {
+                const r = 8;
+                const thetaRad = (t * Math.PI) / 180;
+                const px = r * Math.cos(thetaRad);
+                const py = r * Math.sin(thetaRad);
+                
+                ctxTheory.strokeStyle = "#6366f1";
+                ctxTheory.lineWidth = 2;
+                ctxTheory.beginPath();
+                ctxTheory.arc(getX(0), getY(0), r * (width - 80) / 30, 0, 2 * Math.PI);
+                ctxTheory.stroke();
+                
+                // Proyección X (base del triángulo)
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.3)";
+                ctxTheory.lineWidth = 1.2;
+                ctxTheory.setLineDash([3, 3]);
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(0), getY(0));
+                ctxTheory.lineTo(getX(px), getY(0));
+                ctxTheory.stroke();
+                
+                // Proyección Y (altura del triángulo)
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(px), getY(0));
+                ctxTheory.lineTo(getX(px), getY(py));
+                ctxTheory.stroke();
+                ctxTheory.setLineDash([]);
+                
+                // Etiquetas de las proyecciones con h y k
+                ctxTheory.font = "bold 9px sans-serif";
+                const xLabel = `x = ${formatCoord(px)}`;
+                const yLabel = `y = ${formatCoord(py)}`;
+                const hLabel = `h = 0`;
+                const kLabel = `k = 0`;
+                
+                // Dibujar etiqueta x sobre la proyección horizontal
+                const xWidth = ctxTheory.measureText(xLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                ctxTheory.fillRect(getX(px/2) - xWidth/2 - 2, getY(0) + 3, xWidth + 4, 12);
+                ctxTheory.fillStyle = "#94a3b8";
+                ctxTheory.fillText(xLabel, getX(px/2) - xWidth/2, getY(0) + 12);
+                
+                // Dibujar etiqueta y sobre la proyección vertical
+                const yWidth = ctxTheory.measureText(yLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                ctxTheory.fillRect(getX(px) + 5, getY(py/2) - 5, yWidth + 4, 12);
+                ctxTheory.fillStyle = "#94a3b8";
+                ctxTheory.fillText(yLabel, getX(px) + 7, getY(py/2) + 4);
+                
+                // Dibujar etiqueta h en el eje X (proyección del centro)
+                ctxTheory.font = "bold 9px sans-serif";
+                const hW = ctxTheory.measureText(hLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                ctxTheory.fillRect(getX(0) - hW/2 - 2, getY(0) + 16, hW + 4, 12);
+                ctxTheory.fillStyle = "#10b981";
+                ctxTheory.fillText(hLabel, getX(0) - hW/2, getY(0) + 25);
+                
+                // Dibujar etiqueta k en el eje Y (proyección del centro)
+                const kW = ctxTheory.measureText(kLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                ctxTheory.fillRect(getX(0) - kW - 18, getY(0) - 5, kW + 4, 12);
+                ctxTheory.fillStyle = "#10b981";
+                ctxTheory.fillText(kLabel, getX(0) - kW - 16, getY(0) + 4);
+                
+                drawTheoryPoint(0, 0, "#10b981", `C(h,k) = C(${formatCoord(0)}, ${formatCoord(0)})`);
+                
+                // Radio CP
+                ctxTheory.strokeStyle = "#10b981";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(0), getY(0));
+                ctxTheory.lineTo(getX(px), getY(py));
+                ctxTheory.stroke();
+                
+                drawTheoryPoint(px, py, "#f59e0b", `P(x,y) = P(${formatCoord(px)}, ${formatCoord(py)})`);
+                
+                // Etiqueta r sobre el radio
+                const mx = px / 2;
+                const my = py / 2;
+                const rLabel = `r = 8`;
+                ctxTheory.font = "bold 10px sans-serif";
+                const rWidth = ctxTheory.measureText(rLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                ctxTheory.fillRect(getX(mx) + 8, getY(my) + 4, rWidth + 4, 12);
+                ctxTheory.fillStyle = "#10b981";
+                ctxTheory.fillText(rLabel, getX(mx) + 10, getY(my) + 13);
+                
+                // Pendiente m del radio
+                const mSlope = (px !== 0) ? py / px : Infinity;
+                const mLabel = `m = ${mSlope === Infinity ? '∞' : formatCoord(mSlope)}`;
+                ctxTheory.font = "bold 9px sans-serif";
+                const mWidth = ctxTheory.measureText(mLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                ctxTheory.fillRect(getX(mx) + 8, getY(my) + 18, mWidth + 4, 12);
+                ctxTheory.fillStyle = "#f59e0b";
+                ctxTheory.fillText(mLabel, getX(mx) + 10, getY(my) + 27);
+                
+                // Cuadro informativo: Parámetros y Coeficientes
+                const D_val = 0;  // D = -2h = -2(0) = 0
+                const E_val = 0;  // E = -2k = -2(0) = 0
+                const F_val = 0 + 0 - r*r; // F = h²+k²-r² = -64
+                
+                const boxW = 230, boxH = 175;
+                ctxTheory.fillStyle = "rgba(10, 15, 30, 0.92)";
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.25)";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.roundRect(8, 8, boxW, boxH, 8);
+                ctxTheory.fill();
+                ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#e2e8f0";
+                ctxTheory.font = "bold 13px sans-serif";
+                ctxTheory.fillText("Parámetros y Coeficientes", 18, 28);
+                
+                // Línea decorativa bajo título
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.35)";
+                ctxTheory.lineWidth = 1;
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 34); ctxTheory.lineTo(boxW - 4, 34); ctxTheory.stroke();
+                
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`h = 0`, 18, 52);
+                ctxTheory.fillText(`k = 0`, 100, 52);
+                ctxTheory.fillText(`r = ${r}`, 18, 70);
+                ctxTheory.fillStyle = "#fbbf24";
+                ctxTheory.fillText(`m = ${mSlope === Infinity ? '∞' : formatCoord(mSlope)}`, 100, 70);
+                
+                // Separador
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 78); ctxTheory.lineTo(boxW - 4, 78); ctxTheory.stroke();
+                
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#cbd5e1";
+                ctxTheory.fillText(`D = -2h = ${D_val}`, 18, 96);
+                ctxTheory.fillText(`E = -2k = ${E_val}`, 18, 114);
+                ctxTheory.fillText(`F = h²+k²-r² = ${formatCoord(F_val)}`, 18, 132);
+                
+                // Separador
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 139); ctxTheory.lineTo(boxW - 4, 139); ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#818cf8";
+                ctxTheory.font = "bold 12px monospace";
+                ctxTheory.fillText(`Dx = ${D_val}x`, 18, 156);
+                ctxTheory.fillText(`Ey = ${E_val}y`, 120, 156);
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`F = ${formatCoord(F_val)}`, 18, 174);
+                
+            } else if (activeTheoryDemo === 'gen') {
+                const h = 2, k = 1;
+                const r = t / 10;
+                
+                ctxTheory.strokeStyle = "#6366f1";
+                ctxTheory.lineWidth = 2;
+                ctxTheory.beginPath();
+                ctxTheory.arc(getX(h), getY(k), r * (width - 80) / 30, 0, 2 * Math.PI);
+                ctxTheory.stroke();
+                
+                // Proyecciones del centro C(h, k)
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.25)";
+                ctxTheory.lineWidth = 1;
+                ctxTheory.setLineDash([3, 3]);
+                
+                // Proyección h
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(h), getY(k));
+                ctxTheory.lineTo(getX(0), getY(k));
+                ctxTheory.stroke();
+                
+                // Proyección k
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(h), getY(k));
+                ctxTheory.lineTo(getX(h), getY(0));
+                ctxTheory.stroke();
+                ctxTheory.setLineDash([]);
+                
+                // Etiquetas h y k
+                ctxTheory.font = "9px sans-serif";
+                const hText = `h = ${h}`;
+                const kText = `k = ${k}`;
+                
+                // Etiqueta h
+                const hWidth = ctxTheory.measureText(hText).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.8)";
+                ctxTheory.fillRect(getX(h/2) - hWidth/2 - 2, getY(k) - 12, hWidth + 4, 11);
+                ctxTheory.fillStyle = "#94a3b8";
+                ctxTheory.fillText(hText, getX(h/2) - hWidth/2, getY(k) - 4);
+                
+                // Etiqueta k
+                const kWidth = ctxTheory.measureText(kText).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.8)";
+                ctxTheory.fillRect(getX(h) + 4, getY(k/2) - 5, kWidth + 4, 11);
+                ctxTheory.fillStyle = "#94a3b8";
+                ctxTheory.fillText(kText, getX(h) + 6, getY(k/2) + 3);
+                
+                drawTheoryPoint(h, k, "#10b981", `C(h,k) = C(${formatCoord(h)}, ${formatCoord(k)})`);
+                
+                ctxTheory.strokeStyle = "#10b981";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(h), getY(k));
+                ctxTheory.lineTo(getX(h + r), getY(k));
+                ctxTheory.stroke();
+                
+                const rLabel = `r = ${formatCoord(r)}`;
+                ctxTheory.font = "bold 10px sans-serif";
+                const rWidth = ctxTheory.measureText(rLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.8)";
+                ctxTheory.fillRect(getX(h + r/2) - rWidth/2 - 2, getY(k) - 19, rWidth + 4, 12);
+                ctxTheory.fillStyle = "#10b981";
+                ctxTheory.fillText(rLabel, getX(h + r/2) - rWidth/2, getY(k) - 9);
+                
+                // Cuadro de Parámetros y Coeficientes de Ecuación General
+                const D = -2 * h;
+                const E = -2 * k;
+                const F = h*h + k*k - r*r;
+                
+                const boxW = 250, boxH = 185;
+                ctxTheory.fillStyle = "rgba(10, 15, 30, 0.92)";
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.25)";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.roundRect(8, 8, boxW, boxH, 8);
+                ctxTheory.fill();
+                ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#e2e8f0";
+                ctxTheory.font = "bold 13px sans-serif";
+                ctxTheory.fillText("Parámetros y Coeficientes", 18, 28);
+                
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.35)";
+                ctxTheory.lineWidth = 1;
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 34); ctxTheory.lineTo(boxW - 4, 34); ctxTheory.stroke();
+                
+                // Parámetros h, k, r
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`h = ${h}`, 18, 52);
+                ctxTheory.fillText(`k = ${k}`, 100, 52);
+                ctxTheory.fillText(`r = ${formatCoord(r)}`, 18, 70);
+                
+                // Separador
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 78); ctxTheory.lineTo(boxW - 4, 78); ctxTheory.stroke();
+                
+                // Coeficientes D, E, F
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#cbd5e1";
+                ctxTheory.fillText(`D = -2h = -2(${h}) = ${D}`, 18, 96);
+                ctxTheory.fillText(`E = -2k = -2(${k}) = ${E}`, 18, 114);
+                ctxTheory.fillText(`F = h²+k²-r² = ${formatCoord(F)}`, 18, 132);
+                
+                // Separador
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 139); ctxTheory.lineTo(boxW - 4, 139); ctxTheory.stroke();
+                
+                // Secciones Rectas Dx, Ey
+                ctxTheory.fillStyle = "#818cf8";
+                ctxTheory.font = "bold 12px monospace";
+                ctxTheory.fillText(`Dx = (${D})x = ${D}x`, 18, 156);
+                ctxTheory.fillText(`Ey = (${E})y = ${E}y`, 18, 174);
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`F = ${formatCoord(F)}`, 160, 174);
+            } else if (activeTheoryDemo === 'tan') {
+                const r = 7;
+                const thetaRad = (t * Math.PI) / 180;
+                const tx = r * Math.cos(thetaRad);
+                const ty = r * Math.sin(thetaRad);
+                
+                ctxTheory.strokeStyle = "#6366f1";
+                ctxTheory.lineWidth = 2;
+                ctxTheory.beginPath();
+                ctxTheory.arc(getX(0), getY(0), r * (width - 80) / 30, 0, 2 * Math.PI);
+                ctxTheory.stroke();
+                
+                drawTheoryPoint(0, 0, "#10b981", "C(h,k) = C(0,0)");
+                
+                ctxTheory.strokeStyle = "#10b981";
+                ctxTheory.lineWidth = 1.8;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(0), getY(0));
+                ctxTheory.lineTo(getX(tx), getY(ty));
+                ctxTheory.stroke();
+                
+                drawTheoryPoint(tx, ty, "#ef4444", `T(${formatCoord(tx)}, ${formatCoord(ty)})`);
+                
+                const dx = -ty;
+                const dy = tx;
+                const len = Math.sqrt(dx*dx + dy*dy);
+                const ndx = (dx / len) * 8;
+                const ndy = (dy / len) * 8;
+                
+                ctxTheory.strokeStyle = "#f59e0b";
+                ctxTheory.lineWidth = 1.8;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(tx - ndx), getY(ty - ndy));
+                ctxTheory.lineTo(getX(tx + ndx), getY(ty + ndy));
+                ctxTheory.stroke();
+                
+                const sqLen = 0.8;
+                const vx = -tx / r;
+                const vy = -ty / r;
+                const txDir = -ty / r;
+                const tyDir = tx / r;
+                
+                const p1x = tx + vx * sqLen;
+                const p1y = ty + vy * sqLen;
+                const p2x = p1x + txDir * sqLen;
+                const p2y = p1y + tyDir * sqLen;
+                const p3x = tx + txDir * sqLen;
+                const p3y = ty + tyDir * sqLen;
+                
+                ctxTheory.strokeStyle = "#ef4444";
+                ctxTheory.lineWidth = 1;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(p1x), getY(p1y));
+                ctxTheory.lineTo(getX(p2x), getY(p2y));
+                ctxTheory.lineTo(getX(p3x), getY(p3y));
+                ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#ef4444";
+                ctxTheory.font = "bold 9px sans-serif";
+                ctxTheory.fillText("90°", getX(tx + vx*1.5 + txDir*1.2), getY(ty + vy*1.5 + tyDir*1.2));
+                
+                // Pendientes mr y mt
+                const mrVal = tx === 0 ? Infinity : ty / tx;
+                const mtVal = ty === 0 ? Infinity : -tx / ty;
+                
+                const mrText = `m_r = ${mrVal === Infinity ? '\u221e' : formatCoord(mrVal)}`;
+                const mtText = `m_t = ${mtVal === Infinity ? '\u221e' : formatCoord(mtVal)}`;
+                
+                ctxTheory.font = "8px sans-serif";
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                const mrWidth = ctxTheory.measureText(mrText).width;
+                ctxTheory.fillRect(getX(tx/2) - mrWidth/2 - 2, getY(ty/2) - 15, mrWidth + 4, 12);
+                ctxTheory.fillStyle = "#10b981";
+                ctxTheory.fillText(mrText, getX(tx/2) - mrWidth/2, getY(ty/2) - 6);
+                
+                // Etiqueta r sobre el radio
+                const rLabel = `r = ${r}`;
+                ctxTheory.font = "bold 9px sans-serif";
+                const rLabelW = ctxTheory.measureText(rLabel).width;
+                ctxTheory.fillStyle = "rgba(11, 15, 25, 0.85)";
+                ctxTheory.fillRect(getX(tx/2) - rLabelW/2 - 2, getY(ty/2) + 2, rLabelW + 4, 12);
+                ctxTheory.fillStyle = "#10b981";
+                ctxTheory.fillText(rLabel, getX(tx/2) - rLabelW/2, getY(ty/2) + 11);
+                
+                // Cuadro de Parámetros, Pendientes y Coeficientes
+                const D_tan = 0;
+                const E_tan = 0;
+                const F_tan = -r*r;
+                
+                const boxW = 240, boxH = 195;
+                ctxTheory.fillStyle = "rgba(10, 15, 30, 0.92)";
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.25)";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.roundRect(8, 8, boxW, boxH, 8);
+                ctxTheory.fill();
+                ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#e2e8f0";
+                ctxTheory.font = "bold 13px sans-serif";
+                ctxTheory.fillText("Parámetros y Pendientes", 18, 28);
+                
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.35)";
+                ctxTheory.lineWidth = 1;
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 34); ctxTheory.lineTo(boxW - 4, 34); ctxTheory.stroke();
+                
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`h = 0,  k = 0,  r = ${r}`, 18, 52);
+                
+                // Separador
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 60); ctxTheory.lineTo(boxW - 4, 60); ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`m_r = ${mrVal === Infinity ? '\u221e' : formatCoord(mrVal)}`, 18, 78);
+                ctxTheory.fillStyle = "#fbbf24";
+                ctxTheory.fillText(`m_t = ${mtVal === Infinity ? '\u221e' : formatCoord(mtVal)}`, 18, 96);
+                ctxTheory.fillStyle = "#f87171";
+                ctxTheory.font = "bold 12px monospace";
+                ctxTheory.fillText(`m_r · m_t = -1 (⊥)`, 18, 114);
+                
+                // Separador
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 122); ctxTheory.lineTo(boxW - 4, 122); ctxTheory.stroke();
+                
+                // Coeficientes D, E, F
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#cbd5e1";
+                ctxTheory.fillText(`D = ${D_tan}`, 18, 140);
+                ctxTheory.fillText(`E = ${E_tan}`, 100, 140);
+                ctxTheory.fillText(`F = ${F_tan}`, 18, 158);
+                ctxTheory.fillStyle = "#818cf8";
+                ctxTheory.font = "bold 12px monospace";
+                ctxTheory.fillText(`Dx = ${D_tan}x,  Ey = ${E_tan}y`, 18, 180);
+                
+            } else if (activeTheoryDemo === 'cuerdas') {
+                const ax = -8, ay = 5;
+                const bx = 8, by = -5;
+                const cx = -6, cy = -7;
+                
+                const r = 9.43;
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.4)";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.arc(getX(0), getY(0), r * (width - 80) / 30, 0, 2 * Math.PI);
+                ctxTheory.stroke();
+                
+                const k = t / 100;
+                const px = ax + k * (bx - ax);
+                const py = ay + k * (by - ay);
+                
+                ctxTheory.strokeStyle = "#10b981";
+                ctxTheory.lineWidth = 2;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(ax), getY(ay));
+                ctxTheory.lineTo(getX(bx), getY(by));
+                ctxTheory.stroke();
+                
+                const d1x = px + 1.1 * (px - cx);
+                const d1y = py + 1.1 * (py - cy);
+                
+                ctxTheory.strokeStyle = "#f59e0b";
+                ctxTheory.lineWidth = 2;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(cx), getY(cy));
+                ctxTheory.lineTo(getX(d1x), getY(d1y));
+                ctxTheory.stroke();
+                
+                drawTheoryPoint(ax, ay, "#10b981", "A");
+                drawTheoryPoint(bx, by, "#10b981", "B");
+                drawTheoryPoint(cx, cy, "#f59e0b", "C");
+                drawTheoryPoint(d1x, d1y, "#f59e0b", "D");
+                
+                drawTheoryPoint(px, py, "#ef4444", `P(${formatCoord(px)}, ${formatCoord(py)})`);
+                drawTheoryPoint(0, 0, "rgba(255, 255, 255, 0.4)", "C(h,k) = C(0,0)");
+                
+                // Pendientes de las cuerdas
+                const m1_c = (bx - ax) !== 0 ? (by - ay) / (bx - ax) : Infinity;
+                const m2_c = (d1x - cx) !== 0 ? (d1y - cy) / (d1x - cx) : Infinity;
+                
+                // Cuadro informativo con h, k, r, m y coeficientes
+                const D_cu = 0;
+                const E_cu = 0;
+                const F_cu = -(r * r);
+                
+                const boxW = 240, boxH = 175;
+                ctxTheory.fillStyle = "rgba(10, 15, 30, 0.92)";
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.25)";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.roundRect(8, 8, boxW, boxH, 8);
+                ctxTheory.fill();
+                ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#e2e8f0";
+                ctxTheory.font = "bold 13px sans-serif";
+                ctxTheory.fillText("Parámetros de la Circunferencia", 18, 28);
+                
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.35)";
+                ctxTheory.lineWidth = 1;
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 34); ctxTheory.lineTo(boxW - 4, 34); ctxTheory.stroke();
+                
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`h = 0,  k = 0,  r ≈ ${formatCoord(r)}`, 18, 52);
+                
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 60); ctxTheory.lineTo(boxW - 4, 60); ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`m₁ (AB) = ${m1_c === Infinity ? '∞' : formatCoord(m1_c)}`, 18, 78);
+                ctxTheory.fillStyle = "#fbbf24";
+                ctxTheory.fillText(`m₂ (CD) = ${m2_c === Infinity ? '∞' : formatCoord(m2_c)}`, 18, 96);
+                
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 104); ctxTheory.lineTo(boxW - 4, 104); ctxTheory.stroke();
+                
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#cbd5e1";
+                ctxTheory.fillText(`D = ${D_cu},  E = ${E_cu}`, 18, 122);
+                ctxTheory.fillText(`F = h²+k²-r² ≈ ${formatCoord(F_cu)}`, 18, 140);
+                ctxTheory.fillStyle = "#818cf8";
+                ctxTheory.font = "bold 12px monospace";
+                ctxTheory.fillText(`Dx = ${D_cu}x,  Ey = ${E_cu}y`, 18, 162);
+                
+            } else if (activeTheoryDemo === 'sec') {
+                const r = 5;
+                const px = t / 10;
+                
+                ctxTheory.strokeStyle = "#6366f1";
+                ctxTheory.lineWidth = 2;
+                ctxTheory.beginPath();
+                ctxTheory.arc(getX(0), getY(0), r * (width - 80) / 30, 0, 2 * Math.PI);
+                ctxTheory.stroke();
+                
+                drawTheoryPoint(px, 0, "#f59e0b", `P(${formatCoord(px)}, 0)`);
+                
+                const cosAlpha = r / px;
+                const alpha = Math.acos(cosAlpha);
+                const tx = r * Math.cos(alpha);
+                const ty = r * Math.sin(alpha);
+                
+                ctxTheory.strokeStyle = "#10b981";
+                ctxTheory.lineWidth = 1.8;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(px), getY(0));
+                ctxTheory.lineTo(getX(tx), getY(ty));
+                ctxTheory.stroke();
+                
+                drawTheoryPoint(tx, ty, "#ef4444", "T");
+                
+                ctxTheory.strokeStyle = "rgba(16, 185, 129, 0.4)";
+                ctxTheory.setLineDash([3, 3]);
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(0), getY(0));
+                ctxTheory.lineTo(getX(tx), getY(ty));
+                ctxTheory.stroke();
+                ctxTheory.setLineDash([]);
+                
+                ctxTheory.strokeStyle = "#eab308";
+                ctxTheory.lineWidth = 1.8;
+                ctxTheory.beginPath();
+                ctxTheory.moveTo(getX(px), getY(0));
+                ctxTheory.lineTo(getX(-r), getY(0));
+                ctxTheory.stroke();
+                
+                drawTheoryPoint(r, 0, "#eab308", `A(${formatCoord(r)}, 0)`);
+                drawTheoryPoint(-r, 0, "#eab308", `B(${formatCoord(-r)}, 0)`);
+                drawTheoryPoint(0, 0, "rgba(255, 255, 255, 0.4)", "C(h,k) = C(0,0)");
+                
+                // Pendiente de la tangente PT
+                const m_pt = (0 - ty) !== 0 ? (0 - ty) / (px - tx) : Infinity;
+                
+                // Cuadro informativo con h, k, r, m y coeficientes
+                const D_sec = 0;
+                const E_sec = 0;
+                const F_sec = -(r * r);
+                
+                const boxW = 250, boxH = 175;
+                ctxTheory.fillStyle = "rgba(10, 15, 30, 0.92)";
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.25)";
+                ctxTheory.lineWidth = 1.5;
+                ctxTheory.beginPath();
+                ctxTheory.roundRect(8, 8, boxW, boxH, 8);
+                ctxTheory.fill();
+                ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#e2e8f0";
+                ctxTheory.font = "bold 13px sans-serif";
+                ctxTheory.fillText("Parámetros y Potencia", 18, 28);
+                
+                ctxTheory.strokeStyle = "rgba(99, 102, 241, 0.35)";
+                ctxTheory.lineWidth = 1;
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 34); ctxTheory.lineTo(boxW - 4, 34); ctxTheory.stroke();
+                
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`h = 0,  k = 0,  r = ${r}`, 18, 52);
+                ctxTheory.fillStyle = "#fbbf24";
+                ctxTheory.fillText(`m (tang) = ${m_pt === Infinity ? '∞' : formatCoord(m_pt)}`, 18, 70);
+                
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 78); ctxTheory.lineTo(boxW - 4, 78); ctxTheory.stroke();
+                
+                ctxTheory.font = "12px monospace";
+                ctxTheory.fillStyle = "#cbd5e1";
+                ctxTheory.fillText(`D = -2h = ${D_sec}`, 18, 96);
+                ctxTheory.fillText(`E = -2k = ${E_sec}`, 18, 114);
+                ctxTheory.fillText(`F = h²+k²-r² = ${F_sec}`, 18, 132);
+                
+                ctxTheory.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                ctxTheory.beginPath(); ctxTheory.moveTo(18, 139); ctxTheory.lineTo(boxW - 4, 139); ctxTheory.stroke();
+                
+                ctxTheory.fillStyle = "#818cf8";
+                ctxTheory.font = "bold 12px monospace";
+                ctxTheory.fillText(`Dx = ${D_sec}x,  Ey = ${E_sec}y`, 18, 156);
+                ctxTheory.fillStyle = "#34d399";
+                ctxTheory.fillText(`F = ${F_sec}`, 170, 156);
+            }
+        }
+
+        function drawTheoryPoint(px, py, color, label) {
+            if (!theoryCanvas || !ctxTheory) return;
+            const width = theoryCanvas.width / devicePixelRatio;
+            const height = theoryCanvas.height / devicePixelRatio;
+            const x = 40 + ((px - (-15)) / (30)) * (width - 80);
+            const y = (height - 40) - ((py - (-15)) / (30)) * (height - 80);
+            
+            ctxTheory.beginPath();
+            ctxTheory.arc(x, y, 4, 0, 2 * Math.PI);
+            ctxTheory.fillStyle = color;
+            ctxTheory.fill();
+            ctxTheory.strokeStyle = "#f8fafc";
+            ctxTheory.lineWidth = 0.8;
+            ctxTheory.stroke();
+            
+            ctxTheory.font = "bold 9px sans-serif";
+            
+            // Ajustar dinámicamente el offset del texto para evitar solapamientos
+            let offsetX = 6;
+            let offsetY = -6;
+            
+            if (Math.abs(px) < 0.5) {
+                offsetX = 8;
+                offsetY = (py >= 0) ? -8 : 12;
+            } else if (px < -0.5) {
+                offsetX = -ctxTheory.measureText(label).width - 6;
+            }
+            
+            const textWidth = ctxTheory.measureText(label).width;
+            
+            // Dibujar rectángulo semi-transparente oscuro de fondo para máxima legibilidad
+            ctxTheory.fillStyle = "rgba(11, 15, 25, 0.8)";
+            ctxTheory.fillRect(x + offsetX - 2, y + offsetY - 8, textWidth + 4, 11);
+            
+            // Dibujar texto encima
+            ctxTheory.fillStyle = "#f8fafc";
+            ctxTheory.fillText(label, x + offsetX, y + offsetY);
+        }
+
+        function updateTheoryDemoTexts(t) {
+            if (!theoryDemoData) return;
+            let htmlContent = "";
+            
+            if (activeTheoryDemo === 'def') {
+                const r = 8;
+                const thetaRad = (t * Math.PI) / 180;
+                const px = r * Math.cos(thetaRad);
+                const py = r * Math.sin(thetaRad);
+                
+                htmlContent = `
+                    <h3><i class="fa-solid fa-square-root-variable"></i> Lugar Geométrico de la Circunferencia</h3>
+                    <p>La distancia desde el centro \\(C(0,0)\\) a cualquier punto \\(P(x,y)\\) en el contorno del círculo es constante e igual al radio \\(r = 8\\).</p>
+                    <div style="margin-top: 8px;">
+                        <strong>Fórmula de Distancia (Teorema de Pitágoras):</strong>
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 5px 0;">
+                            \\(d(P, C) = \\sqrt{(x - h)^2 + (y - k)^2} = r\\)
+                        </div>
+                        Sustituyendo los valores del punto actual \\(P(${px.toFixed(2)}, ${py.toFixed(2)})\\):
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 5px 0;">
+                            \\(\\sqrt{(${px.toFixed(2)})^2 + (${py.toFixed(2)})^2} = \\sqrt{${(px*px).toFixed(2)} + ${(py*py).toFixed(2)}} = \\sqrt{64.0} = 8.0\\)
+                        </div>
+                        Como se observa, el valor de la raíz permanece estrictamente constante en <strong>8.0</strong> para cualquier ángulo de giro de \\(\\theta = ${t}^{\\circ}\\).
+                    </div>
+                `;
+            } else if (activeTheoryDemo === 'gen') {
+                const h = 2, k = 1;
+                const r = t / 10;
+                
+                const D = -2 * h;
+                const E = -2 * k;
+                const F = h*h + k*k - r*r;
+                
+                const eqOrdinaria = `(x - 2)^2 + (y - 1)^2 = ${r.toFixed(1)}^2`;
+                const eqGeneral = `x^2 + y^2 - 4x - 2y ${F >= 0 ? '+ ' + F.toFixed(2) : '- ' + Math.abs(F).toFixed(2)} = 0`;
+                
+                htmlContent = `
+                    <h3><i class="fa-solid fa-arrows-spin"></i> Deducción de la Ecuación General</h3>
+                    <p>Modificando el radio \\(r = ${r.toFixed(1)}\\) con centro fijo en \\(C(2,1)\\):</p>
+                    <div style="margin-top: 8px;">
+                        <strong>1. Ecuación Ordinaria:</strong>
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 5px 0;">
+                            \\(${eqOrdinaria}\\)
+                        </div>
+                        <strong>2. Expansión y Desarrollo:</strong>
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:11.5px; margin: 5px 0;">
+                            \\(x^2 - 4x + 4 + y^2 - 2y + 1 = ${(r*r).toFixed(2)}\\)
+                        </div>
+                        <strong>3. Coeficientes Generales:</strong>
+                        <ul style="margin-left: 20px; font-size:12.5px; margin-bottom: 5px;">
+                            <li>\\(D = -2h = -4\\)</li>
+                            <li>\\(E = -2k = -2\\)</li>
+                            <li>\\(F = h^2 + k^2 - r^2 = 2^2 + 1^2 - ${r.toFixed(1)}^2 = 5 - ${(r*r).toFixed(2)} = ${F.toFixed(2)}\\)</li>
+                        </ul>
+                        <strong>4. Ecuación General Resultante:</strong>
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 5px 0;">
+                            \\(${eqGeneral}\\)
+                        </div>
+                    </div>
+                `;
+            } else if (activeTheoryDemo === 'tan') {
+                const r = 7;
+                const thetaRad = (t * Math.PI) / 180;
+                const tx = r * Math.cos(thetaRad);
+                const ty = r * Math.sin(thetaRad);
+                
+                const mr = ty / tx;
+                const mt = -1 / mr;
+                
+                htmlContent = `
+                    <h3><i class="fa-solid fa-compass-drafting"></i> Demostración de Perpendicularidad</h3>
+                    <p>La recta tangente en \\(T(${tx.toFixed(2)}, ${ty.toFixed(2)})\\) es perpendicular al radio \\(\\overline{CT}\\).</p>
+                    <div style="margin-top: 8px;">
+                        <strong>Pendientes calculadas:</strong>
+                        <ul style="margin-left: 20px; font-size:12.5px; margin-bottom: 5px;">
+                            <li>Pendiente del radio: \\(m_r = \\frac{y_t - 0}{x_t - 0} = ${mr.toFixed(3)}\\)</li>
+                            <li>Pendiente de la tangente: \\(m_t = -\\frac{x_t}{y_t} = ${mt.toFixed(3)}\\)</li>
+                        </ul>
+                        <strong>Comprobación del Teorema de Perpendicularidad:</strong>
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 5px 0;">
+                            \\(m_r \\cdot m_t = (${mr.toFixed(3)}) \\cdot (${mt.toFixed(3)}) = -1.000\\)
+                        </div>
+                        Como el producto de las pendientes es exactamente <strong>-1</strong>, queda demostrado analíticamente que las rectas son perpendiculares, formando un ángulo recto de <strong>90°</strong> en el punto de contacto.
+                    </div>
+                `;
+            } else if (activeTheoryDemo === 'cuerdas') {
+                const ax = -8, ay = 5;
+                const bx = 8, by = -5;
+                const cx = -6, cy = -7;
+                
+                const k = t / 100;
+                const px = ax + k * (bx - ax);
+                const py = ay + k * (by - ay);
+                
+                const d1x = px + 1.1 * (px - cx);
+                const d1y = py + 1.1 * (py - cy);
+                
+                const lenAP = Math.sqrt((px - ax)*(px - ax) + (py - ay)*(py - ay));
+                const lenPB = Math.sqrt((bx - px)*(bx - px) + (by - py)*(by - py));
+                const lenCP = Math.sqrt((px - cx)*(px - cx) + (py - cy)*(py - cy));
+                const lenPD = Math.sqrt((d1x - px)*(d1x - px) + (d1y - py)*(d1y - py));
+                
+                const prod1 = lenAP * lenPB;
+                const prod2 = lenCP * lenPD;
+                
+                htmlContent = `
+                    <h3><i class="fa-solid fa-chart-simple"></i> Demostración de Cuerdas Cruzadas</h3>
+                    <p>Las cuerdas \\(AB\\) y \\(CD\\) se intersecan en el punto \\(P\\). El teorema establece que el producto de los segmentos de cada cuerda es idéntico.</p>
+                    <div style="margin-top: 8px;">
+                        <strong>Longitudes de segmentos de cuerda 1 (Verde):</strong>
+                        <div style="font-size:12.5px;">\\(AP = ${lenAP.toFixed(2)}\\text{ u}, \\quad PB = ${lenPB.toFixed(2)}\\text{ u}\\)</div>
+                        <strong>Longitudes de segmentos de cuerda 2 (Ámbar):</strong>
+                        <div style="font-size:12.5px;">\\(CP = ${lenCP.toFixed(2)}\\text{ u}, \\quad PD = ${lenPD.toFixed(2)}\\text{ u}\\)</div>
+                        
+                        <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 8px;">
+                            <strong>Comprobación del producto:</strong>
+                            <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 3px 0;">
+                                \\(AP \\cdot PB = ${lenAP.toFixed(2)} \\cdot ${lenPB.toFixed(2)} = ${prod1.toFixed(2)}\\)
+                            </div>
+                            <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 3px 0;">
+                                \\(CP \\cdot PD = ${lenCP.toFixed(2)} \\cdot ${lenPD.toFixed(2)} = ${prod2.toFixed(2)}\\)
+                            </div>
+                            ¡Los productos resultan exactamente iguales (\\(${prod1.toFixed(2)} \\approx ${prod2.toFixed(2)}\\)), demostrando la validez del teorema para cualquier posición de corte!
+                        </div>
+                    </div>
+                `;
+            } else if (activeTheoryDemo === 'sec') {
+                const r = 5;
+                const px = t / 10;
+                
+                const cosAlpha = r / px;
+                const alpha = Math.acos(cosAlpha);
+                const tx = r * Math.cos(alpha);
+                const ty = r * Math.sin(alpha);
+                
+                const lenPT = Math.sqrt((px - tx)*(px - tx) + (0 - ty)*(0 - ty));
+                const lenPA = px - r;
+                const lenPB = px + r;
+                
+                const ptSq = lenPT * lenPT;
+                const pa_pb = lenPA * lenPB;
+                
+                htmlContent = `
+                    <h3><i class="fa-solid fa-superscript"></i> Teorema de Secante y Tangente</h3>
+                    <p>Desde el punto exterior \\(P(${px.toFixed(2)}, 0)\\) se traza la tangente \\(PT\\) y la secante axial \\(PAB\\).</p>
+                    <div style="margin-top: 8px;">
+                        <strong>Magnitudes medidas:</strong>
+                        <ul style="margin-left: 20px; font-size:12.5px; margin-bottom: 5px;">
+                            <li>Segmento Tangente: \\(PT = ${lenPT.toFixed(2)}\\)</li>
+                            <li>Segmento Exterior: \\(PA = ${lenPA.toFixed(2)}\\)</li>
+                            <li>Segmento Secante Total: \\(PB = ${lenPB.toFixed(2)}\\)</li>
+                        </ul>
+                        <strong>Potencia de un punto (Comprobación):</strong>
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 3px 0;">
+                            \\(PT^2 = (${lenPT.toFixed(2)})^2 = ${ptSq.toFixed(2)}\\)
+                        </div>
+                        <div style="color: var(--accent-indigo); font-family: monospace; font-size:12.5px; margin: 3px 0;">
+                            \\(PA \\cdot PB = (${lenPA.toFixed(2)}) \\cdot (${lenPB.toFixed(2)}) = ${pa_pb.toFixed(2)}\\)
+                        </div>
+                        La relación \\(PT^2 = PA \\cdot PB\\) se mantiene perfectamente idéntica (\\(${ptSq.toFixed(2)} = ${pa_pb.toFixed(2)}\\)) a cualquier distancia del punto exterior.
+                    </div>
+                `;
+            }
+            
+            theoryDemoData.innerHTML = htmlContent;
+            renderMath(theoryDemoData);
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const rect = canvas.parentNode.getBoundingClientRect();
+            canvas.width = rect.width * devicePixelRatio;
+            canvas.height = rect.height * devicePixelRatio;
+            if (ctx) {
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.scale(devicePixelRatio, devicePixelRatio);
+            }
+        }
+
+        function resizeTheoryCanvas() {
+            if (!theoryCanvas) return;
+            const rect = theoryCanvas.parentNode.getBoundingClientRect();
+            theoryCanvas.width = rect.width * devicePixelRatio;
+            theoryCanvas.height = rect.height * devicePixelRatio;
+            if (ctxTheory) {
+                ctxTheory.setTransform(1, 0, 0, 1, 0, 0);
+                ctxTheory.scale(devicePixelRatio, devicePixelRatio);
+            }
+        }
+
+        // Lógica del simulador dinámico principal (Módulo A y B)
+        function runSimulation() {
+            const h = parseFloat(sliderH.value);
+            const k = parseFloat(sliderK.value);
+            const r = parseFloat(sliderR.value);
+            const thetaDeg = parseFloat(sliderTheta.value);
+
+            // Actualizar etiquetas
+            valH.innerText = formatCoord(h);
+            valK.innerText = formatCoord(k);
+            valR.innerText = formatCoord(r);
+            valTheta.innerText = thetaDeg;
+
+            // Fórmulas métricas
+            const perimeter = 2 * Math.PI * r;
+            const area = Math.PI * r * r;
+            const arcLength = (2 * Math.PI * r * thetaDeg) / 360;
+            const sectorArea = (Math.PI * r * r * thetaDeg) / 360;
+
+            // Actualizar textos de métricas
+            metricP.innerText = perimeter.toFixed(2);
+            metricA.innerText = area.toFixed(2);
+            metricAsec.innerText = sectorArea.toFixed(2);
+
+            // Coeficientes ecuación general
+            const D = -2 * h;
+            const E = -2 * k;
+            const F = h*h + k*k - r*r;
+
+            const eqOrdinaria = `(x ${h >= 0 ? '-' : '+'} ${formatCoord(Math.abs(h))})^2 + (y ${k >= 0 ? '-' : '+'} ${formatCoord(Math.abs(k))})^2 = ${formatCoord(r)}^2`;
+            const eqGeneral = `x^2 + y^2 ${D >= 0 ? '+ ' + formatCoord(D) : '- ' + formatCoord(Math.abs(D))}x ${E >= 0 ? '+ ' + formatCoord(E) : '- ' + formatCoord(Math.abs(E))}y ${F >= 0 ? '+ ' + formatCoord(F) : '- ' + formatCoord(Math.abs(F))} = 0`;
+
+            // Paso a paso
+            calcSteps.innerHTML = `
+                <h3><i class="fa-solid fa-list-ol"></i> Resolución Analítica Paso a Paso</h3>
+                <div class="step-item">
+                    <strong>Paso 1: Ecuación Ordinaria (Estándar)</strong><br>
+                    Sustituyendo el centro \\(C(${formatCoord(h)}, ${formatCoord(k)})\\) y el radio \\(r = ${formatCoord(r)}\\) en \\((x - h)^2 + (y - k)^2 = r^2\\):
+                    <div style="margin-top: 5px; color: var(--accent-indigo); font-family: monospace; font-size:12.5px;">
+                        \\(${eqOrdinaria}\\)
+                    </div>
+                </div>
+                <div class="step-item">
+                    <strong>Paso 2: Ecuación General de la Circunferencia</strong><br>
+                    Desarrollando coeficientes \\(D = -2h = ${formatCoord(D)}\\), \\(E = -2k = ${formatCoord(E)}\\) y \\(F = h^2 + k^2 - r^2 = ${formatCoord(F)}\\):
+                    <div style="margin-top: 5px; color: var(--accent-indigo); font-family: monospace; font-size:12.5px;">
+                        \\(${eqGeneral}\\)
+                    </div>
+                </div>
+                <div class="step-item">
+                    <strong>Paso 3: Longitud del Arco y Área del Sector Circular</strong><br>
+                    Para un arco con apertura de \\(\\theta = ${thetaDeg}^{\\circ}\\):
+                    <ul style="margin-left: 20px; margin-top: 5px;">
+                        <li>Longitud del arco: \\(L = \\frac{2\\pi r \\theta}{360^{\\circ}} = ${arcLength.toFixed(3)}\\text{ u}\\)</li>
+                        <li>Área del sector: \\(A_{\\text{sector}} = \\frac{\\pi r^2 \\theta}{360^{\\circ}} = ${sectorArea.toFixed(3)}\\text{ u}^2\\)</li>
+                    </ul>
+                </div>
+            `;
+
+            renderMath(calcSteps);
+
+            // Actualizar tarjeta HTML del simulador en tiempo real
+            const simCard = document.getElementById("simulator-html-card");
+            if (simCard) {
+                simCard.innerHTML = `
+                    <h3 style="font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
+                        <i class="fa-solid fa-square-root-variable" style="color: var(--accent-indigo);"></i>
+                        Conceptos y Ecuaciones del Círculo
+                    </h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13.5px; line-height: 1.5;">
+                        <div>
+                            <strong style="color: var(--text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Ecuación Ordinaria (Estándar)</strong>
+                            <div style="margin: 4px 0 2px 0; color: var(--accent-indigo); font-size: 14px;">
+                                \\( (x - h)^2 + (y - k)^2 = r^2 \\)
+                            </div>
+                            <div style="color: var(--text-primary); font-size: 13px;">
+                                \\(${eqOrdinaria}\\)
+                            </div>
+                        </div>
+                        
+                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px;">
+                            <strong style="color: var(--text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Ecuación General</strong>
+                            <div style="margin: 4px 0 2px 0; color: var(--accent-indigo); font-size: 14px;">
+                                \\( x^2 + y^2 + Dx + Ey + F = 0 \\)
+                            </div>
+                            <div style="color: var(--text-primary); font-size: 13px;">
+                                \\(${eqGeneral}\\)
+                            </div>
+                        </div>
+                        
+                        <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12.5px;">
+                            <div>
+                                <span style="color: var(--text-secondary);">Centro:</span>
+                                <strong style="color: var(--text-primary); margin-left: 4px;">C(${formatCoord(h)}, ${formatCoord(k)})</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary);">Radio:</span>
+                                <strong style="color: var(--accent-emerald); margin-left: 4px;">r = ${formatCoord(r)} u</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary);">Ángulo:</span>
+                                <strong style="color: var(--accent-amber); margin-left: 4px;">θ = ${thetaDeg}°</strong>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary);">Área Sector:</span>
+                                <strong style="color: var(--text-primary); margin-left: 4px;">${formatCoord(sectorArea)} u²</strong>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                renderMath(simCard);
+            }
+
+            drawGeometry();
+        }
+
+        // Graficar simulador principal en Canvas
+        function drawGeometry() {
+            const width = canvas.width / devicePixelRatio;
+            const height = canvas.height / devicePixelRatio;
+            
+            ctx.clearRect(0, 0, width, height);
+
+            const xMin = -15, xMax = 15;
+            const yMin = -15, yMax = 15;
+
+            function getX(xVal) {
+                return 40 + ((xVal - xMin) / (xMax - xMin)) * (width - 80);
+            }
+
+            function getY(yVal) {
+                return (height - 40) - ((yVal - yMin) / (yMax - yMin)) * (height - 80);
+            }
+
+            const h = parseFloat(sliderH.value);
+            const k = parseFloat(sliderK.value);
+            const r = parseFloat(sliderR.value);
+            const thetaDeg = parseFloat(sliderTheta.value);
+
+            // Rejilla
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+            ctx.lineWidth = 1;
+            for (let x = xMin; x <= xMax; x += 2) {
+                ctx.beginPath();
+                ctx.moveTo(getX(x), getY(yMin));
+                ctx.lineTo(getX(x), getY(yMax));
+                ctx.stroke();
+
+                if (x !== 0) {
+                    ctx.fillStyle = "#94a3b8";
+                    ctx.font = "9px sans-serif";
+                    ctx.fillText(x, getX(x) - 4, getY(0) + 12);
+                }
+            }
+
+            for (let y = yMin; y <= yMax; y += 2) {
+                ctx.beginPath();
+                ctx.moveTo(getX(xMin), getY(y));
+                ctx.lineTo(getX(xMax), getY(y));
+                ctx.stroke();
+
+                if (y !== 0) {
+                    ctx.fillStyle = "#94a3b8";
+                    ctx.font = "9px sans-serif";
+                    ctx.fillText(y, getX(0) - 15, getY(y) + 3);
+                }
+            }
+
+            // Ejes
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.moveTo(getX(xMin), getY(0));
+            ctx.lineTo(getX(xMax), getY(0));
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(getX(0), getY(yMin));
+            ctx.lineTo(getX(0), getY(yMax));
+            ctx.stroke();
+
+            ctx.fillStyle = "#f8fafc";
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("X", getX(xMax) - 10, getY(0) - 8);
+            ctx.fillText("Y", getX(0) + 8, getY(yMax) + 12);
+
+            // Sector Sombreado
+            if (thetaDeg > 0) {
+                ctx.fillStyle = "rgba(245, 158, 11, 0.18)";
+                ctx.strokeStyle = "#f59e0b";
+                ctx.lineWidth = 2.2;
+                ctx.beginPath();
+                ctx.moveTo(getX(h), getY(k));
+                
+                const startAngle = 0;
+                const endAngle = - (thetaDeg * Math.PI) / 180;
+                
+                ctx.arc(
+                    getX(h), 
+                    getY(k), 
+                    r * (width - 80) / (xMax - xMin), 
+                    startAngle, 
+                    endAngle, 
+                    true
+                );
+                
+                ctx.lineTo(getX(h), getY(k));
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Circunferencia
+            ctx.strokeStyle = "#6366f1";
+            ctx.lineWidth = 2.5;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "rgba(99, 102, 241, 0.35)";
+            ctx.beginPath();
+            ctx.arc(getX(h), getY(k), r * (width - 80) / (xMax - xMin), 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Centro C
+            ctx.beginPath();
+            const cx = getX(h);
+            const cy = getY(k);
+            ctx.arc(cx, cy, 4.5, 0, 2 * Math.PI);
+            ctx.fillStyle = "#10b981";
+            ctx.fill();
+            ctx.strokeStyle = "#f8fafc";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            const centerLabel = `C(${formatCoord(h)}, ${formatCoord(k)})`;
+            ctx.font = "bold 11px sans-serif";
+            const cWidth = ctx.measureText(centerLabel).width;
+            let cOffsetX = 8;
+            let cOffsetY = -8;
+            if (Math.abs(h) < 0.5 && k < -5) {
+                cOffsetY = 14;
+            }
+            ctx.fillStyle = "rgba(11, 15, 25, 0.8)";
+            ctx.fillRect(cx + cOffsetX - 2, cy + cOffsetY - 10, cWidth + 4, 13);
+            ctx.fillStyle = "#f8fafc";
+            ctx.fillText(centerLabel, cx + cOffsetX, cy + cOffsetY);
+
+            // Referencia de Radio Horizontal
+            ctx.strokeStyle = "rgba(16, 185, 129, 0.4)";
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(getX(h + r), cy);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Puntos y Coordenadas
+            const thetaRad = (thetaDeg * Math.PI) / 180;
+            const xt = h + r * Math.cos(thetaRad);
+            const yt = k + r * Math.sin(thetaRad);
+
+            // Punto A
+            ctx.beginPath();
+            const ax = getX(h + r);
+            const ay = getY(k);
+            ctx.arc(ax, ay, 4.5, 0, 2 * Math.PI);
+            ctx.fillStyle = "#f59e0b";
+            ctx.fill();
+            ctx.strokeStyle = "#f8fafc";
+            ctx.stroke();
+
+            const aLabel = `A(${formatCoord(h + r)}, ${formatCoord(k)})`;
+            ctx.font = "bold 10px sans-serif";
+            const aWidth = ctx.measureText(aLabel).width;
+            let aOffsetX = 8;
+            let aOffsetY = 12;
+            ctx.fillStyle = "rgba(11, 15, 25, 0.8)";
+            ctx.fillRect(ax + aOffsetX - 2, ay + aOffsetY - 9, aWidth + 4, 12);
+            ctx.fillStyle = "#f8fafc";
+            ctx.fillText(aLabel, ax + aOffsetX, ay + aOffsetY);
+
+            // Punto P
+            if (thetaDeg > 0) {
+                ctx.beginPath();
+                const pxPos = getX(xt);
+                const pyPos = getY(yt);
+                ctx.arc(pxPos, pyPos, 4.5, 0, 2 * Math.PI);
+                ctx.fillStyle = "#f59e0b";
+                ctx.fill();
+                ctx.strokeStyle = "#f8fafc";
+                ctx.stroke();
+
+                const pLabel = `P(${formatCoord(xt)}, ${formatCoord(yt)})`;
+                ctx.font = "bold 10px sans-serif";
+                const pWidth = ctx.measureText(pLabel).width;
+                let pOffsetX = 8;
+                let pOffsetY = -8;
+                if (xt - h < -0.5) {
+                    pOffsetX = -pWidth - 8;
+                }
+                if (yt - k < -0.5) {
+                    pOffsetY = 14;
+                }
+                ctx.fillStyle = "rgba(11, 15, 25, 0.8)";
+                ctx.fillRect(pxPos + pOffsetX - 2, pyPos + pOffsetY - 9, pWidth + 4, 12);
+                ctx.fillStyle = "#f8fafc";
+                ctx.fillText(pLabel, pxPos + pOffsetX, pyPos + pOffsetY);
+
+                ctx.strokeStyle = "#10b981";
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(pxPos, pyPos);
+                ctx.stroke();
+
+                const xMid = getX((h + xt) / 2);
+                const yMid = getY((k + yt) / 2);
+                const rLabel = `r = ${formatCoord(r)}`;
+                ctx.font = "bold 10px sans-serif";
+                const rWidth = ctx.measureText(rLabel).width;
+                ctx.fillStyle = "rgba(11, 15, 25, 0.8)";
+                ctx.fillRect(xMid - rWidth/2 - 2, yMid - 6 - 9, rWidth + 4, 12);
+                ctx.fillStyle = "#10b981";
+                ctx.fillText(rLabel, xMid - rWidth/2, yMid - 6);
+            }
+
+            // Arco Ángulo central
+            if (thetaDeg > 15) {
+                ctx.strokeStyle = "#f59e0b";
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 22, 0, -thetaRad, true);
+                ctx.stroke();
+
+                const dx = 1.6 * Math.cos(thetaRad / 2);
+                const dy = 1.6 * Math.sin(thetaRad / 2);
+                const thetaLabel = `θ = ${thetaDeg}°`;
+                ctx.font = "bold 10px sans-serif";
+                const tWidth = ctx.measureText(thetaLabel).width;
+                ctx.fillStyle = "rgba(11, 15, 25, 0.8)";
+                ctx.fillRect(getX(h + dx) - tWidth/2 - 2, getY(k + dy) + 3 - 9, tWidth + 4, 12);
+                ctx.fillStyle = "#f59e0b";
+                ctx.fillText(thetaLabel, getX(h + dx) - tWidth/2, getY(k + dy) + 3);
+            }
+        }
+
+        // Listeners
+        window.addEventListener("resize", () => {
+            if (document.getElementById("tab-simulador").classList.contains("active")) {
+                resizeCanvas();
+                drawGeometry();
+            } else if (document.getElementById("tab-resueltos").classList.contains("active")) {
+                resizeExerciseCanvas();
+                drawExerciseGeometry(currentExerciseId);
+            } else if (document.getElementById("tab-teoria").classList.contains("active")) {
+                resizeTheoryCanvas();
+                drawTheoryDemo();
+            }
+        });
+
+        [sliderH, sliderK, sliderR, sliderTheta].forEach(sl => {
+            sl.addEventListener("input", runSimulation);
+        });
+
+        if (sliderTheoryT) {
+            sliderTheoryT.addEventListener("input", updateTheoryDemo);
+        }
+
+        // Inicialización del simulador
+        resizeCanvas();
+        runSimulation();
+
+        // Inicialización del demostrador teórico
+        resizeTheoryCanvas();
+        changeTheoryDemo('def');
+    </script>
+</body>
+</html>
