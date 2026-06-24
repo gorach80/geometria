@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tema 6: Geometría Plana - Análisis Métrico de Polígonos Costeros</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #0a4d68;
+            --secondary: #088395;
+            --accent: #05bfdb;
+            --highlight: #00ffca;
+            --dark: #01161e;
+            --light: #f0f8ff;
+            --warning: #ff6b35;
+            --success: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 50%, var(--secondary) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(5, 191, 219, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 202, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(8, 131, 149, 0.3) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            padding: 20px;
+            max-width: 1200px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(0, 255, 202, 0.2);
+            border: 2px solid var(--highlight);
+            color: var(--highlight);
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5em, 6vw, 5em);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease 0.3s both;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.5);
+        }
+
+        .hero h1 span {
+            color: var(--highlight);
+            display: block;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1em, 2vw, 1.3em);
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            animation: fadeInUp 1s ease 0.6s both;
+            opacity: 0.9;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            animation: fadeInUp 1s ease 0.9s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: var(--highlight);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2em, 4vw, 3em);
+            color: var(--primary);
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 1.1em;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .context-section {
+            background: white;
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .context-image {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            aspect-ratio: 4/3;
+        }
+
+        .context-image canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .context-text h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .context-text p {
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        .context-highlights {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .highlight-card {
+            background: linear-gradient(135deg, var(--light), white);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+            transition: transform 0.3s;
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight-card i {
+            font-size: 1.8em;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .highlight-card h4 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .highlight-card p {
+            font-size: 0.9em;
+            color: #666;
+            margin: 0;
+        }
+
+        .focus-section {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+            border-top: 4px solid var(--warning);
+            border-bottom: 4px solid var(--warning);
+        }
+
+        .focus-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-left: 6px solid var(--warning);
+        }
+
+        .focus-box h3 {
+            color: var(--warning);
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .focus-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .focus-yes, .focus-no {
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .focus-yes {
+            background: #d4edda;
+            border: 2px solid var(--success);
+        }
+
+        .focus-no {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+
+        .focus-yes h4 {
+            color: var(--success);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .focus-no h4 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .focus-yes ul, .focus-no ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .focus-yes li, .focus-no li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .focus-yes li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        .focus-no li::before {
+            content: '\f00d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+        }
+
+        .problem-section {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(5, 191, 219, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 202, 0.1) 0%, transparent 40%);
+        }
+
+        .problem-section .section-title {
+            color: white;
+        }
+
+        .problem-section .section-subtitle {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .problem-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--highlight), var(--accent));
+        }
+
+        .problem-card h3 {
+            color: var(--highlight);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .problem-card h3 .icon-circle {
+            background: rgba(0, 255, 202, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .problem-card p {
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .problem-card .formula-display {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            border-left: 4px solid var(--highlight);
+        }
+
+        .objectives-section {
+            background: white;
+        }
+
+        .objectives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .objective-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid var(--accent);
+        }
+
+        .objective-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .objective-number {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8em;
+            font-weight: 900;
+            color: rgba(5, 191, 219, 0.08);
+            line-height: 1;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .objective-card i {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .objective-card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .objective-card p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .questions-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .question-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+        }
+
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--warning), var(--accent));
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--warning), #ff8c42);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .question-card h3 {
+            color: var(--primary);
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .question-card p {
+            color: #555;
+            font-size: 1.05em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .question-context {
+            background: linear-gradient(135deg, #fff3cd, #ffe69c);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .question-context strong {
+            color: var(--warning);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deliverable-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .methodology-section {
+            background: white;
+        }
+
+        .methodology-timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .methodology-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent), var(--secondary), var(--primary));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 120px;
+            margin-bottom: 40px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 30px;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--accent);
+        }
+
+        .timeline-content h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .timeline-content p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .deliverables-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .deliverables-section .section-title {
+            color: white;
+        }
+
+        .deliverables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .deliverable-item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .deliverable-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+        }
+
+        .deliverable-item i {
+            font-size: 2.5em;
+            color: var(--highlight);
+            margin-bottom: 15px;
+        }
+
+        .deliverable-item h4 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .deliverable-item p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.95em;
+        }
+
+        .cta-section {
+            background: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, var(--dark), var(--primary));
+            color: white;
+            padding: 60px 40px;
+            border-radius: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 202, 0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-box h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .cta-box p {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            position: relative;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--highlight);
+            color: var(--dark);
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 255, 202, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 255, 202, 0.5);
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.7;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .context-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .context-highlights, .focus-columns {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-stats {
+                gap: 20px;
+            }
+            
+            .methodology-timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                padding-left: 70px;
+            }
+            
+            .timeline-marker {
+                left: 0;
+            }
+            
+            .question-card, .problem-card {
+                padding: 25px;
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-shapes"></i> Tema 6 · Geometría Plana
+            </div>
+            <h1>
+                Análisis Métrico
+                <span>Polígonos Costeros Erosionados</span>
+            </h1>
+            <p class="hero-subtitle">
+                Estudio de polígonos irregulares afectados por la erosión costera en Ayangue y Montañita 
+                mediante triangulación, fórmula de Herón y propiedades clásicas de la geometría euclidiana.
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">Tema</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">2</span>
+                    <span class="stat-label">Zonas de Estudio</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Preguntas Clave</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">∞</span>
+                    <span class="stat-label">Triángulos</span>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down fa-2x"></i>
+        </div>
+    </section>
+
+    <!-- CONTEXT SECTION -->
+    <section class="context-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Contexto</span>
+                <h2 class="section-title">El Problema Costero</h2>
+                <p class="section-subtitle">
+                    Las costas ecuatorianas enfrentan un desafío crítico: la erosión marina modifica 
+                    la forma de los terrenos, alterando sus propiedades geométricas.
+                </p>
+            </div>
+
+            <div class="context-grid">
+                <div class="context-image">
+                    <canvas id="coastCanvas" width="600" height="450"></canvas>
+                </div>
+                <div class="context-text">
+                    <h3>Ayangue y Montañita: Zonas Críticas</h3>
+                    <p>
+                        Estas localidades costeras de Santa Elena han experimentado una acelerada 
+                        erosión marina que ha modificado la forma de los lotes de terreno. Los polígonos 
+                        que antes representaban propiedades regulares, hoy se han transformado en 
+                        figuras irregulares con lados y ángulos alterados.
+                    </p>
+                    <p>
+                        Desde la perspectiva de la <strong>geometría plana</strong>, cada lote es un 
+                        polígono cuyas propiedades métricas (perímetro, área, ángulos) cambian con 
+                        el tiempo. Nuestro reto es analizar estos cambios usando únicamente las 
+                        herramientas clásicas de la geometría euclidiana.
+                    </p>
+
+                    <div class="context-highlights">
+                        <div class="highlight-card">
+                            <i class="fas fa-draw-polygon"></i>
+                            <h4>Polígonos Irregulares</h4>
+                            <p>Figuras con lados y ángulos desiguales</p>
+                        </div>
+                        <div class="highlight-card">
+                            <i class="fas fa-ruler"></i>
+                            <h4>Medición Directa</h4>
+                            <p>Lados medidos con regla o cinta métrica</p>
+                        </div>
+                        <div class="highlight-card">
+                            <i class="fas fa-drafting-compass"></i>
+                            <h4>Construcciones</h4>
+                            <p>Trazados con regla y compás</p>
+                        </div>
+                        <div class="highlight-card">
+                            <i class="fas fa-square-root-alt"></i>
+                            <h4>Teoremas Clásicos</h4>
+                            <p>Pitágoras, Herón y propiedades euclidianas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOCUS SECTION - NUEVA SECCIÓN CLAVE -->
+    <section class="focus-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag" style="background: var(--warning);">Enfoque del Ejercicio</span>
+                <h2 class="section-title">Geometría Plana Pura</h2>
+                <p class="section-subtitle">
+                    Este ejercicio se resuelve exclusivamente con conceptos de geometría plana euclidiana.
+                </p>
+            </div>
+
+            <div class="focus-box">
+                <h3><i class="fas fa-bullseye"></i> ¿Qué SÍ y qué NO se usa?</h3>
+                <p style="color: #555; margin-bottom: 20px;">
+                    Es fundamental entender el alcance de este ejercicio. Trabajaremos únicamente 
+                    con los elementos y teoremas de la geometría plana clásica.
+                </p>
+
+                <div class="focus-columns">
+                    <div class="focus-yes">
+                        <h4><i class="fas fa-check-circle"></i> SÍ se utiliza</h4>
+                        <ul>
+                            <li>Polígonos: lados, vértices, ángulos, diagonales</li>
+                            <li>Perímetro: suma de longitudes de lados</li>
+                            <li>Área por triangulación (descomposición en triángulos)</li>
+                            <li>Fórmula de Herón (área con 3 lados conocidos)</li>
+                            <li>Teorema de Pitágoras</li>
+                            <li>Propiedades de ángulos interiores y exteriores</li>
+                            <li>Construcciones con regla y compás</li>
+                            <li>Cálculo de centroides por intersección de medianas</li>
+                            <li>Semejanza y proporcionalidad de figuras</li>
+                        </ul>
+                    </div>
+                    <div class="focus-no">
+                        <h4><i class="fas fa-times-circle"></i> NO se utiliza</h4>
+                        <ul>
+                            <li>Fórmula de Gauss (es geometría analítica)</li>
+                            <li>Coordenadas cartesianas (x, y)</li>
+                            <li>Ecuaciones de rectas</li>
+                            <li>Vectores</li>
+                            <li>Sistemas GIS (ArcGIS, QGIS)</li>
+                            <li>GeoJSON, Shapefiles</li>
+                            <li>Proyecciones cartográficas</li>
+                            <li>Tablas de atributos digitales</li>
+                            <li>Cálculo con software especializado</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLEM SECTION -->
+    <section class="problem-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag" style="background: rgba(0,255,202,0.2); color: var(--highlight);">El Reto</span>
+                <h2 class="section-title">Planteamiento del Problema</h2>
+                <p class="section-subtitle">
+                    Un desafío geométrico que combina medición, construcción y aplicación de teoremas clásicos.
+                </p>
+            </div>
+
+            <div class="problem-card">
+                <h3>
+                    <span class="icon-circle"><i class="fas fa-draw-polygon"></i></span>
+                    Análisis Métrico de Polígonos Irregulares
+                </h3>
+                <p>
+                    Se dispone de un lote costero representado como un <strong>polígono irregular</strong> 
+                    cuyos lados han sido medidos directamente en el terreno (o mediante un plano a escala) 
+                    con regla o cinta métrica. La erosión marina ha modificado la forma del polígono, 
+                    alterando algunos de sus lados y ángulos.
+                </p>
+                <p>
+                    El objetivo es determinar las <strong>propiedades métricas</strong> del polígono 
+                    (perímetro y área) utilizando exclusivamente métodos de la geometría plana: 
+                    medición directa de lados, triangulación mediante diagonales, y aplicación de 
+                    fórmulas clásicas como la de Herón para el cálculo de áreas.
+                </p>
+                <div class="formula-display">
+                    <p style="margin-bottom: 10px; color: var(--highlight); font-weight: 600;">Fórmula de Herón (para cada triángulo de la triangulación)</p>
+                    <div id="heron-formula">$$A = \sqrt{s(s-a)(s-b)(s-c)}, \quad s = \frac{a+b+c}{2}$$</div>
+                </div>
+            </div>
+
+            <div class="problem-card">
+                <h3>
+                    <span class="icon-circle"><i class="fas fa-ruler-combined"></i></span>
+                    Triangulación y Proyección por Semejanza
+                </h3>
+                <p>
+                    Para calcular el área de un polígono irregular, se debe realizar una 
+                    <strong>triangulación completa</strong>: trazar diagonales desde un vértice que 
+                    descompongan el polígono en $(n-2)$ triángulos. Cada triángulo se analiza 
+                    independientemente midiendo sus tres lados y aplicando la fórmula de Herón.
+                </p>
+                <p>
+                    La <strong>proyección métrica anual</strong> se realiza mediante el concepto de 
+                    <strong>semejanza de polígonos</strong> y proporcionalidad: si la erosión avanza 
+                    una distancia constante en cada lado costero, el polígono resultante mantiene 
+                    relaciones proporcionales con el original que permiten proyectar áreas futuras.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- OBJECTIVES SECTION -->
+    <section class="objectives-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Objetivos</span>
+                <h2 class="section-title">¿Qué se busca lograr?</h2>
+                <p class="section-subtitle">
+                    Competencias geométricas que desarrollarás al resolver este caso.
+                </p>
+            </div>
+
+            <div class="objectives-grid">
+                <div class="objective-card fade-in">
+                    <div class="objective-number">1</div>
+                    <i class="fas fa-ruler-combined"></i>
+                    <h3>Medir Lados</h3>
+                    <p>Realizar mediciones directas de los lados de polígonos irregulares usando regla, cinta métrica o escala en planos.</p>
+                </div>
+                <div class="objective-card fade-in">
+                    <div class="objective-number">2</div>
+                    <i class="fas fa-project-diagram"></i>
+                    <h3>Triangular Polígonos</h3>
+                    <p>Trazar diagonales correctamente para descomponer cualquier polígono en triángulos, base del cálculo de áreas.</p>
+                </div>
+                <div class="objective-card fade-in">
+                    <div class="objective-number">3</div>
+                    <i class="fas fa-square-root-alt"></i>
+                    <h3>Aplicar Herón y Pitágoras</h3>
+                    <p>Usar la fórmula de Herón para calcular áreas de triángulos y el teorema de Pitágoras para longitudes desconocidas.</p>
+                </div>
+                <div class="objective-card fade-in">
+                    <div class="objective-number">4</div>
+                    <i class="fas fa-angle-double-right"></i>
+                    <h3>Analizar Ángulos</h3>
+                    <p>Verificar la suma de ángulos interiores y clasificar polígonos como convexos o cóncavos según sus ángulos.</p>
+                </div>
+                <div class="objective-card fade-in">
+                    <div class="objective-number">5</div>
+                    <i class="fas fa-drafting-compass"></i>
+                    <h3>Construir Geométricamente</h3>
+                    <p>Realizar trazados con regla y compás: perpendiculares, medianas, centroides por intersección.</p>
+                </div>
+                <div class="objective-card fade-in">
+                    <div class="objective-number">6</div>
+                    <i class="fas fa-expand-arrows-alt"></i>
+                    <h3>Proyectar por Semejanza</h3>
+                    <p>Aplicar proporciones y semejanza para estimar áreas futuras de polígonos erosionados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUESTIONS SECTION -->
+    <section class="questions-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Preguntas Clave</span>
+                <h2 class="section-title">Desafíos Geométricos a Resolver</h2>
+                <p class="section-subtitle">
+                    Tres preguntas que solo pueden responderse con conceptos de geometría plana.
+                </p>
+            </div>
+
+            <div class="question-container">
+                <!-- Pregunta 1 -->
+                <div class="question-card fade-in">
+                    <div class="question-number">1</div>
+                    <h3>Error Métrico por Triangulación Incompleta</h3>
+                    <p>
+                        Al calcular el área de un lote costero poligonal irregular mediante 
+                        <strong>triangulación</strong>, ¿cuál es el <strong>error métrico porcentual</strong> 
+                        en el área total si, en lugar de realizar una triangulación completa desde un 
+                        vértice (que genera $n-2$ triángulos), se asume erróneamente que el polígono 
+                        puede representarse como un solo triángulo usando solo dos de sus diagonales 
+                        principales, ignorando los triángulos restantes?
+                    </p>
+                    <div class="question-context">
+                        <strong><i class="fas fa-info-circle"></i> Contexto geométrico</strong>
+                        Recuerda que un polígono de $n$ lados se descompone en exactamente $(n-2)$ 
+                        triángulos mediante diagonales desde un mismo vértice. Si el polígono es 
+                        cóncavo (ángulos mayores a 180°), algunas diagonales pueden quedar fuera 
+                        del polígono, lo que complica la triangulación y puede generar errores si 
+                        no se identifican correctamente las regiones.
+                    </div>
+                    <span class="deliverable-tag">Análisis Cuantitativo con Geometría Plana</span>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="question-card fade-in">
+                    <div class="question-number">2</div>
+                    <h3>Proyección Métrica Anual por Semejanza</h3>
+                    <p>
+                        Con base en las medidas de los lados del polígono original y del polígono 
+                        erosionado (obtenidas por medición directa), ¿cuánto terreno (expresado 
+                        como <strong>área del polígono</strong>) se pierde anualmente? Utiliza el 
+                        concepto de <strong>semejanza de polígonos</strong> y proporcionalidad de 
+                        áreas para establecer un modelo de proyección a 5, 10 y 20 años.
+                    </p>
+                    <div class="question-context">
+                        <strong><i class="fas fa-info-circle"></i> Contexto geométrico</strong>
+                        Si dos polígonos son semejantes con razón de semejanza $k$, la razón entre 
+                        sus áreas es $k^2$. Aplica esta propiedad junto con la fórmula de Herón 
+                        para proyectar áreas futuras basándote en la reducción proporcional de los lados.
+                    </div>
+                    <div class="formula-display" style="background: rgba(255, 107, 53, 0.1); border-left-color: var(--warning);">
+                        <div id="similarity-formula">$$\frac{A_2}{A_1} = k^2, \quad \text{donde } k = \frac{L_2}{L_1}$$</div>
+                    </div>
+                    <span class="deliverable-tag">Modelo Predictivo con Semejanza</span>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="question-card fade-in">
+                    <div class="question-number">3</div>
+                    <h3>Dibujo Técnico con Tabla de Propiedades Métricas</h3>
+                    <p>
+                        Realiza un <strong>dibujo técnico a escala</strong> del polígono irregular 
+                        (original y erosionado) usando regla, compás y transportador. El dibujo debe 
+                        mostrar claramente: los lados con sus medidas, las diagonales de triangulación, 
+                        los ángulos interiores, y el <strong>centroide</strong> obtenido por intersección 
+                        de medianas. Acompaña el dibujo con una <strong>tabla de propiedades métricas</strong> 
+                        que incluya: perímetro, área (calculada por triangulación con Herón), suma de 
+                        ángulos interiores, número de diagonales, y ubicación del centroide.
+                    </p>
+                    <div class="question-context">
+                        <strong><i class="fas fa-info-circle"></i> Contexto geométrico</strong>
+                        El centroide de un polígono puede aproximarse triangulando el polígono y 
+                        calculando el centroide de cada triángulo (intersección de sus medianas), 
+                        luego ponderando por el área de cada triángulo. El dibujo debe ser 
+                        geométricamente preciso y la tabla debe reflejar cálculos verificables.
+                    </div>
+                    <span class="deliverable-tag">Producto Técnico con Regla y Compás</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- METHODOLOGY SECTION -->
+    <section class="methodology-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Metodología Sugerida</span>
+                <h2 class="section-title">Ruta de Trabajo Geométrica</h2>
+                <p class="section-subtitle">
+                    Pasos recomendados usando únicamente herramientas de geometría plana.
+                </p>
+            </div>
+
+            <div class="methodology-timeline">
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">1</div>
+                    <div class="timeline-content">
+                        <h4>Medición de Lados</h4>
+                        <p>Medir directamente con regla o cinta métrica cada lado del polígono original y del polígono erosionado. Anotar las longitudes en una tabla.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">2</div>
+                    <div class="timeline-content">
+                        <h4>Cálculo del Perímetro</h4>
+                        <p>Sumar todas las longitudes de los lados: $P = L_1 + L_2 + ... + L_n$. Comparar perímetros original y erosionado.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">3</div>
+                    <div class="timeline-content">
+                        <h4>Triangulación del Polígono</h4>
+                        <p>Trazar diagonales desde un vértice a todos los vértices no adyacentes, descomponiendo el polígono en $(n-2)$ triángulos.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">4</div>
+                    <div class="timeline-content">
+                        <h4>Medición de Diagonales</h4>
+                        <p>Medir las diagonales trazadas. Ahora cada triángulo tiene sus tres lados conocidos (dos lados del polígono y una diagonal, o combinaciones equivalentes).</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">5</div>
+                    <div class="timeline-content">
+                        <h4>Aplicar Fórmula de Herón</h4>
+                        <p>Para cada triángulo, calcular el semiperímetro $s$ y aplicar $A = \sqrt{s(s-a)(s-b)(s-c)}$. Sumar las áreas para obtener el área total.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">6</div>
+                    <div class="timeline-content">
+                        <h4>Ángulos y Propiedades</h4>
+                        <p>Medir ángulos interiores con transportador. Verificar que la suma sea $(n-2) \times 180°$. Contar diagonales con $D = \frac{n(n-3)}{2}$.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">7</div>
+                    <div class="timeline-content">
+                        <h4>Ubicar el Centroide</h4>
+                        <p>En cada triángulo, trazar las tres medianas y marcar su intersección (centroide del triángulo). Calcular el centroide ponderado del polígono.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">8</div>
+                    <div class="timeline-content">
+                        <h4>Proyección por Semejanza</h4>
+                        <p>Calcular la razón de semejanza $k$ entre lados correspondientes del polígono original y erosionado. Proyectar áreas futuras usando $A_{futuro} = A_{actual} \cdot k^2$.</p>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-marker">9</div>
+                    <div class="timeline-content">
+                        <h4>Dibujo Técnico Final</h4>
+                        <p>Elaborar el dibujo a escala con regla y compás, mostrando todos los elementos: lados, diagonales, ángulos, centroides y tabla de propiedades métricas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DELIVERABLES SECTION -->
+    <section class="deliverables-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag" style="background: rgba(0,255,202,0.2); color: var(--highlight);">Entregables</span>
+                <h2 class="section-title">¿Qué debes entregar?</h2>
+            </div>
+
+            <div class="deliverables-grid">
+                <div class="deliverable-item fade-in">
+                    <i class="fas fa-file-alt"></i>
+                    <h4>Informe de Cálculos</h4>
+                    <p>Documento con todos los cálculos paso a paso: perímetros, áreas por triangulación, aplicación de Herón y verificaciones.</p>
+                </div>
+                <div class="deliverable-item fade-in">
+                    <i class="fas fa-drafting-compass"></i>
+                    <h4>Dibujo Técnico</h4>
+                    <p>Dibujo a escala del polígono con regla y compás, mostrando lados, diagonales, ángulos y centroides marcados.</p>
+                </div>
+                <div class="deliverable-item fade-in">
+                    <i class="fas fa-table"></i>
+                    <h4>Tabla de Propiedades</h4>
+                    <p>Tabla con: perímetro, área, suma de ángulos, número de diagonales, ubicación del centroide para cada polígono.</p>
+                </div>
+                <div class="deliverable-item fade-in">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Modelo de Proyección</h4>
+                    <p>Análisis predictivo de pérdida de área a 5, 10 y 20 años usando semejanza de polígonos.</p>
+                </div>
+                <div class="deliverable-item fade-in">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Análisis de Error</h4>
+                    <p>Cuantificación del error métrico al realizar una triangulación incompleta o asumir convexidad incorrectamente.</p>
+                </div>
+                <div class="deliverable-item fade-in">
+                    <i class="fas fa-ruler"></i>
+                    <h4>Registro de Mediciones</h4>
+                    <p>Tabla con todas las medidas de lados y diagonales tomadas directamente, con unidades y precisiones.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>¿Listo para el desafío geométrico?</h2>
+                <p>
+                    Este caso te permitirá aplicar los fundamentos de la geometría plana euclidiana 
+                    para resolver un problema real: analizar cómo cambia la forma y el área de los 
+                    terrenos costeros ante la erosión del mar.
+                </p>
+                <p style="font-size: 0.95em; opacity: 0.8;">
+                    Solo necesitas: regla, compás, transportador, calculadora y los teoremas de siempre.
+                </p>
+                <a href="#" class="cta-button">
+                    <i class="fas fa-drafting-compass"></i> Comenzar el Análisis
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p><strong>Tema 6: Geometría Plana</strong></p>
+            <p>Análisis Métrico de Polígonos Costeros Erosionados</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                <i class="fas fa-graduation-cap"></i> Material Educativo · Junio 2026
+            </p>
+            <p style="margin-top: 10px; font-size: 0.85em; opacity: 0.6;">
+                Enfoque exclusivo en geometría plana euclidiana: regla, compás y teoremas clásicos
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ]
+            });
+
+            drawCoastScene();
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            document.querySelector('.scroll-indicator').addEventListener('click', function() {
+                document.querySelector('.context-section').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            });
+        });
+
+        function drawCoastScene() {
+            const canvas = document.getElementById('coastCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, height * 0.4);
+            skyGradient.addColorStop(0, '#87CEEB');
+            skyGradient.addColorStop(1, '#E0F6FF');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, width, height * 0.4);
+
+            const seaGradient = ctx.createLinearGradient(0, height * 0.4, 0, height * 0.7);
+            seaGradient.addColorStop(0, '#088395');
+            seaGradient.addColorStop(1, '#05bfdb');
+            ctx.fillStyle = seaGradient;
+            ctx.fillRect(0, height * 0.4, width, height * 0.3);
+
+            const beachGradient = ctx.createLinearGradient(0, height * 0.7, 0, height);
+            beachGradient.addColorStop(0, '#F4D03F');
+            beachGradient.addColorStop(1, '#D4AC0D');
+            ctx.fillStyle = beachGradient;
+            ctx.fillRect(0, height * 0.7, width, height * 0.3);
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                const y = height * 0.4 + i * 20;
+                for (let x = 0; x < width; x += 10) {
+                    const wave = Math.sin((x + i * 30) / 30) * 5;
+                    if (x === 0) ctx.moveTo(x, y + wave);
+                    else ctx.lineTo(x, y + wave);
+                }
+                ctx.stroke();
+            }
+
+            // Polígono original con triangulación visible
+            const verticesOriginal = [
+                {x: 100, y: height * 0.55},
+                {x: 250, y: height * 0.50},
+                {x: 400, y: height * 0.52},
+                {x: 500, y: height * 0.60},
+                {x: 450, y: height * 0.75},
+                {x: 300, y: height * 0.78},
+                {x: 150, y: height * 0.72}
+            ];
+
+            // Dibujar triangulación
+            ctx.strokeStyle = '#9932CC';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            for (let i = 2; i < verticesOriginal.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(verticesOriginal[0].x, verticesOriginal[0].y);
+                ctx.lineTo(verticesOriginal[i].x, verticesOriginal[i].y);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+
+            // Polígono original
+            ctx.fillStyle = 'rgba(46, 139, 87, 0.3)';
+            ctx.strokeStyle = '#2E8B57';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(verticesOriginal[0].x, verticesOriginal[0].y);
+            for (let i = 1; i < verticesOriginal.length; i++) {
+                ctx.lineTo(verticesOriginal[i].x, verticesOriginal[i].y);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Vértices
+            verticesOriginal.forEach((v, i) => {
+                ctx.fillStyle = '#2E8B57';
+                ctx.beginPath();
+                ctx.arc(v.x, v.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 10px Arial';
+                ctx.fillText('V' + (i+1), v.x - 8, v.y - 10);
+            });
+
+            // Etiquetas de triángulos
+            ctx.fillStyle = '#9932CC';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('T₁', 180, height * 0.62);
+            ctx.fillText('T₂', 280, height * 0.60);
+            ctx.fillText('T₃', 360, height * 0.65);
+            ctx.fillText('T₄', 320, height * 0.72);
+            ctx.fillText('T₅', 220, height * 0.70);
+
+            // Leyenda
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.fillRect(20, 20, 220, 110);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(20, 20, 220, 110);
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 13px Arial';
+            ctx.fillText('TRIANGULACIÓN', 30, 40);
+            
+            ctx.strokeStyle = '#2E8B57';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(30, 55);
+            ctx.lineTo(70, 55);
+            ctx.stroke();
+            ctx.fillText('Polígono', 80, 60);
+
+            ctx.strokeStyle = '#9932CC';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(30, 75);
+            ctx.lineTo(70, 75);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillText('Diagonales', 80, 80);
+
+            ctx.fillStyle = '#9932CC';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('T₁, T₂, T₃...', 30, 100);
+            ctx.fillStyle = '#666';
+            ctx.font = '11px Arial';
+            ctx.fillText('Triángulos (n-2)', 30, 115);
+
+            // Título
+            ctx.fillStyle = 'rgba(10, 77, 104, 0.9)';
+            ctx.fillRect(width - 220, 20, 200, 30);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('Ayangue / Montañita', width - 210, 40);
+        }
+    </script>
+</body>
+</html>
