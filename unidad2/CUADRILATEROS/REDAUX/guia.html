@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tema 2: Rotores Reuleaux - Guía de Construcción</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Estilos de KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Three.js & OrbitControls CDNs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <style>
+        
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #2c5282;
+            --accent: #3182ce;
+            --highlight: #f6ad55;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --warning: #dd6b20;
+            --success: #38a169;
+            --geogebra: #69b34c;
+            --gold: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 50%, var(--secondary) 100%);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8em, 4vw, 3em);
+            margin-bottom: 15px;
+        }
+
+        .hero h1 span { color: var(--highlight); }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(246, 173, 85, 0.2);
+            border: 2px solid var(--highlight);
+            color: var(--highlight);
+            padding: 8px 25px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* PAGE SEPARATOR */
+        .page-separator {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            margin: 50px 0;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .page-separator h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .page-number {
+            display: inline-block;
+            background: var(--highlight);
+            color: var(--dark);
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        /* STEP BOX */
+        .step-box {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--geogebra);
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -18px;
+            left: 25px;
+            background: var(--geogebra);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2em;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .step-box h3 {
+            color: var(--primary);
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-box h4 {
+            color: var(--secondary);
+            margin: 20px 0 12px 0;
+            font-size: 1.15em;
+        }
+
+        .step-box p { margin-bottom: 12px; color: #555; }
+
+        .step-box ul, .step-box ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .step-box li { margin: 10px 0; }
+
+        /* CODE BLOCK */
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 18px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--geogebra);
+        }
+
+        /* FORMULA BOX */
+        .formula-box {
+            color: var(--dark);
+            border-left: 4px solid var(--accent);
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .formula-box h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        /* TIP/WARNING BOXES */
+        .tip-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid var(--warning);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .info-box {
+            background: #d4edda;
+            border-left: 5px solid var(--success);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        /* PASSWORD PROTECTION */
+        .password-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 40px auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .password-container i {
+            font-size: 4em;
+            color: var(--warning);
+            margin-bottom: 20px;
+        }
+
+        .password-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px 20px;
+            font-size: 1.2em;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--warning);
+        }
+
+        .btn-unlock {
+            background: linear-gradient(135deg, var(--warning), var(--highlight));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-unlock:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .solution-content { display: none; }
+
+        /* CALCULATION BOX */
+        .calculation-box {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid var(--success);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .calculation-box .step-explanation {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            font-style: italic;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .calculation-box .formula {
+            color: var(--primary);
+            font-size: 1.1em;
+            margin: 12px 0;
+            line-height: 1.8;
+        }
+
+        .calculation-box .result {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 2px dashed #ccc;
+        }
+
+        .highlight-result {
+            background: linear-gradient(135deg, var(--gold), #ffed4e);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 25px 0;
+            font-weight: bold;
+            color: var(--dark);
+            font-size: 1.15em;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* TABLE */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .data-table tr:hover { background: #f5f5f5; }
+
+        /* CHECKLIST */
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .checklist li {
+            padding: 10px 0 10px 35px;
+            position: relative;
+            font-size: 1.05em;
+        }
+
+        .checklist li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--geogebra);
+        }
+
+        /* CANVAS */
+        .canvas-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        canvas {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8f9fa;
+            max-width: 100%;
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .step-box { padding: 25px; }
+            .page-separator h2 { font-size: 1.6em; }
+        }
+    
+        
+/* ==========================================================================
+   NAVIGATION BAR & GLOBAL THEME
+   ========================================================================== */
+:root {
+    --primary: #1e3a5f;
+    --secondary: #2c5282;
+    --accent: #3182ce;
+    --highlight: #f6ad55;
+    --dark: #1a202c;
+    --light: #f7fafc;
+    --warning: #dd6b20;
+    --success: #38a169;
+    --geogebra: #69b34c;
+    --gold: #ffd700;
+}
+
+.main-tabs-nav {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(26, 32, 44, 0.95);
+    border-bottom: 2px solid var(--accent);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tabs-nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 20px;
+}
+
+.main-tab-button {
+    background: transparent;
+    border: none;
+    color: rgba(240, 248, 255, 0.7);
+    padding: 12px 24px;
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(0.85em, 1.8vw, 1.05em);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.main-tab-button:hover {
+    color: var(--highlight);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.main-tab-button.active {
+    color: var(--dark);
+    background: var(--highlight);
+    box-shadow: 0 0 15px rgba(246, 173, 85, 0.4);
+}
+
+.tab-header-block {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 20px;
+}
+
+.tab-header-block h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8em, 4vw, 2.8em);
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.tab-header-block h1 span {
+    color: var(--highlight);
+}
+
+.tab-header-block p {
+    font-size: 1em;
+    opacity: 0.9;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.formula-box .katex-display {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+        .anim-dot.active {
+            background: var(--highlight) !important;
+            transform: scale(1.3);
+            box-shadow: 0 0 8px rgba(246, 173, 85, 0.6);
+        }
+        .anim-btn {
+            transition: all 0.2s;
+        }
+        .anim-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+        
+        /* Genially-style Hotspots */
+        .hotspot-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--highlight);
+            border: 2px solid white;
+            color: var(--dark);
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 5;
+        }
+        .hotspot-btn:hover {
+            transform: scale(1.2);
+            background: var(--accent);
+            color: white;
+        }
+        .hotspot-ripple {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--highlight);
+            animation: rippleEffect 1.8s infinite ease-out;
+            pointer-events: none;
+            top: -2px;
+            left: -2px;
+            box-sizing: content-box;
+        }
+        @keyframes rippleEffect {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-header-block">
+        <h1>Guía de <span>Diseño y Construcción</span></h1>
+        <p>Pasos secuenciales y conceptos de geometría plana para modelar el rotor de Reuleaux</p>
+    </div>
+    
+    <!-- NAVEGACIÓN POR PÁGINAS INDEPENDIENTES (STICKY) -->
+    <nav class="main-tabs-nav">
+        <div class="tabs-nav-container">
+            <a class="main-tab-button" href="index.html"><i class="fas fa-book"></i> 1. Presentación</a><a class="main-tab-button active" href="guia.html"><i class="fas fa-drafting-compass"></i> 2. Guía</a><a class="main-tab-button" href="solucion.html"><i class="fas fa-graduation-cap"></i> 3. Solución</a><a class="main-tab-button" href="generador.html"><i class="fas fa-cogs"></i> 4. Generador GeoGebra</a>
+        </div>
+    </nav>
+    
+    
+    <div class="container" style="margin-top: 30px;">
+        <div class="page-number">PÁGINA 2</div>
+            <h2>Guía Paso a Paso para Estudiantes</h2>
+            <p style="font-size: 1.1em; opacity: 0.9;">Instrucciones detalladas sobre QUÉ hacer y QUÉ fórmulas usar (sin desarrollo)</p>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="step-box">
+            <div class="step-number">1</div>
+            <h3><i class="fas fa-draw-polygon"></i> Construcción del Triángulo Equilátero Base</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Construye un triángulo equilátero de lado <strong>w</strong> (ancho constante del polígono de Reuleaux). Este será la base para construir el rotor.</p>
+
+            <h4>Conceptos geométricos a aplicar:</h4>
+            <ul class="checklist">
+                <li>Propiedades del triángulo equilátero (3 lados iguales, 3 ángulos de 60°)</li>
+                <li>Construcción con regla y compás o en GeoGebra</li>
+                <li>Ubicación de vértices en coordenadas convenientes</li>
+            </ul>
+
+            <div class="formula-box">
+                <h4>Fórmula del área del triángulo equilátero:</h4>
+                $$A_{triángulo} = \frac{\sqrt{3}}{4} \cdot w^2$$
+                <p style="margin-top: 10px; font-size: 0.95em; color: #666;">
+                    <strong>Donde:</strong> w = longitud del lado del triángulo
+                </p>
+            </div>
+
+            <div class="tip-box">
+                <i class="fas fa-lightbulb"></i> <strong>Consejo:</strong> Coloca un vértice en el origen (0,0) y otro en (w, 0) para facilitar los cálculos. El tercer vértice estará en (w/2, w√3/2).
+            </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="step-box">
+            <div class="step-number">2</div>
+            <h3><i class="fas fa-circle-notch"></i> Trazado de los 3 Arcos del Reuleaux</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Desde cada vértice del triángulo equilátero, traza un arco de circunferencia con radio w que conecte los otros dos vértices.</p>
+
+            <h4>Procedimiento geométrico:</h4>
+            <ol>
+                <li><strong>Arco 1:</strong> Centro en vértice A, radio w, desde vértice B hasta vértice C</li>
+                <li><strong>Arco 2:</strong> Centro en vértice B, radio w, desde vértice C hasta vértice A</li>
+                <li><strong>Arco 3:</strong> Centro en vértice C, radio w, desde vértice A hasta vértice B</li>
+            </ol>
+
+            <div class="formula-box">
+                <h4>Propiedad de cada arco:</h4>
+                <p>Cada arco es un <strong>sector circular de 60°</strong> (π/3 radianes) con radio w.</p>
+                $$\text{Ángulo del sector} = 60° = \frac{\pi}{3} \text{ rad}$$
+                <p style="margin-top: 10px;">Área de cada sector circular:</p>
+                $$A_{sector} = \frac{60°}{360°} \cdot \pi \cdot w^2 = \frac{\pi \cdot w^2}{6}$$
+            </div>
+
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Importante:</strong> Los arcos deben trazarse HACIA AFUERA del triángulo, no hacia adentro. Esto forma el polígono de Reuleaux convexo.
+            </div>
+        </div>
+
+        
+            <!-- Animador Interactivo de Construcción (Flash-like widget) -->
+            <div class="interactive-animator-card" style="background: white; border: 2px solid #e2e8f0; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 25px; margin: 35px 0; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; box-sizing: border-box;">
+                <div style="text-align: center; width: 100%;">
+                    <h3 style="color: var(--primary); margin: 0; font-size: 1.35em; font-family: 'Playfair Display', serif;"><i class="fas fa-drafting-compass"></i> Animación Interactiva: Construcción del Triángulo de Reuleaux</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 5px; margin-bottom: 0;">Observa el paso a paso detallado y el uso de las herramientas de dibujo geométrico.</p>
+                </div>
+                
+                <!-- SVG Canvas Container -->
+                <div style="position: relative; width: 100%; max-width: 600px; height: 400px; background: #fafbfe; border: 2px solid #cbd5e0; border-radius: 12px; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);">
+                    <svg id="animationSvg" width="600" height="400" viewBox="0 0 600 400" style="width: 100%; height: 100%;">
+                        <!-- Definitions for Grid Pattern -->
+                        <defs>
+                            <pattern id="blueprintGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e6ebf5" stroke-width="1" />
+                            </pattern>
+                        </defs>
+                        
+                        <!-- Background Grid -->
+                        <rect width="600" height="400" fill="url(#blueprintGrid)" />
+                        
+                        <!-- Drawing Paths -->
+                        <path id="draw-arc-b" d="" fill="none" stroke="#cbd5e0" stroke-width="1.5" stroke-dasharray="4,4" />
+                        <path id="draw-arc-c" d="" fill="none" stroke="#cbd5e0" stroke-width="1.5" stroke-dasharray="4,4" />
+                        <line id="draw-line-bc" x1="220" y1="280" x2="220" y2="280" stroke="#a0aec0" stroke-width="2" />
+                        <line id="draw-line-ba" x1="220" y1="280" x2="220" y2="280" stroke="#a0aec0" stroke-width="2" />
+                        <line id="draw-line-ca" x1="380" y1="280" x2="380" y2="280" stroke="#a0aec0" stroke-width="2" />
+                        <path id="reuleaux-shade" d="M 220 280 A 160 160 0 0,1 380 280 A 160 160 0 0,1 300 141.44 A 160 160 0 0,1 220 280 Z" fill="rgba(49, 130, 206, 0.15)" stroke="none" style="opacity: 0; transition: opacity 0.5s;" />
+                        <path id="draw-reu-bc" d="" fill="none" stroke="var(--primary)" stroke-width="3.5" stroke-linecap="round" />
+                        <path id="draw-reu-ca" d="" fill="none" stroke="var(--primary)" stroke-width="3.5" stroke-linecap="round" />
+                        <path id="draw-reu-ab" d="" fill="none" stroke="var(--primary)" stroke-width="3.5" stroke-linecap="round" />
+                        
+                        <!-- Points and Labels -->
+                        <g id="label-b" style="opacity: 0; transition: opacity 0.3s;">
+                            <circle cx="220" cy="280" r="5" fill="var(--primary)" />
+                            <text x="205" y="295" font-family="'Poppins', sans-serif" font-weight="700" font-size="14" fill="var(--primary)">B</text>
+                        </g>
+                        <g id="label-c" style="opacity: 0; transition: opacity 0.3s;">
+                            <circle cx="380" cy="280" r="5" fill="var(--primary)" />
+                            <text x="388" y="295" font-family="'Poppins', sans-serif" font-weight="700" font-size="14" fill="var(--primary)">C</text>
+                        </g>
+                        <g id="label-a" style="opacity: 0; transition: opacity 0.3s;">
+                            <circle cx="300" cy="141.44" r="5" fill="var(--primary)" />
+                            <text x="295" y="128" font-family="'Poppins', sans-serif" font-weight="700" font-size="14" fill="var(--primary)">A</text>
+                        </g>
+                        
+                        <!-- Ruler -->
+                        <g id="svg-ruler" style="display: none; opacity: 0; transition: opacity 0.3s;">
+                            <g transform="translate(0, 0)">
+                                <rect x="-10" y="-12" width="220" height="24" fill="#feebc8" stroke="#dd6b20" stroke-width="1.5" rx="3" opacity="0.9" />
+                                <line x1="10" y1="12" x2="10" y2="4" stroke="#7b341e" stroke-width="1" />
+                                <line x1="30" y1="12" x2="30" y2="6" stroke="#7b341e" stroke-width="1" />
+                                <line x1="50" y1="12" x2="50" y2="4" stroke="#7b341e" stroke-width="1" />
+                                <line x1="70" y1="12" x2="70" y2="6" stroke="#7b341e" stroke-width="1" />
+                                <line x1="90" y1="12" x2="90" y2="4" stroke="#7b341e" stroke-width="1" />
+                                <line x1="110" y1="12" x2="110" y2="6" stroke="#7b341e" stroke-width="1" />
+                                <line x1="130" y1="12" x2="130" y2="4" stroke="#7b341e" stroke-width="1" />
+                                <line x1="150" y1="12" x2="150" y2="6" stroke="#7b341e" stroke-width="1" />
+                                <line x1="170" y1="12" x2="170" y2="4" stroke="#7b341e" stroke-width="1" />
+                                <line x1="190" y1="12" x2="190" y2="6" stroke="#7b341e" stroke-width="1" />
+                            </g>
+                        </g>
+                        
+                        <!-- Detailed Realistic Compass -->
+                        <g id="svg-compass" style="display: none; opacity: 0; transition: opacity 0.3s;">
+                            <!-- Threaded horizontal bar & thumbscrew wheel -->
+                            <line x1="-15" y1="-80" x2="100" y2="-60" stroke="#a0aec0" stroke-width="2.5" />
+                            <circle cx="42" cy="-70" r="10" fill="#718096" stroke="#4a5568" stroke-width="1.5" />
+                            <rect x="38" y="-75" width="8" height="10" fill="#cbd5e0" rx="1" />
+                            
+                            <!-- Top Handle -->
+                            <rect x="-4" y="-145" width="8" height="25" fill="#4a5568" rx="2"/>
+                            <circle cx="0" cy="-145" r="5" fill="#2d3748"/>
+                            
+                            <!-- Hinge joint -->
+                            <circle cx="0" cy="-120" r="12" fill="#4a5568" stroke="#cbd5e0" stroke-width="2" />
+                            <circle cx="0" cy="-120" r="4" fill="#a0aec0" />
+                            
+                            <!-- Needle Leg (Arm 1) -->
+                            <!-- Upper Arm -->
+                            <path d="M -6 -120 L -12 -50 L 0 -50 L 0 -120 Z" fill="#718096" stroke="#4a5568" stroke-width="1"/>
+                            <!-- Lower Arm -->
+                            <path d="M -6 -50 L -2 0 L 2 0 L 0 -50 Z" fill="#cbd5e0" stroke="#718096" stroke-width="1"/>
+                            <!-- Metal needle tip -->
+                            <line x1="0" y1="0" x2="0" y2="12" stroke="#2d3748" stroke-width="1.5" stroke-linecap="round"/>
+                            
+                            <!-- Pencil Leg (Arm 2) -->
+                            <!-- Upper Arm -->
+                            <path d="M 6 -120 L 75 -65 L 68 -55 L 0 -120 Z" fill="#718096" stroke="#4a5568" stroke-width="1"/>
+                            <!-- Lower Arm/Holder -->
+                            <path d="M 71 -60 L 160 0 L 152 8 L 68 -55 Z" fill="#cbd5e0" stroke="#718096" stroke-width="1"/>
+                            <!-- Pivot joint -->
+                            <circle cx="71" cy="-60" r="5" fill="#4a5568"/>
+                            
+                            <!-- Pencil assembly -->
+                            <g transform="translate(160, 0) rotate(20)">
+                                <!-- Attachment ring -->
+                                <rect x="-8" y="-10" width="16" height="8" fill="#4a5568" rx="2"/>
+                                <circle cx="6" cy="-6" r="3" fill="#a0aec0"/>
+                                
+                                <!-- Pencil -->
+                                <rect x="-3" y="-12" width="6" height="18" fill="#ecc94b" stroke="#b7791f" stroke-width="0.8" />
+                                <polygon points="-3,6 3,6 0,14" fill="#fbd38d" />
+                                <polygon points="-1,11 1,11 0,14" fill="#1a202c" />
+                            </g>
+                        </g>
+                        
+                        <!-- Pencil (for ruler drawing) -->
+                        <g id="svg-pencil" style="display: none; opacity: 0; transition: opacity 0.2s;">
+                            <g transform="translate(-3, -15) rotate(-15)">
+                                <rect x="0" y="0" width="6" height="20" fill="#f56565" stroke="#c53030" stroke-width="0.8" />
+                                <polygon points="0,0 6,0 3,-6" fill="#fbd38d" />
+                                <polygon points="1.5,-3 4.5,-3 3,-6" fill="#1a202c" />
+                                <circle cx="3" cy="18" r="1.5" fill="#ecc94b" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                
+                <!-- Description Box -->
+                <div style="width: 100%; max-width: 600px; min-height: 70px; background: #1a202c; color: white; border-radius: 10px; padding: 15px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; box-sizing: border-box;">
+                    <div id="anim-step-badge" style="background: var(--highlight); color: var(--dark); font-weight: bold; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1em; flex-shrink: 0;">0</div>
+                    <p id="anim-step-desc" style="margin: 0; font-size: 0.95em; line-height: 1.5; color: #e2e8f0; font-weight: 500;">Inicio: Pulsa 'Siguiente' o 'Reproducir' para iniciar la construcción paso a paso del triángulo de Reuleaux.</p>
+                </div>
+                
+                <!-- Controls and Dots -->
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+                    <!-- Progress Dots -->
+                    <div style="display: flex; gap: 8px;">
+                        <span class="anim-dot active" onclick="jumpToStep(0)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(1)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(2)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(3)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(4)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(5)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(6)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(7)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                        <span class="anim-dot" onclick="jumpToStep(8)" style="width: 10px; height: 10px; border-radius: 50%; background: #cbd5e0; cursor: pointer; transition: all 0.3s;"></span>
+                    </div>
+                    
+                    <!-- Buttons -->
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="anim-btn" id="anim-prev" onclick="stepPrev()" style="width: 45px; height: 45px; border-radius: 50%; border: 1.5px solid #cbd5e0; background: white; color: var(--primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; transition: all 0.2s;" title="Paso anterior"><i class="fas fa-chevron-left"></i></button>
+                        <button class="anim-btn" id="anim-play" onclick="togglePlay()" style="padding: 12px 25px; border-radius: 30px; border: none; background: linear-gradient(135deg, var(--accent), var(--secondary)); color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1em; transition: all 0.3s; box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3); min-width: 130px; justify-content: center;" title="Reproducción automática"><i class="fas fa-play"></i> Reproducir</button>
+                        <button class="anim-btn" id="anim-next" onclick="stepNext()" style="width: 45px; height: 45px; border-radius: 50%; border: 1.5px solid #cbd5e0; background: white; color: var(--primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; transition: all 0.2s;" title="Siguiente paso"><i class="fas fa-chevron-right"></i></button>
+                        <button class="anim-btn" id="anim-reset" onclick="resetAnimation()" style="padding: 12px 20px; border-radius: 30px; border: 1.5px solid #cbd5e0; background: white; color: #718096; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.95em; transition: all 0.2s;" title="Reiniciar construcción"><i class="fas fa-undo"></i> Reiniciar</button>
+                        <button class="anim-btn" id="anim-sound-btn" onclick="toggleSound()" style="width: 45px; height: 45px; border-radius: 50%; border: 1.5px solid #cbd5e0; background: white; color: var(--primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; transition: all 0.2s;" title="Desactivar narrador"><i class="fas fa-volume-up"></i></button>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size: 0.95em; color: #4a5568; margin-top: 10px; font-style: italic; text-align: center;"><i class="fas fa-image"></i> Figura 1: Esquema animado interactivo de construcción geométrica del triángulo de Reuleaux</p>
+        </div>
+        <!-- PASO 3 -->
+        <div class="step-box">
+            <div class="step-number">3</div>
+            <h3><i class="fas fa-circle"></i> Construcción del Círculo Circunscrito</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Dibuja el círculo que pasa por los 3 vértices del triángulo equilátero (y del Reuleaux). Este círculo representa el estator de la bomba.</p>
+
+            <h4>Conceptos a aplicar:</h4>
+            <ul>
+                <li>Centroide del triángulo equilátero (intersección de medianas)</li>
+                <li>Radio del círculo circunscrito</li>
+                <li>Distancia del centroide a cualquier vértice</li>
+            </ul>
+
+            <div class="formula-box">
+                <h4>Fórmulas necesarias:</h4>
+                <p>Radio del círculo circunscrito:</p>
+                $$R = \frac{w}{\sqrt{3}}$$
+                <p style="margin-top: 10px;">Área del círculo circunscrito:</p>
+                $$A_{círculo} = \pi \cdot R^2 = \frac{\pi \cdot w^2}{3}$$
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> <strong>Nota:</strong> El centro del círculo coincide con el centroide del triángulo equilátero.
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="step-box">
+            <div class="step-number">4</div>
+            <h3><i class="fas fa-cut"></i> Descomposición del Reuleaux en Figuras Elementales</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Descompón el triángulo de Reuleaux en figuras geométricas cuyas áreas conozcas: el triángulo equilátero central y los 3 segmentos circulares.</p>
+
+            <h4>Estructura del Reuleaux:</h4>
+            <div class="formula-box">
+                <p><strong>Reuleaux = Triángulo equilátero + 3 segmentos circulares</strong></p>
+            </div>
+
+            <h4>Conceptos a aplicar:</h4>
+            <ul class="checklist">
+                <li>Segmento circular = Sector circular - Triángulo isósceles</li>
+                <li>Cada segmento corresponde a un arco de 60°</li>
+                <li>Los 3 segmentos son congruentes (iguales)</li>
+            </ul>
+
+            <div class="tip-box">
+                <i class="fas fa-puzzle-piece"></i> <strong>Estrategia:</strong> Calcula primero el área del triángulo equilátero, luego el área de cada segmento circular, y finalmente suma todo.
+            </div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="step-box">
+            <div class="step-number">5</div>
+            <h3><i class="fas fa-calculator"></i> Cálculo del Área del Reuleaux</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Suma el área del triángulo equilátero más el área de los 3 segmentos circulares para obtener el área total del Reuleaux.</p>
+
+            <h4>Fórmulas a utilizar:</h4>
+            <div class="formula-box">
+                <p>Área de cada segmento circular:</p>
+                $$A_{segmento} = A_{sector} - A_{triángulo\_sector}$$
+                $$A_{segmento} = \frac{\pi \cdot w^2}{6} - \text{(área del triángulo isósceles)}$$
+                
+                <p style="margin-top: 15px;">Área total del Reuleaux:</p>
+                $$A_{Reuleaux} = A_{triángulo} + 3 \cdot A_{segmento}$$
+            </div>
+
+            <div class="warning-box">
+                <i class="fas fa-exclamation-circle"></i> <strong>Atención:</strong> Asegúrate de usar las unidades correctas. Si w está en metros, el área estará en m².
+            </div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="step-box">
+            <div class="step-number">6</div>
+            <h3><i class="fas fa-minus-square"></i> Cálculo de la Diferencia de Áreas (ΔA)</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Resta el área del Reuleaux del área del círculo circunscrito para obtener la diferencia ΔA.</p>
+
+            <div class="formula-box">
+                <h4>Fórmula de la diferencia:</h4>
+                $$\Delta A = A_{círculo} - A_{Reuleaux}$$
+                
+                <p style="margin-top: 10px;">Esta diferencia representa:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Las 3 regiones entre el círculo y el Reuleaux</li>
+                    <li>El área útil de bombeo por unidad de longitud</li>
+                    <li>Las cavidades que se llenan con crudo durante la rotación</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-percentage"></i> <strong>Interpretación:</strong> ΔA representa aproximadamente el 32.5% del área del círculo circunscrito. Este es el volumen disponible para bombear.
+            </div>
+        </div>
+
+        
+            <!-- Visor 3D Interactivo y Sección Educativa (Genially-like) -->
+            <div class="genially-interactive-card" style="background: white; border: 2px solid #e2e8f0; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 25px; margin: 35px 0; display: flex; flex-direction: column; gap: 25px; width: 100%; box-sizing: border-box;">
+                <div style="text-align: center; width: 100%;">
+                    <h3 style="color: var(--primary); margin: 0; font-size: 1.35em; font-family: 'Playfair Display', serif;"><i class="fas fa-cube"></i> Vista 3D: Funcionamiento del Rotor de Reuleaux en una Bomba BPC</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-top: 5px; margin-bottom: 0;">Funcionamiento del Rotor de Reuleaux en una Bomba BPC (Confinamiento Volumétrico y Flujo Axial No Pulsante)</p>
+                </div>
+                
+                <!-- 3D Canvas with Hotspot Overlays -->
+                <div style="position: relative; width: 100%; height: 450px; background: #1a202c; border-radius: 12px; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);">
+                    <!-- Three.js Canvas Div -->
+                    <div id="threejs-canvas-container" style="width: 100%; height: 100%;"></div>
+                    
+                    <!-- Hover/Click Information Overlay Panel -->
+                    <div id="info-overlay-panel" style="position: absolute; top: 20px; left: 20px; width: 260px; background: rgba(26, 32, 44, 0.85); color: white; border-radius: 8px; padding: 15px; border-left: 4px solid var(--accent); backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.25); pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 10; box-sizing: border-box;">
+                        <h4 id="info-overlay-title" style="margin: 0 0 8px 0; font-size: 1.1em; color: var(--highlight);">Rotor Helicoidal</h4>
+                        <p id="info-overlay-text" style="margin: 0; font-size: 0.85em; line-height: 1.4; color: #cbd5e0;">Información sobre el componente...</p>
+                    </div>
+                    
+                    <!-- Genially-style Hotspots -->
+                    <button class="hotspot-btn" onclick="triggerHotspot('rotor')" style="position: absolute; top: 45%; left: 42%;" title="Rotor Helicoidal de Reuleaux">
+                        <i class="fas fa-info"></i>
+                        <span class="hotspot-ripple"></span>
+                    </button>
+                    <button class="hotspot-btn" onclick="triggerHotspot('estator')" style="position: absolute; top: 22%; left: 52%;" title="Estator Elastómero Helicoidal">
+                        <i class="fas fa-info"></i>
+                        <span class="hotspot-ripple"></span>
+                    </button>
+                    <button class="hotspot-btn" onclick="triggerHotspot('housing')" style="position: absolute; top: 62%; left: 66%;" title="Carcasa de la Bomba (BPC housing)">
+                        <i class="fas fa-info"></i>
+                        <span class="hotspot-ripple"></span>
+                    </button>
+                    <button class="hotspot-btn" onclick="triggerHotspot('trayectoria')" style="position: absolute; top: 58%; left: 28%;" title="Trayectoria Excéntrica">
+                        <i class="fas fa-info"></i>
+                        <span class="hotspot-ripple"></span>
+                    </button>
+                    <button class="hotspot-btn" onclick="triggerHotspot('flujo')" style="position: absolute; top: 32%; left: 82%;" title="Flujo de Salida (Descarga)">
+                        <i class="fas fa-info"></i>
+                        <span class="hotspot-ripple"></span>
+                    </button>
+                    
+                    <!-- Help tooltip -->
+                    <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); padding: 5px 12px; border-radius: 20px; font-size: 0.8em; display: flex; align-items: center; gap: 8px; pointer-events: none;">
+                        <i class="fas fa-mouse"></i> Arrastra para rotar en 3D
+                    </div>
+                </div>
+                
+                <!-- Two-Column Layout: Video & Summary -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; align-items: start; width: 100%;">
+                    <!-- Left: YouTube Video embed -->
+                    <div style="width: 100%;">
+                        <h4 style="color: var(--primary); margin-top: 0; margin-bottom: 12px; font-size: 1.1em; display: flex; align-items: center; gap: 8px;">
+                            <i class="fab fa-youtube" style="color: #e53e3e;"></i> Video Explicativo: Bombas BPC
+                        </h4>
+                        <div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/iqWXe2wzWOs" title="BOMBAS DE CAVIDAD PROGRESIVA PARTE I" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Technical Summary -->
+                    <div style="width: 100%; background: #f8f9fa; border-radius: 12px; padding: 20px; border-left: 4px solid var(--geogebra); box-sizing: border-box;">
+                        <h4 style="color: var(--primary); margin-top: 0; margin-bottom: 12px; font-size: 1.1em; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-book-reader"></i> Dinámica de Desplazamiento
+                        </h4>
+                        <p style="margin: 0; font-size: 0.9em; line-height: 1.5; color: #4a5568;">
+                            El movimiento del rotor es <strong>planetario</strong>: su centro gira en una órbita circular alrededor del eje del estator, mientras el rotor gira sobre sí mismo en sentido contrario. Este movimiento crea cámaras de desplazamiento herméticas (en color naranja) que empujan el fluido axialmente de manera continua y sin pulsaciones.
+                        </p>
+                        <div style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;">
+                            <span style="font-size: 0.8em; background: #e2e8f0; color: #4a5568; padding: 4px 10px; border-radius: 20px; font-weight: 500;">Escala 3D: 1:1</span>
+                            <span style="font-size: 0.8em; background: #e2e8f0; color: #4a5568; padding: 4px 10px; border-radius: 20px; font-weight: 500;">Geometría Reuleaux</span>
+                            <span style="font-size: 0.8em; background: #e2e8f0; color: #4a5568; padding: 4px 10px; border-radius: 20px; font-weight: 500;">Bomba Cavidad Progresiva</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size: 0.95em; color: #4a5568; margin-top: 10px; font-style: italic; text-align: center;"><i class="fas fa-image"></i> Figura 2: Sección transversal interactiva 3D del rotor de Reuleaux y las cavidades de bombeo (ΔA)</p>
+        </div>
+        <!-- PASO 7 -->
+        <div class="step-box">
+            <div class="step-number">7</div>
+            <h3><i class="fas fa-cube"></i> Cálculo del Volumen de Bombeo por Revolución</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Multiplica la diferencia de áreas ΔA por la longitud L del rotor (eje axial) para obtener el volumen desplazado por cada revolución.</p>
+
+            <div class="formula-box">
+                <h4>Fórmula del volumen:</h4>
+                $$V_{rev} = \Delta A \cdot L$$
+                
+                <p style="margin-top: 10px;">Donde:</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>ΔA = diferencia de área (m²)</li>
+                    <li>L = longitud del rotor (m)</li>
+                    <li>V_rev = volumen por revolución (m³)</li>
+                </ul>
+            </div>
+
+            <h4>Ejemplo de aplicación:</h4>
+            <p>Si w = 0.1 m (10 cm) y L = 2 m:</p>
+            <ul>
+                <li>Calcula ΔA usando la fórmula del paso 6</li>
+                <li>Multiplica ΔA × 2 m</li>
+                <li>Convierte a litros (1 m³ = 1000 L)</li>
+            </ul>
+        </div>
+
+        <!-- PASO 8 -->
+        <div class="step-box">
+            <div class="step-number">8</div>
+            <h3><i class="fas fa-percentage"></i> Cálculo de la Eficiencia Geométrica</h3>
+            
+            <p><strong>Qué debes hacer:</strong></p>
+            <p>Calcula el porcentaje del área del Reuleaux respecto al área del círculo circunscrito.</p>
+
+            <div class="formula-box">
+                <h4>Fórmula de eficiencia:</h4>
+                $$\eta = \frac{A_{Reuleaux}}{A_{círculo}} \times 100\%$$
+                
+                <p style="margin-top: 10px;">Esta eficiencia es constante e independiente del valor de w.</p>
+            </div>
+
+            <div class="tip-box">
+                <i class="fas fa-chart-pie"></i> <strong>Dato importante:</strong> La eficiencia geométrica del triángulo de Reuleaux es aproximadamente 67.46%, sin importar el tamaño.
+            </div>
+        </div>
+
+        <!-- RESUMEN DE FÓRMULAS -->
+        <div class="step-box" style="background: linear-gradient(135deg, #f0fff4, #c6f6d5); border-left-color: var(--success);">
+            <div class="step-number" style="background: var(--warning);"><i class="fas fa-list"></i></div>
+            <h3><i class="fas fa-bookmark"></i> Resumen de Fórmulas a Utilizar</h3>
+            
+            <div class="formula-box">
+                <p><strong>1. Triángulo equilátero:</strong></p>
+                $$A = \frac{\sqrt{3}}{4} \cdot w^2$$
+            </div>
+
+            <div class="formula-box">
+                <p><strong>2. Sector circular (60°):</strong></p>
+                $$A = \frac{\pi \cdot w^2}{6}$$
+            </div>
+
+            <div class="formula-box">
+                <p><strong>3. Círculo circunscrito:</strong></p>
+                $$R = \frac{w}{\sqrt{3}}, \quad A = \frac{\pi \cdot w^2}{3}$$
+            </div>
+
+            <div class="formula-box">
+                <p><strong>4. Volumen de bombeo:</strong></p>
+                $$V_{rev} = \Delta A \cdot L$$
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-check-circle"></i> <strong>Verificación:</strong> Al finalizar, verifica que todas las unidades sean consistentes y que los resultados tengan sentido físico.
+            </div>
+        </div>
+
+        <!-- ENTREGABLES -->
+        <div class="step-box" style="background: linear-gradient(135deg, #fffaf0, #feebc8); border-left-color: var(--warning);">
+            <div class="step-number" style="background: var(--highlight);"><i class="fas fa-tasks"></i></div>
+            <h3><i class="fas fa-clipboard-check"></i> Entregables Requeridos</h3>
+            
+            <ol style="margin-left: 20px; line-height: 2;">
+                <li><strong>Memoria de cálculo</strong> con:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Desarrollo paso a paso de todas las fórmulas</li>
+                        <li>Sustitución de valores (si se proporcionan)</li>
+                        <li>Resultados finales con unidades</li>
+                    </ul>
+                </li>
+                <li><strong>Dibujos geométricos</strong> que muestren:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Triángulo equilátero base</li>
+                        <li>Los 3 arcos del Reuleaux</li>
+                        <li>Círculo circunscrito</li>
+                        <li>Descomposición en figuras elementales</li>
+                    </ul>
+                </li>
+                <li><strong>Archivo GeoGebra (.ggb)</strong> interactivo</li>
+                <li><strong>Video explicativo</strong> de 3 minutos</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ==================== PÁGINA 3 ==================== -->
+    <div class="container">
+    </div>
+    
+    
+    <!-- FOOTER ÚNICO UNIFICADO -->
+    <footer>
+        <div class="container">
+            <p><strong>Tema 2: Rotores de Reuleaux - Aplicación de Ingeniería & GeoGebra</strong></p>
+            <p>Prototipo Digital del Rotor de Reuleaux para Bombas de Cavidad Progresiva (PCP)</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                <i class="fas fa-graduation-cap"></i> Material Educativo Integrado · Ingeniería en Petróleos / Mecánica
+            </p>
+        </div>
+    </footer>
+
+
+    <script>
+        function renderMath() {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            } else {
+                setTimeout(renderMath, 50);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', renderMath);
+
+        // ==========================================================================
+        // ANIMADOR INTERACTIVO DEL TRIÁNGULO DE REULEAUX
+        // ==========================================================================
+        let animStep = 0;
+        let isPlaying = false;
+        let playInterval = null;
+        let animationFrame = null;
+        let startTime = null;
+        const animDuration = 1800; // ms por paso
+        
+        const stepsInfo = [
+            {
+                badge: "0",
+                desc: "Inicio: Pulsa 'Siguiente' o 'Reproducir' para iniciar la construcción paso a paso del triángulo de Reuleaux."
+            },
+            {
+                badge: "1",
+                desc: "Paso 1: Coloca la regla y traza el segmento de base BC con la longitud constante w (el ancho de diseño)."
+            },
+            {
+                badge: "2",
+                desc: "Paso 2: Apoya la aguja del compás en B, abre el lápiz hasta C y traza un arco de radio w en la parte superior."
+            },
+            {
+                badge: "3",
+                desc: "Paso 3: Ahora apoya la aguja en C, abre hasta B y traza otro arco de radio w. La intersección de ambos define el vértice superior A."
+            },
+            {
+                badge: "4",
+                desc: "Paso 4: Con la regla y el lápiz, une los vértices A, B y C para completar el triángulo equilátero de base."
+            },
+            {
+                badge: "5",
+                desc: "Paso 5: Apoya la aguja del compás en el vértice superior A, abre hasta B y traza el arco inferior BC que conecta ambos extremos."
+            },
+            {
+                badge: "6",
+                desc: "Paso 6: Traslada la aguja al vértice B, abre hasta C y traza el arco lateral derecho CA."
+            },
+            {
+                badge: "7",
+                desc: "Paso 7: Finalmente, apoya la aguja en C, abre hasta A y traza el arco lateral izquierdo AB."
+            },
+            {
+                badge: "8",
+                desc: "Paso 8: ¡Construcción completa! El rotor de Reuleaux está formado por los 3 arcos circulares. El triángulo interior sirve de base geométrica."
+            }
+        ];
+
+        let isAudioEnabled = true;
+
+        function toggleSound() {
+            isAudioEnabled = !isAudioEnabled;
+            const btn = document.getElementById('anim-sound-btn');
+            if (isAudioEnabled) {
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                btn.style.color = 'var(--primary)';
+                btn.title = 'Desactivar narrador';
+                speakStepText(stepsInfo[animStep].desc);
+            } else {
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                btn.style.color = '#e53e3e';
+                btn.title = 'Activar narrador';
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.cancel();
+                }
+            }
+        }
+
+        function speakStepText(text) {
+            if (!isAudioEnabled) return;
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                
+                // Limpiar texto para lectura natural
+                let cleanText = text.replace(/\$/g, "")
+                                    .replace(/\Delta/g, "delta")
+                                    .replace(/\eta/g, "eficiencia")
+                                    .replace(/w/g, "el ancho w")
+                                    .replace(/L/g, "la longitud L")
+                                    .replace(/A/g, "A")
+                                    .replace(/B/g, "B")
+                                    .replace(/C/g, "C")
+                                    .replace(/×/g, "por")
+                                    .replace(/·/g, "por");
+                
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'es-ES';
+                utterance.rate = 1.05;
+                utterance.pitch = 1.0;
+                
+                const voices = window.speechSynthesis.getVoices();
+                const esVoice = voices.find(v => v.lang.startsWith('es'));
+                if (esVoice) {
+                    utterance.voice = esVoice;
+                }
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateStepUI() {
+            document.getElementById('anim-step-badge').textContent = stepsInfo[animStep].badge;
+            document.getElementById('anim-step-desc').textContent = stepsInfo[animStep].desc;
+            
+            const dots = document.querySelectorAll('.anim-dot');
+            dots.forEach((dot, idx) => {
+                if (idx === animStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            speakStepText(stepsInfo[animStep].desc);
+        }
+
+        function drawState(step, progress) {
+            const lineBC = document.getElementById('draw-line-bc');
+            const lineBA = document.getElementById('draw-line-ba');
+            const lineCA = document.getElementById('draw-line-ca');
+            const arcB = document.getElementById('draw-arc-b');
+            const arcC = document.getElementById('draw-arc-c');
+            const reuBC = document.getElementById('draw-reu-bc');
+            const reuCA = document.getElementById('draw-reu-ca');
+            const reuAB = document.getElementById('draw-reu-ab');
+            
+            const ruler = document.getElementById('svg-ruler');
+            const compass = document.getElementById('svg-compass');
+            const pencil = document.getElementById('svg-pencil');
+            
+            const labelB = document.getElementById('label-b');
+            const labelC = document.getElementById('label-c');
+            const labelA = document.getElementById('label-a');
+            const shade = document.getElementById('reuleaux-shade');
+            
+            ruler.style.display = 'none';
+            ruler.style.opacity = 0;
+            compass.style.display = 'none';
+            compass.style.opacity = 0;
+            pencil.style.display = 'none';
+            pencil.style.opacity = 0;
+            
+            labelB.style.opacity = (step >= 1) ? 1 : 0;
+            labelC.style.opacity = (step >= 1) ? 1 : 0;
+            labelA.style.opacity = (step >= 3) ? 1 : 0;
+            shade.style.opacity = (step >= 8) ? 1 : 0;
+            
+            if (step > 1) {
+                lineBC.setAttribute('x2', '380');
+            } else if (step < 1) {
+                lineBC.setAttribute('x2', '220');
+            }
+            
+            if (step > 2) {
+                arcB.setAttribute('d', 'M 380 280 A 160 160 0 0,0 300 141.44');
+            } else if (step < 2) {
+                arcB.setAttribute('d', '');
+            }
+            
+            if (step > 3) {
+                arcC.setAttribute('d', 'M 220 280 A 160 160 0 0,1 300 141.44');
+            } else if (step < 3) {
+                arcC.setAttribute('d', '');
+            }
+            
+            if (step > 4) {
+                lineBA.setAttribute('x2', '300');
+                lineBA.setAttribute('y2', '141.44');
+                lineCA.setAttribute('x2', '300');
+                lineCA.setAttribute('y2', '141.44');
+            } else if (step < 4) {
+                lineBA.setAttribute('x2', '220');
+                lineBA.setAttribute('y2', '280');
+                lineCA.setAttribute('x2', '380');
+                lineCA.setAttribute('y2', '280');
+            }
+            
+            if (step > 5) {
+                reuBC.setAttribute('d', 'M 220 280 A 160 160 0 0,0 380 280');
+            } else if (step < 5) {
+                reuBC.setAttribute('d', '');
+            }
+            
+            if (step > 6) {
+                reuCA.setAttribute('d', 'M 380 280 A 160 160 0 0,0 300 141.44');
+            } else if (step < 6) {
+                reuCA.setAttribute('d', '');
+            }
+            
+            if (step > 7) {
+                reuAB.setAttribute('d', 'M 300 141.44 A 160 160 0 0,0 220 280');
+            } else if (step < 7) {
+                reuAB.setAttribute('d', '');
+            }
+            
+            if (step === 1) {
+                ruler.style.display = 'block';
+                ruler.style.opacity = 1;
+                ruler.setAttribute('transform', 'translate(220, 292)');
+                
+                pencil.style.display = 'block';
+                pencil.style.opacity = 1;
+                const px = 220 + 160 * progress;
+                pencil.setAttribute('transform', `translate(${px}, 280)`);
+                
+                lineBC.setAttribute('x2', px.toString());
+            } 
+            else if (step === 2) {
+                compass.style.display = 'block';
+                compass.style.opacity = 1;
+                const angle = 0 - 60 * progress;
+                compass.setAttribute('transform', `translate(220, 280) rotate(${angle})`);
+                
+                const rad = angle * Math.PI / 180;
+                const xe = 220 + 160 * Math.cos(rad);
+                const ye = 280 + 160 * Math.sin(rad);
+                arcB.setAttribute('d', `M 380 280 A 160 160 0 0,0 ${xe} ${ye}`);
+            }
+            else if (step === 3) {
+                compass.style.display = 'block';
+                compass.style.opacity = 1;
+                const angle = 180 + 60 * progress;
+                compass.setAttribute('transform', `translate(380, 280) rotate(${angle})`);
+                
+                const rad = angle * Math.PI / 180;
+                const xe = 380 + 160 * Math.cos(rad);
+                const ye = 280 + 160 * Math.sin(rad);
+                arcC.setAttribute('d', `M 220 280 A 160 160 0 0,1 ${xe} ${ye}`);
+            }
+            else if (step === 4) {
+                ruler.style.display = 'block';
+                ruler.style.opacity = 1;
+                pencil.style.display = 'block';
+                pencil.style.opacity = 1;
+                
+                if (progress <= 0.5) {
+                    const p = progress * 2;
+                    ruler.setAttribute('transform', 'translate(220, 280) rotate(-60) translate(0, 12)');
+                    const dx = 80 * p;
+                    const dy = 138.56 * p;
+                    const px = 220 + dx;
+                    const py = 280 - dy;
+                    pencil.setAttribute('transform', `translate(${px}, ${py})`);
+                    
+                    lineBA.setAttribute('x2', px.toString());
+                    lineBA.setAttribute('y2', py.toString());
+                } else {
+                    lineBA.setAttribute('x2', '300');
+                    lineBA.setAttribute('y2', '141.44');
+                    
+                    const p = (progress - 0.5) * 2;
+                    ruler.setAttribute('transform', 'translate(380, 280) rotate(-120) translate(0, -12)');
+                    const dx = 80 * p;
+                    const dy = 138.56 * p;
+                    const px = 380 - dx;
+                    const py = 280 - dy;
+                    pencil.setAttribute('transform', `translate(${px}, ${py})`);
+                    
+                    lineCA.setAttribute('x2', px.toString());
+                    lineCA.setAttribute('y2', py.toString());
+                }
+            }
+            else if (step === 5) {
+                compass.style.display = 'block';
+                compass.style.opacity = 1;
+                const angle = 120 - 60 * progress;
+                compass.setAttribute('transform', `translate(300, 141.44) rotate(${angle})`);
+                
+                const rad = angle * Math.PI / 180;
+                const xe = 300 + 160 * Math.cos(rad);
+                const ye = 141.44 + 160 * Math.sin(rad);
+                reuBC.setAttribute('d', `M 220 280 A 160 160 0 0,0 ${xe} ${ye}`);
+            }
+            else if (step === 6) {
+                compass.style.display = 'block';
+                compass.style.opacity = 1;
+                const angle = 0 - 60 * progress;
+                compass.setAttribute('transform', `translate(220, 280) rotate(${angle})`);
+                
+                const rad = angle * Math.PI / 180;
+                const xe = 220 + 160 * Math.cos(rad);
+                const ye = 280 + 160 * Math.sin(rad);
+                reuCA.setAttribute('d', `M 380 280 A 160 160 0 0,0 ${xe} ${ye}`);
+            }
+            else if (step === 7) {
+                compass.style.display = 'block';
+                compass.style.opacity = 1;
+                const angle = 240 - 60 * progress;
+                compass.setAttribute('transform', `translate(380, 280) rotate(${angle})`);
+                
+                const rad = angle * Math.PI / 180;
+                const xe = 380 + 160 * Math.cos(rad);
+                const ye = 280 + 160 * Math.sin(rad);
+                reuAB.setAttribute('d', `M 300 141.44 A 160 160 0 0,0 ${xe} ${ye}`);
+            }
+        }
+
+        function animateStep(step, onComplete) {
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+            startTime = null;
+            animStep = step;
+            updateStepUI();
+            
+            function frame(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / animDuration, 1.0);
+                
+                drawState(animStep, progress);
+                
+                if (progress < 1.0) {
+                    animationFrame = requestAnimationFrame(frame);
+                } else {
+                    if (onComplete) onComplete();
+                }
+            }
+            animationFrame = requestAnimationFrame(frame);
+        }
+
+        function startAutoPlay() {
+            isPlaying = true;
+            document.getElementById('anim-play').innerHTML = '<i class="fas fa-pause"></i> Pausar';
+            
+            function playNext() {
+                if (!isPlaying) return;
+                if (animStep < 8) {
+                    animateStep(animStep + 1, () => {
+                        playInterval = setTimeout(playNext, 1200);
+                    });
+                } else {
+                    stopAutoPlay();
+                    resetAnimation();
+                }
+            }
+            playNext();
+        }
+        
+        function stopAutoPlay() {
+            isPlaying = false;
+            document.getElementById('anim-play').innerHTML = '<i class="fas fa-play"></i> Reproducir';
+            if (playInterval) clearTimeout(playInterval);
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+        }
+        
+        function togglePlay() {
+            if (isPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
+        
+        function stepNext() {
+            stopAutoPlay();
+            if (animStep < 8) {
+                animateStep(animStep + 1, null);
+            }
+        }
+        
+        function stepPrev() {
+            stopAutoPlay();
+            if (animStep > 0) {
+                animStep--;
+                updateStepUI();
+                drawState(animStep, 1.0);
+            }
+        }
+        
+        function jumpToStep(step) {
+            stopAutoPlay();
+            animStep = step;
+            updateStepUI();
+            drawState(animStep, 1.0);
+        }
+        
+        function resetAnimation() {
+            stopAutoPlay();
+            animStep = 0;
+            updateStepUI();
+            drawState(0, 1.0);
+        }
+
+        // ==========================================================================
+        // VISOR 3D INTERACTIVO (THREE.JS) - FIGURA 2 (BOMBA HELICOIDAL BPC)
+        // ==========================================================================
+        let scene, camera, renderer, controls;
+        let rotor, estator, housing, flangeL, flangeR;
+        let t3d = 0;
+        
+        function twistGeometry(geometry, twistAmount) {
+            const position = geometry.attributes.position;
+            for (let i = 0; i < position.count; i++) {
+                const x = position.getX(i);
+                const y = position.getY(i);
+                const z = position.getZ(i);
+                
+                // Torsión proporcional al eje Z
+                const angle = z * twistAmount;
+                const newX = x * Math.cos(angle) - y * Math.sin(angle);
+                const newY = x * Math.sin(angle) + y * Math.cos(angle);
+                
+                position.setXYZ(i, newX, newY, z);
+            }
+            geometry.computeVertexNormals();
+        }
+        
+        function init3D() {
+            const container = document.getElementById('threejs-canvas-container');
+            if (!container) return;
+            
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a202c);
+            
+            camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+            camera.position.set(5, 4, 6);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            // Activar planos de corte locales
+            renderer.localClippingEnabled = true;
+            container.appendChild(renderer.domElement);
+            
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 + 0.1;
+            
+            // Iluminación industrial
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.95);
+            dirLight1.position.set(8, 12, 10);
+            scene.add(dirLight1);
+            
+            const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.45);
+            dirLight2.position.set(-8, 5, -8);
+            scene.add(dirLight2);
+            
+            // Dos planos de corte para hacer un corte de 3/4 en el estator y la carcasa (removiendo un cuadrante frontal)
+            const planeX = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0.0); // Corta la mitad frontal (x > 0)
+            const planeY = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0.0); // Corta la mitad superior (y > 0)
+            const bpcClippingPlanes = [planeX, planeY];
+            
+            // 1. ROTOR HELICOIDAL REULEAUX (Azul brillante)
+            const w = 1.0;
+            const rShape = createReuleauxShape(w);
+            const rotorExtrudeSettings = {
+                depth: 5.0,
+                bevelEnabled: false,
+                steps: 60
+            };
+            const rotorGeo = new THREE.ExtrudeGeometry(rShape, rotorExtrudeSettings);
+            rotorGeo.center(); // Centrar en eje Z
+            twistGeometry(rotorGeo, 0.8); // Aplicar torsión helicoidal
+            
+            const rotorMat = new THREE.MeshPhongMaterial({
+                color: 0x4299e1, // Azul claro de la imagen
+                shininess: 90,
+                specular: 0xffffff
+            });
+            rotor = new THREE.Mesh(rotorGeo, rotorMat);
+            scene.add(rotor);
+            
+            // 2. ESTATOR BICAVITARIO HELICOIDAL (Azul oscuro con corte)
+            const statorShape = new THREE.Shape();
+            statorShape.absarc(0, 0, 1.8, 0, Math.PI * 2, false);
+            
+            // Cavidad racetrack interna
+            const holePath = new THREE.Path();
+            const rVal = 0.72;
+            const dVal = 0.35;
+            holePath.moveTo(-dVal, -rVal);
+            holePath.absarc(-dVal, 0, rVal, -Math.PI / 2, Math.PI / 2, false);
+            holePath.lineTo(dVal, rVal);
+            holePath.absarc(dVal, 0, rVal, Math.PI / 2, -Math.PI / 2, false);
+            holePath.lineTo(-dVal, -rVal);
+            statorShape.holes.push(holePath);
+            
+            const statorExtrudeSettings = {
+                depth: 5.0,
+                bevelEnabled: false,
+                steps: 60
+            };
+            const statorGeo = new THREE.ExtrudeGeometry(statorShape, statorExtrudeSettings);
+            statorGeo.center();
+            twistGeometry(statorGeo, 0.8);
+            
+            const statorMat = new THREE.MeshPhongMaterial({
+                color: 0x2b6cb0, // Azul marino
+                side: THREE.DoubleSide,
+                clippingPlanes: bpcClippingPlanes,
+                clipIntersection: true,
+                clipShadows: true,
+                shininess: 45
+            });
+            estator = new THREE.Mesh(statorGeo, statorMat);
+            scene.add(estator);
+            
+            // 3. CARCASA EXTERNA TRANSPARENTE (BPC Housing)
+            const housingGeo = new THREE.CylinderGeometry(1.95, 1.95, 5.0, 48, 1, true);
+            housingGeo.rotateX(Math.PI / 2); // Alinear al eje Z
+            
+            const housingMat = new THREE.MeshPhongMaterial({
+                color: 0xe2e8f0,
+                transparent: true,
+                opacity: 0.18,
+                side: THREE.DoubleSide,
+                clippingPlanes: bpcClippingPlanes,
+                clipIntersection: true,
+                shininess: 100
+            });
+            housing = new THREE.Mesh(housingGeo, housingMat);
+            scene.add(housing);
+            
+            // 4. BRIDAS METÁLICAS EN EXTREMOS (Flanges)
+            const flangeGeo = new THREE.CylinderGeometry(2.2, 2.2, 0.4, 48);
+            flangeGeo.rotateX(Math.PI / 2);
+            
+            const flangeMat = new THREE.MeshPhongMaterial({
+                color: 0x718096, // Gris metálico
+                shininess: 85,
+                clippingPlanes: bpcClippingPlanes,
+                clipIntersection: true
+            });
+            
+            flangeL = new THREE.Mesh(flangeGeo, flangeMat);
+            flangeL.position.z = -2.5;
+            scene.add(flangeL);
+            
+            flangeR = new THREE.Mesh(flangeGeo, flangeMat);
+            flangeR.position.z = 2.5;
+            scene.add(flangeR);
+            
+            // 5. VECTORES DE FLUJO EN ENTRADA Y SALIDA (Arrows)
+            // Flecha verde de entrada (Succión)
+            const dirZ = new THREE.Vector3(0, 0, 1);
+            const posSuction = new THREE.Vector3(0, 0, -3.7);
+            const suctionArrow = new THREE.ArrowHelper(dirZ, posSuction, 0.9, 0x48bb78, 0.3, 0.2);
+            scene.add(suctionArrow);
+            
+            // Flecha azul de salida (Descarga)
+            const posDischarge = new THREE.Vector3(0, 0, 2.8);
+            const dischargeArrow = new THREE.ArrowHelper(dirZ, posDischarge, 0.9, 0x3182ce, 0.3, 0.2);
+            scene.add(dischargeArrow);
+            
+            // Ayudante de trayectoria excéntrica (eje de color rojo)
+            const orbitGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, -2.5),
+                new THREE.Vector3(0, 0, 2.5)
+            ]);
+            const orbitMat = new THREE.LineBasicMaterial({ color: 0xe53e3e, linewidth: 3 });
+            orbitAxis = new THREE.Line(orbitGeo, orbitMat);
+            scene.add(orbitAxis);
+            
+            animate3D();
+            
+            window.addEventListener('resize', onWindowResize);
+        }
+        
+        function createReuleauxShape(w) {
+            const shape = new THREE.Shape();
+            const radius = w;
+            const h = w * Math.sqrt(3) / 2;
+            
+            const ay = (2/3) * h;
+            const by = -(1/3) * h;
+            const bx = -w/2;
+            const cy = -(1/3) * h;
+            const cx = w/2;
+            
+            const angleAB = Math.atan2(by - ay, bx);
+            const angleAC = Math.atan2(cy - ay, cx);
+            
+            shape.moveTo(bx, by);
+            
+            const segments = 24;
+            for (let i = 1; i <= segments; i++) {
+                const t = i / segments;
+                const angle = angleAB * (1 - t) + angleAC * t;
+                const x = 0 + radius * Math.cos(angle);
+                const y = ay + radius * Math.sin(angle);
+                shape.lineTo(x, y);
+            }
+            
+            const angleBC = Math.atan2(cy - by, cx - bx);
+            const angleBA = Math.atan2(ay - by, -bx);
+            for (let i = 1; i <= segments; i++) {
+                const t = i / segments;
+                const angle = angleBC * (1 - t) + angleBA * t;
+                const x = bx + radius * Math.cos(angle);
+                const y = by + radius * Math.sin(angle);
+                shape.lineTo(x, y);
+            }
+            
+            const angleCA = Math.atan2(ay - cy, -cx);
+            const angleCB = Math.atan2(by - cy, bx - cx);
+            for (let i = 1; i <= segments; i++) {
+                const t = i / segments;
+                const angle = angleCA * (1 - t) + angleCB * t;
+                const x = cx + radius * Math.cos(angle);
+                const y = cy + radius * Math.sin(angle);
+                shape.lineTo(x, y);
+            }
+            
+            return shape;
+        }
+        
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            
+            t3d += 0.015;
+            
+            // Movimiento orbital planetario del rotor
+            const eccentricity = 0.22;
+            const orbitX = eccentricity * Math.cos(t3d);
+            const orbitY = eccentricity * Math.sin(t3d);
+            
+            if (rotor) {
+                // Desplazamiento excéntrico en el plano X-Y
+                rotor.position.x = orbitX;
+                rotor.position.y = orbitY;
+                
+                // Rotación sincronizada en reversa sobre su eje Z
+                rotor.rotation.z = -t3d;
+            }
+            
+            if (orbitAxis) {
+                orbitAxis.position.x = orbitX;
+                orbitAxis.position.y = orbitY;
+            }
+            
+            if (controls) controls.update();
+            if (renderer && scene && camera) renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            const container = document.getElementById('threejs-canvas-container');
+            if (!container || !camera || !renderer) return;
+            
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // ==========================================================================
+        // MANEJADOR DE PUNTOS INTERACTIVOS (GENIALLY HOTSPOTS)
+        // ==========================================================================
+        const hotspotsInfo = {
+            rotor: {
+                title: "Rotor de Reuleaux (Perfil helicoidal 3 lóbulos)",
+                desc: "Es el eje azul helicoidal extruido con perfil de triángulo de Reuleaux. Al girar excéntricamente con trayectoria helicoidal, desplaza las cavidades de fluido a lo largo de la bomba.",
+                speak: "El rotor helicoidal, en color azul, tiene perfil de Reuleaux. Gira excéntricamente y empuja el fluido en dirección axial."
+            },
+            estator: {
+                title: "Estator Elastómero (Bicavitario helicoidal)",
+                desc: "Recubrimiento interno flexible de doble cavidad helicoidal (sección en azul marino). El perfil interno permite encajar al rotor de Reuleaux y crear cámaras herméticas móviles.",
+                speak: "El estator elastómero tiene un perfil de doble cavidad helicoidal. Crea cámaras selladas junto con el rotor."
+            },
+            housing: {
+                title: "Carcasa de la Bomba (BPC housing)",
+                desc: "Estructura exterior protectora (representada en cristal semitransparente con bridas de acoplamiento grises en los extremos) que contiene al estator y al fluido de operación.",
+                speak: "La carcasa de la bomba o B P C housing es la estructura externa de protección. Cuenta con bridas metálicas de sujeción."
+            },
+            trayectoria: {
+                title: "Trayectoria Excéntrica",
+                desc: "Representado por la línea de eje roja en el núcleo. Muestra el desvío y la órbita excéntrica que describe el rotor durante su movimiento planetario rotativo.",
+                speak: "La línea de eje roja representa la excentricidad y trayectoria orbital planetaria que sigue el rotor al girar."
+            },
+            flujo: {
+                title: "Flujo de Salida (Descarga)",
+                desc: "Representa el flujo axial continuo y libre de pulsaciones del fluido a través de las cavidades selladas de la bomba helicoidal (entrada en succión verde, salida en descarga azul).",
+                speak: "El flujo de salida o descarga representa el transporte axial constante de fluido sin pulsaciones."
+            }
+        };
+
+        function triggerHotspot(id) {
+            const info = hotspotsInfo[id];
+            if (!info) return;
+            
+            document.getElementById('info-overlay-title').textContent = info.title;
+            document.getElementById('info-overlay-text').textContent = info.desc;
+            
+            const panel = document.getElementById('info-overlay-panel');
+            panel.style.opacity = 1;
+            
+            speakStepText(info.speak);
+            
+            // Destello en 3D
+            if (id === 'rotor' && rotor) {
+                flashMaterial(rotor.material, 0x4299e1, 0xffeb3b);
+            } else if (id === 'estator' && estator) {
+                flashMaterial(estator.material, 0x2b6cb0, 0xffeb3b);
+            } else if (id === 'housing' && housing) {
+                flashMaterial(housing.material, 0xe2e8f0, 0xffeb3b);
+            } else if (id === 'flangeL' && flangeL) {
+                flashMaterial(flangeL.material, 0x718096, 0xffeb3b);
+            } else if (id === 'flangeR' && flangeR) {
+                flashMaterial(flangeR.material, 0x718096, 0xffeb3b);
+            }
+        }
+        
+        function flashMaterial(material, originalColorHex, flashColorHex) {
+            let count = 0;
+            const originalColor = new THREE.Color(originalColorHex);
+            const flashColor = new THREE.Color(flashColorHex);
+            
+            const interval = setInterval(() => {
+                material.color.copy(count % 2 === 0 ? flashColor : originalColor);
+                count++;
+                if (count > 5) {
+                    clearInterval(interval);
+                    material.color.copy(originalColor);
+                }
+            }, 250);
+        }
+
+        // Inicializar en carga
+        window.addEventListener('DOMContentLoaded', () => {
+            resetAnimation();
+            init3D();
+        });
+    </script>
+</body>
+</html>
