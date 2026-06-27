@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cupulas Geodesicas - Optimizacion Metrica</title>
+<meta name="description" content="Modulo educativo interactivo con Tutor IA estilo Mathos AI, simulador matematico paso a paso y visualizador 3D.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+:root{--accent:#00b4d8;--gold:#f6ad55;--green:#48bb78;--danger:#fc8181;--dark:#0a0f1e;--darker:#060c18;--card-bg:rgba(255,255,255,0.04);--border:rgba(0,180,216,0.25);--text:#e2e8f0;--dim:#94a3b8;--tutor-bg:#0d1117;--tutor-accent:#58a6ff;--tutor-green:#3fb950;--tutor-gold:#d29922;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Poppins',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;line-height:1.7;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--darker) 0%,#0d2137 60%,#0a2d50 100%);padding:55px 20px 38px;text-align:center;position:relative;overflow:hidden;border-bottom:2px solid var(--accent);}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,180,216,0.13) 0%,transparent 65%);pointer-events:none;}
+.hero-badge{display:inline-block;background:rgba(0,180,216,0.15);border:1px solid var(--accent);color:var(--accent);padding:5px 18px;border-radius:30px;font-size:0.8em;font-weight:600;letter-spacing:1px;margin-bottom:18px;text-transform:uppercase;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.7em,4.2vw,3em);font-weight:900;margin-bottom:10px;line-height:1.2;}
+.hero h1 span{color:var(--gold);}
+.hero p{font-size:clamp(0.88em,1.8vw,1.05em);color:var(--dim);max-width:700px;margin:0 auto 18px;}
+.hero-question{display:inline-block;background:rgba(246,173,85,0.1);border:1px solid rgba(246,173,85,0.4);border-radius:12px;padding:14px 24px;font-size:0.97em;color:var(--gold);max-width:800px;font-style:italic;}
+
+/* NAV */
+.main-nav{position:sticky;top:0;z-index:1000;background:rgba(6,12,24,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:center;gap:4px;padding:7px 20px;flex-wrap:wrap;}
+.tab-btn{background:transparent;border:1px solid transparent;color:var(--dim);padding:9px 20px;font-family:'Poppins',sans-serif;font-size:clamp(0.76em,1.4vw,0.92em);font-weight:600;cursor:pointer;border-radius:8px;transition:all 0.3s;display:flex;align-items:center;gap:7px;}
+.tab-btn:hover{color:var(--accent);border-color:var(--border);background:rgba(0,180,216,0.05);}
+.tab-btn.active{color:var(--darker);background:var(--accent);border-color:var(--accent);box-shadow:0 0 16px rgba(0,180,216,0.35);}
+
+/* AUDIO GLOBAL BTN */
+.global-audio-btn{position:fixed;bottom:24px;right:24px;z-index:9000;background:rgba(0,180,216,0.15);border:2px solid var(--accent);color:var(--accent);width:52px;height:52px;border-radius:50%;font-size:1.3em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;backdrop-filter:blur(8px);}
+.global-audio-btn:hover{background:var(--accent);color:var(--darker);transform:scale(1.1);}
+.global-audio-btn.muted{border-color:var(--danger);color:var(--danger);background:rgba(252,129,129,0.1);}
+
+/* TABS */
+.main-tab-content{display:none;}
+.main-tab-content.active{display:block;}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+
+/* CARDS */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:28px;margin:22px 0;backdrop-filter:blur(8px);transition:border-color 0.3s;}
+.card:hover{border-color:rgba(0,180,216,0.48);}
+.card h3{font-size:1.25em;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.tab-header{background:linear-gradient(90deg,rgba(0,180,216,0.1) 0%,transparent 80%);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:18px 26px;margin:28px 0 8px;}
+.tab-header .pn{font-size:0.76em;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.tab-header h2{font-family:'Playfair Display',serif;font-size:1.85em;color:var(--text);}
+.tab-header p{color:var(--dim);margin-top:5px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr;}}
+.step-box{background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;padding:22px 26px;margin:14px 0;position:relative;}
+.step-num{position:absolute;top:-13px;left:18px;background:var(--accent);color:var(--darker);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.97em;}
+.step-title{font-weight:700;color:var(--accent);margin-bottom:7px;font-size:1.02em;}
+.formula-box{background:linear-gradient(135deg,rgba(0,180,216,0.08),rgba(0,180,216,0.03));border:1px solid rgba(0,180,216,0.3);border-radius:10px;padding:16px 20px;margin:12px 0;text-align:center;color:var(--text);}
+.info-box{background:rgba(0,180,216,0.07);border-left:4px solid var(--accent);border-radius:6px;padding:12px 16px;margin:12px 0;}
+.tip-box{background:rgba(72,187,120,0.07);border-left:4px solid var(--green);border-radius:6px;padding:12px 16px;margin:12px 0;}
+.warn-box{background:rgba(246,173,85,0.07);border-left:4px solid var(--gold);border-radius:6px;padding:12px 16px;margin:12px 0;}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.91em;}
+.data-table th{background:rgba(0,180,216,0.15);color:var(--accent);padding:11px 14px;text-align:center;font-weight:700;border-bottom:2px solid var(--border);}
+.data-table td{padding:9px 14px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.06);}
+.data-table tr:hover td{background:rgba(0,180,216,0.05);}
+.data-table .hl td{color:var(--gold);font-weight:700;}
+.checklist{list-style:none;padding:0;}
+.checklist li{padding:7px 0 7px 30px;position:relative;}
+.checklist li::before{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;left:0;color:var(--green);}
+.video-wrapper{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin:18px 0;}
+.video-wrapper iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.video-label{display:flex;align-items:center;gap:9px;color:var(--gold);font-weight:700;font-size:0.97em;margin-bottom:7px;}
+
+/* PASSWORD */
+.password-gate{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:45px 36px;max-width:460px;margin:50px auto;text-align:center;}
+.password-gate h3{color:var(--accent);font-size:1.45em;margin-bottom:10px;}
+.pw-input{width:100%;padding:13px 18px;background:rgba(255,255,255,0.06);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:1.1em;text-align:center;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color 0.3s;margin-bottom:12px;}
+.pw-input:focus{border-color:var(--accent);}
+.btn-unlock{background:linear-gradient(135deg,var(--accent),#0077a8);color:white;border:none;padding:13px 36px;border-radius:10px;font-size:1.02em;font-weight:700;cursor:pointer;transition:all 0.3s;width:100%;}
+.btn-unlock:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,180,216,0.35);}
+.pw-error{color:var(--danger);margin-top:10px;display:none;font-size:0.88em;}
+.pw-hint{color:var(--dim);font-size:0.8em;margin-top:10px;}
+.solution-content{display:none;}
+
+/* 3D */
+#viewer3d-container{width:100%;height:480px;border-radius:14px;overflow:hidden;border:1px solid var(--border);position:relative;background:#05090f;}
+.viewer-controls{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10;}
+.viewer-btn{background:rgba(0,0,0,0.72);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:0.8em;cursor:pointer;transition:all 0.2s;}
+.viewer-btn:hover,.viewer-btn.abtn{background:var(--accent);color:var(--darker);}
+.viewer-label{position:absolute;top:13px;left:16px;color:var(--accent);font-weight:700;font-size:0.86em;}
+
+/* HOTSPOTS */
+.hotspot-container{position:relative;border-radius:14px;overflow:hidden;height:460px;background:#05090f;}
+.hotspot-btn{position:absolute;width:33px;height:33px;border-radius:50%;background:var(--gold);border:2px solid white;color:var(--darker);font-size:0.83em;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.3s;outline:none;}
+.hotspot-btn::after{content:'';position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid var(--gold);animation:hpulse 2s infinite;}
+@keyframes hpulse{0%{transform:scale(1);opacity:1;}100%{transform:scale(2.4);opacity:0;}}
+.hotspot-btn:hover{transform:scale(1.2);background:var(--accent);color:white;}
+.hotspot-tooltip{display:none;position:absolute;background:rgba(5,9,15,0.97);border:1px solid var(--border);border-radius:10px;padding:13px 16px;min-width:210px;max-width:270px;z-index:20;font-size:0.86em;box-shadow:0 8px 25px rgba(0,0,0,0.5);}
+.hotspot-tooltip h4{color:var(--gold);margin-bottom:5px;font-size:0.97em;}
+.hotspot-tooltip.visible{display:block;}
+
+/* SVG ANIMATOR */
+#svg-animator{width:100%;max-width:620px;height:350px;background:#05090f;border:1px solid var(--border);border-radius:12px;margin:0 auto;display:block;}
+.anim-controls{display:flex;align-items:center;gap:9px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.anim-btn{background:rgba(0,180,216,0.1);border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:0.86em;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.anim-btn:hover,.anim-btn.active{background:var(--accent);color:var(--darker);border-color:var(--accent);}
+.anim-dots{display:flex;gap:7px;}
+.anim-dot{width:9px;height:9px;border-radius:50%;background:var(--border);cursor:pointer;transition:all 0.3s;}
+.anim-dot.active{background:var(--accent);transform:scale(1.4);box-shadow:0 0 8px rgba(0,180,216,0.6);}
+.anim-info{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-top:14px;}
+.anim-step-title{color:var(--gold);font-weight:700;margin-bottom:5px;}
+.anim-step-desc{color:var(--dim);font-size:0.9em;}
+
+/* FREQ SLIDER */
+.freq-slider-wrap{display:flex;align-items:center;gap:14px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin:18px 0;flex-wrap:wrap;}
+.freq-slider-wrap label{font-weight:700;color:var(--accent);white-space:nowrap;}
+input[type=range]{flex:1;accent-color:var(--accent);height:6px;min-width:80px;}
+.freq-value{background:rgba(0,180,216,0.12);border:1px solid var(--border);border-radius:8px;padding:5px 14px;font-weight:800;color:var(--gold);font-size:1.08em;min-width:46px;text-align:center;}
+
+/* CMD BLOCK */
+.cmd-block{background:rgba(0,0,0,0.52);border:1px solid rgba(0,180,216,0.2);border-radius:10px;padding:16px 18px;margin:12px 0;position:relative;}
+.cmd-label{font-size:0.76em;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
+.cmd-code{font-family:'JetBrains Mono',monospace;font-size:0.86em;color:#7dd3fc;white-space:pre;overflow-x:auto;line-height:1.8;}
+.cmd-copy{position:absolute;top:12px;right:12px;background:rgba(0,180,216,0.15);border:1px solid var(--border);color:var(--accent);padding:4px 11px;border-radius:6px;font-size:0.78em;cursor:pointer;transition:all 0.2s;}
+.cmd-copy:hover{background:var(--accent);color:var(--darker);}
+.cmd-copy.copied{background:var(--green);color:white;border-color:var(--green);}
+
+/* ═══════════════════════════════════════════════════
+   MATHOS AI / MathGPT-PRO STYLE TUTOR
+   ═══════════════════════════════════════════════════ */
+.math-tutor-panel{background:var(--tutor-bg);border:2px solid rgba(88,166,255,0.3);border-radius:18px;overflow:hidden;margin:24px 0;box-shadow:0 0 40px rgba(88,166,255,0.08);}
+.mtp-topbar{background:#161b22;border-bottom:1px solid rgba(88,166,255,0.2);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.mtp-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1em;color:var(--tutor-accent);}
+.mtp-brand i{font-size:1.2em;}
+.mtp-brand span{font-family:'Poppins',sans-serif;}
+.mtp-counter{background:rgba(88,166,255,0.12);border:1px solid rgba(88,166,255,0.3);border-radius:20px;padding:4px 14px;font-size:0.85em;font-weight:700;color:var(--tutor-accent);}
+.mtp-prog-track{width:100%;height:4px;background:rgba(255,255,255,0.08);}
+.mtp-prog-fill{height:100%;background:linear-gradient(90deg,var(--tutor-accent),var(--tutor-green));transition:width 0.5s ease;width:0%;}
+.mtp-screen{min-height:360px;padding:32px 36px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.mtp-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(88,166,255,0.05) 0%,transparent 70%);}
+.mtp-step-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.3);border-radius:20px;padding:5px 16px;font-size:0.82em;font-weight:700;color:var(--tutor-accent);margin-bottom:18px;animation:fadeSlideIn 0.5s ease;}
+.mtp-title-text{font-family:'Playfair Display',serif;font-size:clamp(1.3em,3vw,1.85em);font-weight:700;color:white;text-align:center;margin-bottom:18px;animation:fadeSlideIn 0.5s ease 0.1s both;}
+.mtp-formula-area{background:rgba(88,166,255,0.05);border:1px solid rgba(88,166,255,0.18);border-radius:14px;padding:24px 32px;margin:14px 0;text-align:center;position:relative;overflow:hidden;width:100%;max-width:700px;animation:fadeSlideIn 0.5s ease 0.2s both;}
+.mtp-formula-area .katex-display{margin:8px 0!important;color:white!important;}
+.mtp-formula-cursor{display:inline-block;width:2px;height:1.2em;background:var(--tutor-accent);margin-left:3px;animation:blink 1s infinite;vertical-align:text-bottom;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.mtp-explain{color:#c9d1d9;font-size:0.97em;text-align:center;max-width:650px;line-height:1.7;animation:fadeSlideIn 0.5s ease 0.35s both;margin-top:8px;}
+.mtp-highlight-box{background:linear-gradient(135deg,rgba(63,185,80,0.1),rgba(63,185,80,0.05));border:1px solid rgba(63,185,80,0.35);border-radius:12px;padding:16px 22px;margin-top:18px;width:100%;max-width:700px;animation:fadeSlideIn 0.5s ease 0.45s both;}
+.mtp-highlight-box strong{color:var(--tutor-green);}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.mtp-controls-bar{background:#0d1117;border-top:1px solid rgba(88,166,255,0.15);padding:16px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mtp-btn{background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.3);color:var(--tutor-accent);padding:9px 20px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:0.88em;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:7px;}
+.mtp-btn:hover{background:var(--tutor-accent);color:var(--tutor-bg);}
+.mtp-btn.primary-btn{background:var(--tutor-accent);color:var(--tutor-bg);font-weight:700;}
+.mtp-btn.primary-btn:hover{opacity:0.88;}
+.mtp-speed-label{color:var(--dim);font-size:0.82em;margin-left:auto;}
+.mtp-speed-select{background:rgba(255,255,255,0.07);border:1px solid rgba(88,166,255,0.25);color:var(--text);padding:6px 10px;border-radius:6px;font-family:'Poppins',sans-serif;font-size:0.85em;cursor:pointer;}
+
+/* ═══════════════════════════════════════════════════
+   INTERACTIVE MATH SIMULATOR
+   ═══════════════════════════════════════════════════ */
+.sim-panel{background:var(--tutor-bg);border:2px solid rgba(63,185,80,0.25);border-radius:18px;overflow:hidden;margin:24px 0;}
+.sim-topbar{background:#161b22;border-bottom:1px solid rgba(63,185,80,0.2);padding:14px 22px;display:flex;align-items:center;gap:12px;}
+.sim-brand{font-weight:700;color:var(--tutor-green);display:flex;align-items:center;gap:9px;}
+.sim-inputs-row{display:flex;gap:14px;padding:22px 22px 10px;flex-wrap:wrap;align-items:flex-end;}
+.sim-field{display:flex;flex-direction:column;gap:6px;}
+.sim-field label{font-size:0.82em;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;}
+.sim-input{background:rgba(255,255,255,0.07);border:1px solid rgba(63,185,80,0.3);border-radius:8px;color:var(--text);padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:1.05em;width:110px;outline:none;transition:border-color 0.3s;}
+.sim-input:focus{border-color:var(--tutor-green);}
+.sim-run-btn{background:linear-gradient(135deg,var(--tutor-green),#2ea043);color:var(--tutor-bg);border:none;padding:12px 28px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:1em;font-weight:700;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.sim-run-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(63,185,80,0.3);}
+.sim-run-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.sim-output{padding:0 22px 22px;min-height:60px;}
+.sim-step-card{background:rgba(255,255,255,0.03);border:1px solid rgba(63,185,80,0.15);border-left:4px solid var(--tutor-green);border-radius:10px;padding:16px 20px;margin:10px 0;opacity:0;transform:translateY(12px);transition:all 0.45s ease;}
+.sim-step-card.visible{opacity:1;transform:translateY(0);}
+.sim-step-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.sim-step-num{width:28px;height:28px;border-radius:50%;background:var(--tutor-green);color:var(--tutor-bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.88em;flex-shrink:0;}
+.sim-step-title{font-weight:700;color:var(--tutor-green);font-size:0.97em;}
+.sim-step-formula{background:rgba(63,185,80,0.06);border-radius:8px;padding:12px 16px;margin:8px 0;font-family:'JetBrains Mono',monospace;font-size:0.92em;color:#7ee787;white-space:pre-wrap;}
+.sim-step-result{color:var(--gold);font-weight:700;font-size:1.05em;margin-top:6px;}
+.sim-final-box{background:linear-gradient(135deg,rgba(63,185,80,0.12),rgba(88,166,255,0.08));border:2px solid var(--tutor-green);border-radius:14px;padding:22px 26px;margin:18px 0;text-align:center;animation:pulseGlow 2s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 rgba(63,185,80,0);}50%{box-shadow:0 0 22px rgba(63,185,80,0.25);}}
+.sim-final-title{color:var(--tutor-green);font-size:1.2em;font-weight:800;margin-bottom:10px;}
+.sim-final-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:12px;}
+.sim-final-item{background:rgba(255,255,255,0.04);border:1px solid rgba(63,185,80,0.25);border-radius:10px;padding:14px 10px;text-align:center;}
+.sim-final-label{color:var(--dim);font-size:0.78em;margin-bottom:4px;}
+.sim-final-val{color:var(--gold);font-size:1.4em;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.sim-running-indicator{display:none;align-items:center;gap:10px;padding:16px 22px;color:var(--tutor-green);font-size:0.9em;font-weight:600;}
+.sim-running-indicator.visible{display:flex;}
+.sim-dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--tutor-green);animation:simDot 1.2s infinite ease-in-out;}
+.sim-dots span:nth-child(2){animation-delay:0.2s;}
+.sim-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes simDot{0%,100%{transform:scale(0.7);opacity:0.4;}50%{transform:scale(1.2);opacity:1;}}
+
+/* FOOTER */
+footer{background:var(--darker);border-top:1px solid var(--border);text-align:center;padding:28px 20px;color:var(--dim);font-size:0.86em;margin-top:55px;}
+footer strong{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<!-- FLOATING AUDIO BUTTON -->
+<button class="global-audio-btn" id="globalAudioBtn" title="Activar/Desactivar narrador" onclick="toggleGlobalAudio()">
+    <i class="fas fa-volume-up" id="globalAudioIcon"></i>
+</button>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-badge"><i class="fas fa-cube"></i> &nbsp; Ingenieria Civil / Estructural &nbsp;·&nbsp; Nivel Universitario</div>
+    <h1>Optimizacion Metrica de<br><span>Cupulas Geodesicas</span></h1>
+    <p>Analisis de como la frecuencia de subdivision poligonal afecta la relacion perimetro-area en estructuras cupula para instalaciones industriales.</p>
+    <div class="hero-question">
+        <i class="fas fa-question-circle"></i>&nbsp;
+        Como varia la relacion entre el perimetro total y el area proyectada al aumentar la frecuencia <em>f</em> de subdivision, y en que punto exacto se estanca el ahorro de material?
+    </div>
+</header>
+
+<!-- NAV -->
+<nav class="main-nav">
+    <div class="nav-inner">
+        <button class="tab-btn active" id="btn-presentacion" onclick="switchTab('presentacion')"><i class="fas fa-book-open"></i> 1. Presentacion</button>
+        <button class="tab-btn" id="btn-guia" onclick="switchTab('guia')"><i class="fas fa-drafting-compass"></i> 2. Guia 3D</button>
+        <button class="tab-btn" id="btn-solucion" onclick="switchTab('solucion')"><i class="fas fa-robot"></i> 3. Tutor IA + Solucion</button>
+        <button class="tab-btn" id="btn-generador" onclick="switchTab('generador')"><i class="fas fa-cogs"></i> 4. Generador GeoGebra</button>
+    </div>
+</nav>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 1: PRESENTACION                       -->
+<!-- ══════════════════════════════════════════ -->
+<div id="tab-presentacion" class="main-tab-content active">
+<div class="container">
+<div class="tab-header">
+    <div class="pn">Pagina 1 de 4</div>
+    <h2>Presentacion del Tema</h2>
+    <p>Fundamentos geometricos, aplicaciones industriales y simulador animado paso a paso con narrador de voz.</p>
+</div>
+
+<div class="grid-2">
+<div class="card">
+    <h3><i class="fas fa-globe"></i> Que es una Cupula Geodesica?</h3>
+    <p>Una <strong>cupula geodesica</strong> es una estructura esferica o semi-esferica construida a partir de una red de triangulos equilateros interconectados. Fueron popularizadas por <strong>Buckminster Fuller</strong> en 1948.</p>
+    <div class="info-box"><i class="fas fa-industry"></i> &nbsp; <strong>Aplicacion:</strong> Tanques de almacenamiento, plantas de tratamiento, reservorios de gas, domos de radares e instalaciones tipo Petroamazonas/UPSE.</div>
+</div>
+<div class="card">
+    <h3><i class="fas fa-project-diagram"></i> El Icosaedro como Base</h3>
+    <p>El proceso parte del <strong>icosaedro regular</strong> (20 caras triangulares, 12 vertices, 30 aristas). Cada cara se subdivide segun la frecuencia <em>f</em> y los vertices se proyectan sobre una esfera de radio R.</p>
+    <ul class="checklist" style="margin-top:10px;">
+        <li>Mayor frecuencia f &rarr; mayor aproximacion a una esfera perfecta</li>
+        <li>Las aristas son mas cortas pero mas numerosas</li>
+        <li>Aumenta la rigidez estructural</li>
+        <li>Disminuye el peso por m&sup2; de cobertura</li>
+    </ul>
+</div>
+</div>
+
+<!-- SVG ANIMATOR con AUDIO -->
+<div class="card" style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+    <div style="text-align:center;width:100%;">
+        <h3 style="justify-content:center;"><i class="fas fa-play-circle"></i> Simulador: Construccion Paso a Paso</h3>
+        <p style="color:var(--dim);font-size:0.9em;">Con narrador de voz integrado — haz clic en <i class="fas fa-volume-up"></i> para escuchar cada paso.</p>
+    </div>
+
+    <svg id="svg-animator" viewBox="0 0 620 350" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <pattern id="bgGrid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(0,180,216,0.08)" stroke-width="1"/></pattern>
+            <radialGradient id="sphereGrad" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#1a4a6e" stop-opacity="0.8"/><stop offset="100%" stop-color="#05090f" stop-opacity="0.95"/></radialGradient>
+        </defs>
+        <rect width="620" height="350" fill="url(#bgGrid)"/>
+        <!-- STEP 0: Icosaedro -->
+        <g id="step-ico" style="opacity:0;transition:opacity 0.6s;">
+            <polygon points="310,55 195,158 227,290 393,290 425,158" fill="rgba(0,180,216,0.08)" stroke="#00b4d8" stroke-width="1.5"/>
+            <line x1="310" y1="55" x2="227" y2="290" stroke="#00b4d8" stroke-width="1.1" stroke-dasharray="4,4"/>
+            <line x1="310" y1="55" x2="393" y2="290" stroke="#00b4d8" stroke-width="1.1" stroke-dasharray="4,4"/>
+            <line x1="195" y1="158" x2="425" y2="158" stroke="#00b4d8" stroke-width="1.1" stroke-dasharray="4,4"/>
+            <line x1="195" y1="158" x2="393" y2="290" stroke="#00b4d8" stroke-width="1.1" stroke-dasharray="4,4"/>
+            <line x1="425" y1="158" x2="227" y2="290" stroke="#00b4d8" stroke-width="1.1" stroke-dasharray="4,4"/>
+            <circle cx="310" cy="55" r="5" fill="#f6ad55"/><circle cx="195" cy="158" r="5" fill="#f6ad55"/>
+            <circle cx="425" cy="158" r="5" fill="#f6ad55"/><circle cx="227" cy="290" r="5" fill="#f6ad55"/>
+            <circle cx="393" cy="290" r="5" fill="#f6ad55"/>
+            <text x="310" y="172" text-anchor="middle" fill="#00b4d8" font-size="13" font-family="Poppins" font-weight="600">Icosaedro Base</text>
+            <text x="310" y="189" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Poppins">20 caras / 12 vertices / 30 aristas</text>
+        </g>
+        <!-- STEP 1: f=1 -->
+        <g id="step-f1" style="opacity:0;transition:opacity 0.6s;">
+            <polygon points="310,48 182,270 438,270" fill="rgba(0,180,216,0.05)" stroke="#00b4d8" stroke-width="2"/>
+            <line x1="246" y1="159" x2="374" y2="159" stroke="#48bb78" stroke-width="1.5"/>
+            <line x1="246" y1="159" x2="310" y2="270" stroke="#48bb78" stroke-width="1.5"/>
+            <line x1="374" y1="159" x2="310" y2="270" stroke="#48bb78" stroke-width="1.5"/>
+            <polygon points="310,48 246,159 374,159" fill="rgba(72,187,120,0.08)" stroke="#48bb78" stroke-width="1.5"/>
+            <polygon points="246,159 182,270 310,270" fill="rgba(72,187,120,0.08)" stroke="#48bb78" stroke-width="1.5"/>
+            <polygon points="374,159 310,270 438,270" fill="rgba(72,187,120,0.08)" stroke="#48bb78" stroke-width="1.5"/>
+            <polygon points="246,159 374,159 310,270" fill="rgba(0,180,216,0.08)" stroke="#00b4d8" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <text x="310" y="193" text-anchor="middle" fill="#48bb78" font-size="13" font-family="Poppins" font-weight="600">f = 1 — 4 triangulos por cara</text>
+            <text x="310" y="210" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Poppins">E=120 aristas / F=80 caras totales</text>
+        </g>
+        <!-- STEP 2: f=2 -->
+        <g id="step-f2" style="opacity:0;transition:opacity 0.6s;">
+            <polygon points="310,38 148,295 472,295" fill="rgba(0,180,216,0.04)" stroke="#00b4d8" stroke-width="2"/>
+            <polygon points="310,38 268,110 352,110" fill="rgba(246,173,85,0.07)" stroke="#f6ad55" stroke-width="1.3"/>
+            <polygon points="268,110 228,182 310,182" fill="rgba(246,173,85,0.07)" stroke="#f6ad55" stroke-width="1.3"/>
+            <polygon points="268,110 352,110 310,182" fill="rgba(0,180,216,0.06)" stroke="#00b4d8" stroke-width="1.3" stroke-dasharray="4,3"/>
+            <polygon points="352,110 392,182 310,182" fill="rgba(246,173,85,0.07)" stroke="#f6ad55" stroke-width="1.3"/>
+            <polygon points="228,182 188,254 268,254" fill="rgba(246,173,85,0.07)" stroke="#f6ad55" stroke-width="1.3"/>
+            <polygon points="228,182 310,182 268,254" fill="rgba(0,180,216,0.06)" stroke="#00b4d8" stroke-width="1.3" stroke-dasharray="4,3"/>
+            <polygon points="310,182 352,254 268,254" fill="rgba(246,173,85,0.07)" stroke="#f6ad55" stroke-width="1.3"/>
+            <polygon points="310,182 392,182 352,254" fill="rgba(0,180,216,0.06)" stroke="#00b4d8" stroke-width="1.3" stroke-dasharray="4,3"/>
+            <polygon points="392,182 432,254 352,254" fill="rgba(246,173,85,0.07)" stroke="#f6ad55" stroke-width="1.3"/>
+            <text x="310" y="318" text-anchor="middle" fill="#f6ad55" font-size="13" font-family="Poppins" font-weight="600">f = 2 — 16 triangulos por cara</text>
+            <text x="310" y="335" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Poppins">V=42 / E=120 / F=80</text>
+        </g>
+        <!-- STEP 3: Proyeccion esferica -->
+        <g id="step-sphere" style="opacity:0;transition:opacity 0.6s;">
+            <circle cx="310" cy="182" r="142" fill="url(#sphereGrad)" stroke="#00b4d8" stroke-width="2"/>
+            <ellipse cx="310" cy="182" rx="142" ry="40" fill="none" stroke="rgba(0,180,216,0.25)" stroke-width="1"/>
+            <ellipse cx="310" cy="148" rx="106" ry="27" fill="none" stroke="rgba(0,180,216,0.2)" stroke-width="1"/>
+            <ellipse cx="310" cy="216" rx="106" ry="27" fill="none" stroke="rgba(0,180,216,0.2)" stroke-width="1"/>
+            <path d="M 310 40 Q 430 182 310 324" fill="none" stroke="rgba(0,180,216,0.25)" stroke-width="1"/>
+            <path d="M 310 40 Q 190 182 310 324" fill="none" stroke="rgba(0,180,216,0.25)" stroke-width="1"/>
+            <line x1="248" y1="78" x2="310" y2="182" stroke="#f6ad55" stroke-width="1" opacity="0.6"/>
+            <line x1="372" y1="78" x2="310" y2="182" stroke="#f6ad55" stroke-width="1" opacity="0.6"/>
+            <line x1="248" y1="78" x2="372" y2="78" stroke="#f6ad55" stroke-width="1" opacity="0.6"/>
+            <line x1="198" y1="228" x2="310" y2="182" stroke="#48bb78" stroke-width="1" opacity="0.6"/>
+            <line x1="422" y1="228" x2="310" y2="182" stroke="#48bb78" stroke-width="1" opacity="0.6"/>
+            <text x="310" y="344" text-anchor="middle" fill="#00b4d8" font-size="13" font-family="Poppins" font-weight="600">Proyeccion Esferica</text>
+        </g>
+        <!-- STEP 4: Dome -->
+        <g id="step-dome" style="opacity:0;transition:opacity 0.6s;">
+            <ellipse cx="310" cy="284" rx="148" ry="27" fill="rgba(0,180,216,0.08)" stroke="rgba(0,180,216,0.4)" stroke-width="1.5"/>
+            <path d="M 162 284 A 148 148 0 0,1 458 284" fill="rgba(0,180,216,0.07)" stroke="#00b4d8" stroke-width="2"/>
+            <path d="M 162 284 A 148 148 0 0,1 310 136" fill="none" stroke="#f6ad55" stroke-width="1.3"/>
+            <path d="M 310 136 A 148 148 0 0,1 458 284" fill="none" stroke="#f6ad55" stroke-width="1.3"/>
+            <path d="M 218 218 A 148 148 0 0,1 402 218" fill="none" stroke="#48bb78" stroke-width="1"/>
+            <path d="M 178 258 A 148 148 0 0,1 442 258" fill="none" stroke="#48bb78" stroke-width="1"/>
+            <line x1="218" y1="218" x2="310" y2="136" stroke="#f6ad55" stroke-width="1"/>
+            <line x1="402" y1="218" x2="310" y2="136" stroke="#f6ad55" stroke-width="1"/>
+            <line x1="310" y1="136" x2="310" y2="284" stroke="rgba(246,173,85,0.5)" stroke-width="1" stroke-dasharray="5,4"/>
+            <text x="318" y="212" fill="#f6ad55" font-size="11" font-family="Poppins">R</text>
+            <text x="310" y="46" text-anchor="middle" fill="#00b4d8" font-size="13" font-family="Poppins" font-weight="700">Cupula Geodesica (f=3)</text>
+            <text x="310" y="62" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Poppins">A = 2piR² · Perimetro base = 2piR</text>
+        </g>
+        <!-- STEP 5: Grafica -->
+        <g id="step-graph" style="opacity:0;transition:opacity 0.6s;">
+            <line x1="75" y1="295" x2="555" y2="295" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+            <line x1="75" y1="295" x2="75" y2="38" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
+            <text x="62" y="295" text-anchor="end" fill="#94a3b8" font-size="10" font-family="Poppins">0</text>
+            <text x="62" y="197" text-anchor="end" fill="#94a3b8" font-size="10" font-family="Poppins">0.5</text>
+            <text x="62" y="100" text-anchor="end" fill="#94a3b8" font-size="10" font-family="Poppins">1.0</text>
+            <text x="163" y="312" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Poppins">f=1</text>
+            <text x="255" y="312" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Poppins">f=2</text>
+            <text x="347" y="312" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Poppins">f=3</text>
+            <text x="439" y="312" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Poppins">f=4</text>
+            <text x="531" y="312" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Poppins">f=5</text>
+            <polyline points="75,295 163,118 255,88 347,76 439,70 531,67" fill="none" stroke="#48bb78" stroke-width="2.5"/>
+            <polyline points="75,295 163,248 255,200 347,154 439,110 531,68" fill="none" stroke="#f6ad55" stroke-width="2.5"/>
+            <polyline points="75,295 163,98 255,112 347,125 439,137 531,148" fill="none" stroke="#00b4d8" stroke-width="3" stroke-dasharray="8,4"/>
+            <line x1="95" y1="52" x2="122" y2="52" stroke="#48bb78" stroke-width="2.5"/><text x="129" y="56" fill="#48bb78" font-size="11" font-family="Poppins">Area proyectada</text>
+            <line x1="95" y1="68" x2="122" y2="68" stroke="#f6ad55" stroke-width="2.5"/><text x="129" y="72" fill="#f6ad55" font-size="11" font-family="Poppins">Perimetro total</text>
+            <line x1="95" y1="84" x2="122" y2="84" stroke="#00b4d8" stroke-width="3" stroke-dasharray="6,4"/><text x="129" y="88" fill="#00b4d8" font-size="11" font-family="Poppins">eta=A/P (eficiencia)</text>
+            <line x1="255" y1="38" x2="255" y2="295" stroke="rgba(252,129,129,0.4)" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <text x="262" y="50" fill="#fc8181" font-size="10" font-family="Poppins">Punto de</text>
+            <text x="262" y="62" fill="#fc8181" font-size="10" font-family="Poppins">estancamiento</text>
+            <text x="310" y="336" text-anchor="middle" fill="#00b4d8" font-size="13" font-family="Poppins" font-weight="700">Analisis Metrico eta vs. frecuencia f</text>
+        </g>
+    </svg>
+
+    <div class="anim-controls">
+        <button class="anim-btn" onclick="animStep(-1)"><i class="fas fa-chevron-left"></i></button>
+        <div class="anim-dots" id="anim-dots"></div>
+        <button class="anim-btn" onclick="animStep(1)"><i class="fas fa-chevron-right"></i></button>
+        <button class="anim-btn" id="anim-play" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+        <button class="anim-btn" id="anim-audio-btn" onclick="speakCurrentStep()" title="Narrar este paso">
+            <i class="fas fa-volume-up"></i>
+        </button>
+    </div>
+    <div class="anim-info" style="width:100%;max-width:620px;">
+        <div class="anim-step-title" id="anim-title">Paso 1 - Icosaedro Base</div>
+        <div class="anim-step-desc" id="anim-desc">El icosaedro regular tiene 20 caras triangulares, 12 vertices y 30 aristas. Cumple la formula de Euler: V - E + F = 12 - 30 + 20 = 2.</div>
+    </div>
+</div>
+
+<!-- Video -->
+<div class="card">
+    <div class="video-label"><i class="fab fa-youtube"></i> Video Educativo — Formula de Euler y Cupulas Geodesicas (Numberphile)</div>
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube-nocookie.com/embed/WIibcLd_oYU?rel=0&modestbranding=1&color=white" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe>
+    </div>
+    <div class="tip-box"><i class="fas fa-lightbulb"></i> &nbsp; El video explora como la formula de Euler V - E + F = 2 se aplica directamente a las cupulas geodesicas.</div>
+</div>
+
+<div class="grid-2">
+<div class="card">
+    <h3><i class="fas fa-ruler-combined"></i> Poligonos en una Cupula</h3>
+    <table class="data-table">
+        <thead><tr><th>Poligono</th><th>Lados</th><th>Posicion</th></tr></thead>
+        <tbody>
+            <tr><td>Pentagono</td><td>5</td><td>12 vertices fijos del icosaedro</td></tr>
+            <tr><td>Hexagono</td><td>6</td><td>Resto de la superficie</td></tr>
+            <tr><td>Triangulo</td><td>3</td><td>Cara basica de subdivision</td></tr>
+        </tbody>
+    </table>
+</div>
+<div class="card">
+    <h3><i class="fas fa-weight-hanging"></i> Ventajas Estructurales</h3>
+    <ul class="checklist">
+        <li><strong>Distribucion de cargas:</strong> Fuerzas distribuidas homogeneamente</li>
+        <li><strong>Eficiencia material:</strong> Maximo volumen con minima superficie</li>
+        <li><strong>Sin columnas:</strong> Vano libre de gran dimension</li>
+        <li><strong>Resistencia sismica:</strong> Alta rigidez ante cargas laterales</li>
+        <li><strong>Escalabilidad:</strong> Diseno parametrico por frecuencia f</li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 2: GUIA 3D                            -->
+<!-- ══════════════════════════════════════════ -->
+<div id="tab-guia" class="main-tab-content">
+<div class="container">
+<div class="tab-header">
+    <div class="pn">Pagina 2 de 4</div>
+    <h2>Guia de Construccion y Visor 3D</h2>
+    <p>Visualizacion 3D interactiva con corte 3/4, hotspots narrables y tabla de metricas por frecuencia.</p>
+</div>
+
+<div class="freq-slider-wrap">
+    <label><i class="fas fa-sliders-h"></i> &nbsp; Frecuencia f:</label>
+    <input type="range" min="1" max="5" value="2" id="freqSlider" oninput="updateFrequency(this.value)">
+    <div class="freq-value" id="freqVal">2</div>
+    <span style="color:var(--dim);font-size:0.86em;">Triangulos: <strong id="faceCount" style="color:var(--gold);">80</strong></span>
+</div>
+
+<div class="card" style="padding:18px;">
+    <h3><i class="fas fa-cube"></i> Visor 3D Interactivo — Cupula Geodesica con Corte 3/4</h3>
+    <p style="color:var(--dim);font-size:0.86em;margin-bottom:14px;">Arrastra para rotar · Rueda para zoom · Cambia la frecuencia con el deslizador</p>
+    <div id="viewer3d-container">
+        <canvas id="viewer3d-canvas"></canvas>
+        <div class="viewer-label"><i class="fas fa-cube"></i> Vista 3/4 — Corte transversal</div>
+        <div class="viewer-controls">
+            <button class="viewer-btn abtn" id="btn-wireframe" onclick="setMode('wireframe')">Estructura</button>
+            <button class="viewer-btn" id="btn-solid" onclick="setMode('solid')">Solido</button>
+            <button class="viewer-btn" id="btn-xray" onclick="setMode('xray')">Rayos-X</button>
+            <button class="viewer-btn" onclick="toggleAutoRotate()"><i class="fas fa-sync-alt"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Hotspots -->
+<div class="card">
+    <h3><i class="fas fa-map-marker-alt"></i> Hotspots: Elementos de la Cupula (con audio)</h3>
+    <p style="color:var(--dim);margin-bottom:18px;">Haz clic en cada punto para explorar los componentes — el narrador describira cada elemento automaticamente.</p>
+    <div class="hotspot-container">
+        <svg width="100%" height="100%" viewBox="0 0 700 460" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;">
+            <defs><pattern id="bgGrid2" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(0,180,216,0.06)" stroke-width="1"/></pattern></defs>
+            <rect width="700" height="460" fill="url(#bgGrid2)"/>
+            <ellipse cx="350" cy="385" rx="206" ry="44" fill="rgba(0,180,216,0.06)" stroke="rgba(0,180,216,0.35)" stroke-width="1.5"/>
+            <path d="M 144 385 A 206 206 0 0,1 556 385" fill="rgba(0,180,216,0.07)" stroke="#00b4d8" stroke-width="2"/>
+            <g stroke="#00b4d8" stroke-width="1" opacity="0.5">
+                <path d="M 144 385 A 206 206 0 0,1 350 179"/>
+                <path d="M 350 179 A 206 206 0 0,1 556 385"/>
+                <path d="M 228 288 A 206 206 0 0,1 472 288"/>
+                <path d="M 183 344 A 206 206 0 0,1 517 344"/>
+                <line x1="228" y1="288" x2="350" y2="179"/><line x1="472" y1="288" x2="350" y2="179"/>
+                <line x1="183" y1="344" x2="228" y2="288"/><line x1="517" y1="344" x2="472" y2="288"/>
+            </g>
+        </svg>
+        <button class="hotspot-btn" style="top:10%;left:48%;" onclick="showHotspot('apex')">1
+            <div class="hotspot-tooltip" id="ht-apex">
+                <h4><i class="fas fa-circle"></i> Vertice Apical (Nodo)</h4>
+                <p>Punto de convergencia de varias aristas. El nodo apical es unico. En f=2: <strong>42 vertices</strong> totales.</p>
+            </div>
+        </button>
+        <button class="hotspot-btn" style="top:37%;left:29%;" onclick="showHotspot('pent')">2
+            <div class="hotspot-tooltip" id="ht-pent" style="right:40px;left:auto;top:0;">
+                <h4><i class="fas fa-star"></i> Pentagono (5 lados)</h4>
+                <p>Siempre hay exactamente <strong>12 pentagonos</strong>. Son los herederos de los 12 vertices del icosaedro.</p>
+            </div>
+        </button>
+        <button class="hotspot-btn" style="top:53%;left:61%;" onclick="showHotspot('hex')">3
+            <div class="hotspot-tooltip" id="ht-hex" style="right:40px;left:auto;top:0;">
+                <h4><i class="fas fa-th"></i> Hexagono (6 lados)</h4>
+                <p>Forman la mayoria de la superficie. Cantidad: <strong>10f&sup2; - 10</strong>. Para f=3: 80 hexagonos.</p>
+            </div>
+        </button>
+        <button class="hotspot-btn" style="top:71%;left:21%;" onclick="showHotspot('edge')">4
+            <div class="hotspot-tooltip" id="ht-edge" style="left:40px;top:-10px;">
+                <h4><i class="fas fa-minus"></i> Arista (Barra Estructural)</h4>
+                <p>Trabaja en <strong>traccion o compresion pura</strong>. Longitud: l &asymp; 1.051R/f. A mayor f, l es menor.</p>
+            </div>
+        </button>
+        <button class="hotspot-btn" style="top:71%;right:15%;" onclick="showHotspot('tri')">5
+            <div class="hotspot-tooltip" id="ht-tri" style="right:40px;left:auto;top:-10px;">
+                <h4><i class="fas fa-play"></i> Cara Triangular (Panel)</h4>
+                <p>Cada cara es un panel de cubierta. Total caras: <strong>F = 20f&sup2;</strong>. Para f=3: 180 caras.</p>
+            </div>
+        </button>
+    </div>
+</div>
+
+<!-- Steps -->
+<div class="step-box"><div class="step-num">1</div><div class="step-title">Definir el Icosaedro de Partida</div>
+    <p>Se fija el radio R y se construye el icosaedro regular inscrito en la esfera usando el numero aureo.</p>
+    <div class="formula-box">$$\phi = \frac{1+\sqrt{5}}{2} \approx 1.618$$</div>
+</div>
+<div class="step-box"><div class="step-num">2</div><div class="step-title">Subdivision Poligonal por Frecuencia f</div>
+    <p>Cada arista del icosaedro se divide en f segmentos. Los elementos crecen con f&sup2;:</p>
+    <div class="formula-box">$$V = 10f^2 + 2 \qquad E = 30f^2 \qquad F = 20f^2$$</div>
+    <div class="info-box"><i class="fas fa-check"></i> &nbsp; Verificacion Euler: (10f&sup2;+2) - 30f&sup2; + 20f&sup2; = 2 &#10003;</div>
+</div>
+<div class="step-box"><div class="step-num">3</div><div class="step-title">Proyeccion Esferica de Vertices</div>
+    <div class="formula-box">$$\hat{v} = \frac{R}{\|\vec{v}\|} \cdot \vec{v}$$</div>
+</div>
+<div class="step-box"><div class="step-num">4</div><div class="step-title">Seleccionar la Semiesfera</div>
+    <p>Se retienen los triangulos con centroide z &ge; 0 formando la cupula geodesica.</p>
+</div>
+<div class="step-box"><div class="step-num">5</div><div class="step-title">Analisis Metrico de Eficiencia</div>
+    <div class="formula-box">$$\eta(f) = \frac{A_{proy}}{L_{total}(f)} = \frac{\pi R^2}{15.77\,f\,R}$$</div>
+</div>
+
+<div class="card">
+    <h3><i class="fas fa-table"></i> Tabla de Propiedades Metricas por Frecuencia</h3>
+    <div style="overflow-x:auto;">
+    <table class="data-table">
+        <thead><tr><th>f</th><th>Vertices</th><th>Aristas</th><th>Caras</th><th>l/R</th><th>A cub./A esf.</th><th>eta</th></tr></thead>
+        <tbody>
+            <tr><td>1</td><td>12</td><td>30</td><td>20</td><td>1.051</td><td>50%</td><td>0.500</td></tr>
+            <tr><td>2</td><td>42</td><td>120</td><td>80</td><td>0.618</td><td>62%</td><td>0.620</td></tr>
+            <tr class="hl"><td>3</td><td>92</td><td>270</td><td>180</td><td>0.403</td><td>78%</td><td>0.711</td></tr>
+            <tr><td>4</td><td>162</td><td>480</td><td>320</td><td>0.299</td><td>83%</td><td>0.742</td></tr>
+            <tr><td>5</td><td>252</td><td>750</td><td>500</td><td>0.238</td><td>85%</td><td>0.751</td></tr>
+        </tbody>
+    </table>
+    </div>
+    <div class="warn-box"><i class="fas fa-exclamation-triangle"></i> &nbsp; <strong>Punto de estancamiento entre f=3 y f=4:</strong> La ganancia en eficiencia es solo +4.4%.</div>
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 3: TUTOR IA + SOLUCION               -->
+<!-- ══════════════════════════════════════════ -->
+<div id="tab-solucion" class="main-tab-content">
+<div class="container">
+<div class="tab-header">
+    <div class="pn">Pagina 3 de 4</div>
+    <h2>Tutor IA + Simulador + Solucion</h2>
+    <p>Sistema estilo Mathos AI con narrador de voz, animacion de formulas paso a paso y simulador interactivo.</p>
+</div>
+
+<!-- ═══ MATHOS AI STYLE TUTOR ═══ -->
+<div class="math-tutor-panel">
+    <div class="mtp-topbar">
+        <div class="mtp-brand"><i class="fas fa-robot"></i><span>Tutor IA — Cupulas Geodesicas</span></div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div class="mtp-counter"><span id="mtp-cur">1</span> / <span id="mtp-tot">9</span></div>
+            <button class="mtp-btn" id="mtp-mute-btn" onclick="mtpToggleMute()" style="padding:6px 12px;font-size:0.82em;">
+                <i class="fas fa-volume-up" id="mtp-mute-icon"></i> Audio
+            </button>
+        </div>
+    </div>
+    <div class="mtp-prog-track"><div class="mtp-prog-fill" id="mtp-prog"></div></div>
+    <div class="mtp-screen" id="mtp-screen">
+        <!-- Filled by JS -->
+    </div>
+    <div class="mtp-controls-bar">
+        <button class="mtp-btn" onclick="mtpPrev()"><i class="fas fa-step-backward"></i> Anterior</button>
+        <button class="mtp-btn primary-btn" onclick="mtpPlayPause()" id="mtp-play-btn"><i class="fas fa-play" id="mtp-play-icon"></i> Reproducir</button>
+        <button class="mtp-btn" onclick="mtpNext()">Siguiente <i class="fas fa-step-forward"></i></button>
+        <div class="mtp-speed-label">Velocidad:</div>
+        <select class="mtp-speed-select" id="mtp-speed" onchange="mtpSetSpeed(this.value)">
+            <option value="0.7">Lenta</option>
+            <option value="1" selected>Normal</option>
+            <option value="1.4">Rapida</option>
+        </select>
+        <button class="mtp-btn" onclick="mtpRestart()" style="margin-left:auto;"><i class="fas fa-redo"></i> Reiniciar</button>
+    </div>
+</div>
+
+<!-- ═══ INTERACTIVE MATH SIMULATOR ═══ -->
+<div class="sim-panel">
+    <div class="sim-topbar">
+        <div class="sim-brand"><i class="fas fa-calculator"></i> Simulador Matematico Interactivo — Ingresa tus valores y observa la resolucion paso a paso</div>
+    </div>
+    <div class="sim-inputs-row">
+        <div class="sim-field">
+            <label>Frecuencia f</label>
+            <input type="number" class="sim-input" id="sim-f" value="3" min="1" max="6" step="1">
+        </div>
+        <div class="sim-field">
+            <label>Radio R (m)</label>
+            <input type="number" class="sim-input" id="sim-R" value="10" min="1" max="500" step="0.5">
+        </div>
+        <div class="sim-field">
+            <label>Altura H (m)</label>
+            <input type="number" class="sim-input" id="sim-H" value="10" min="1" max="500" step="0.5">
+        </div>
+        <button class="sim-run-btn" id="sim-run-btn" onclick="runSimulator()">
+            <i class="fas fa-bolt"></i> Resolver paso a paso
+        </button>
+    </div>
+    <div class="sim-running-indicator" id="sim-running">
+        <div class="sim-dots"><span></span><span></span><span></span></div>
+        <span>Calculando y narrando...</span>
+    </div>
+    <div class="sim-output" id="sim-output"></div>
+</div>
+
+<!-- PASSWORD + SOLUTION -->
+<div class="password-gate" id="pw-gate">
+    <div style="font-size:2.4em;color:var(--accent);margin-bottom:14px;"><i class="fas fa-lock"></i></div>
+    <h3>Memoria de Calculo Completa</h3>
+    <p style="color:var(--dim);margin-bottom:22px;">Intenta resolver con el tutor IA antes de consultar la solucion completa.</p>
+    <input type="password" class="pw-input" id="pw-input" placeholder="Ingresa la contrasena" onkeyup="if(event.key==='Enter') checkPw()">
+    <button class="btn-unlock" onclick="checkPw()"><i class="fas fa-unlock-alt"></i> &nbsp; Acceder</button>
+    <p class="pw-error" id="pw-error"><i class="fas fa-times-circle"></i> Contrasena incorrecta</p>
+    <p class="pw-hint">Pista: nombre del solido base + frecuencia minima (ej: "solido1")</p>
+</div>
+
+<div class="solution-content" id="solution-content">
+    <div class="card">
+        <div class="video-label"><i class="fab fa-youtube"></i> Video Tutor Mathos AI — Euler, Poliedros y Geometria Geodesica</div>
+        <div class="video-wrapper">
+            <iframe src="https://www.youtube-nocookie.com/embed/WIibcLd_oYU?start=180&rel=0&modestbranding=1&color=white" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="no-referrer"></iframe>
+        </div>
+    </div>
+    <div class="card">
+        <h3><i class="fas fa-square-root-alt"></i> Parte 1 — Topologia del Icosaedro Subdividido</h3>
+        <div class="step-box"><div class="step-num">1</div><div class="step-title">Formula de Euler para Poliedros Convexos</div><div class="formula-box">$$V - E + F = 2$$</div></div>
+        <div class="step-box"><div class="step-num">2</div><div class="step-title">Conteo para Frecuencia f</div><div class="formula-box">$$F = 20f^2 \qquad E = 30f^2 \qquad V = 10f^2 + 2$$</div></div>
+        <div class="step-box"><div class="step-num">3</div><div class="step-title">Verificacion por Euler</div><div class="formula-box">$$V - E + F = (10f^2+2) - 30f^2 + 20f^2 = 2 \checkmark$$</div><div class="tip-box"><i class="fas fa-check-circle"></i> &nbsp; La identidad de Euler se cumple para cualquier frecuencia f.</div></div>
+    </div>
+    <div class="card">
+        <h3><i class="fas fa-ruler"></i> Parte 2 — Geometria Metrica</h3>
+        <div class="step-box"><div class="step-num">4</div><div class="step-title">Longitud de Arista Base</div><div class="formula-box">$$a_1 = R\sqrt{\frac{2(5-\sqrt{5})}{5}} \approx 1.051\,R$$</div></div>
+        <div class="step-box"><div class="step-num">5</div><div class="step-title">Longitud para Frecuencia f</div><div class="formula-box">$$a_f \approx \frac{1.051\,R}{f}$$</div></div>
+    </div>
+    <div class="card">
+        <h3><i class="fas fa-chart-area"></i> Parte 3 — Analisis Metrico: Area vs. Perimetro</h3>
+        <div class="step-box"><div class="step-num">6</div><div class="step-title">Area Proyectada (constante)</div><div class="formula-box">$$A_{proy} = \pi R^2$$</div></div>
+        <div class="step-box"><div class="step-num">7</div><div class="step-title">Perimetro Total de Aristas (crece lineal)</div><div class="formula-box">$$L_{total}(f) \approx 15f^2 \cdot \frac{1.051\,R}{f} = 15.77\,f\,R$$</div></div>
+        <div class="step-box"><div class="step-num">8</div><div class="step-title">Indice de Eficiencia eta(f)</div><div class="formula-box">$$\eta(f) = \frac{\pi R^2}{15.77\,f\,R} = \frac{\pi R}{15.77\,f}$$</div>
+            <div class="warn-box"><strong><i class="fas fa-star"></i> Respuesta central:</strong><br>La eficiencia eta(f) decrece como 1/f. El punto optimo esta entre <strong>f=3 y f=4</strong>.</div>
+        </div>
+        <div class="step-box"><div class="step-num">9</div><div class="step-title">Conclusion de Diseno Industrial</div>
+            <div class="formula-box">$$f_{optimo} = 3 \quad \Rightarrow \quad V=92,\; E=270,\; F=180$$</div>
+            <ul class="checklist" style="margin-top:10px;">
+                <li>Aproximacion geometrica suficiente a la esfera</li>
+                <li>Numero de barras manejable para fabricacion</li>
+                <li>Distribucion de cargas adecuada</li>
+                <li>Costo optimo de fabricacion de nodos</li>
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 4: GENERADOR GEOGEBRA                 -->
+<!-- ══════════════════════════════════════════ -->
+<div id="tab-generador" class="main-tab-content">
+<div class="container">
+<div class="tab-header">
+    <div class="pn">Pagina 4 de 4</div>
+    <h2>Generador de Comandos GeoGebra</h2>
+    <p>Comandos listos para construir el modelo parametrico de cupula geodesica en GeoGebra 3D.</p>
+</div>
+
+<div class="freq-slider-wrap">
+    <label><i class="fas fa-cogs"></i> &nbsp; Frecuencia:</label>
+    <input type="range" min="1" max="4" value="2" id="geoFreqSlider" oninput="updateGeoCommands(this.value)">
+    <div class="freq-value" id="geoFreqVal">2</div>
+    <span style="color:var(--dim);font-size:0.86em;">Radio R (m):</span>
+    <input type="number" min="1" max="100" value="5" id="radioInput" oninput="updateGeoCommands(document.getElementById('geoFreqSlider').value)" style="width:70px;padding:6px 10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Poppins',sans-serif;font-size:0.9em;">
+    <span style="color:var(--dim);font-size:0.83em;">m</span>
+</div>
+
+<div class="card">
+    <h3><i class="fas fa-info-circle"></i> Instrucciones</h3>
+    <ol style="color:var(--dim);padding-left:20px;line-height:2;">
+        <li>Abre <strong style="color:var(--accent);">GeoGebra 3D</strong> (geogebra.org/3d)</li>
+        <li>Ve al <strong>Panel de Algebra / Entrada</strong></li>
+        <li>Copia cada bloque y pegalo en la barra de entrada presionando Enter</li>
+    </ol>
+</div>
+
+<div class="cmd-block"><div class="cmd-label">Bloque 1 - Parametros Base</div>
+    <pre class="cmd-code" id="cmd-params">f = 2
+R = 5
+phi = (1 + sqrt(5)) / 2</pre>
+    <button class="cmd-copy" onclick="copyCmd('cmd-params',this)"><i class="fas fa-copy"></i> Copiar</button>
+</div>
+<div class="cmd-block"><div class="cmd-label">Bloque 2 - Vertices del Icosaedro</div>
+    <pre class="cmd-code" id="cmd-verts">V1 = (0, 1, phi) / sqrt(1 + phi^2) * R
+V2 = (0, -1, phi) / sqrt(1 + phi^2) * R
+V3 = (0, 1, -phi) / sqrt(1 + phi^2) * R
+V4 = (0, -1, -phi) / sqrt(1 + phi^2) * R
+V5 = (1, phi, 0) / sqrt(1 + phi^2) * R
+V6 = (-1, phi, 0) / sqrt(1 + phi^2) * R
+V7 = (1, -phi, 0) / sqrt(1 + phi^2) * R
+V8 = (-1, -phi, 0) / sqrt(1 + phi^2) * R
+V9 = (phi, 0, 1) / sqrt(1 + phi^2) * R
+V10 = (-phi, 0, 1) / sqrt(1 + phi^2) * R
+V11 = (phi, 0, -1) / sqrt(1 + phi^2) * R
+V12 = (-phi, 0, -1) / sqrt(1 + phi^2) * R</pre>
+    <button class="cmd-copy" onclick="copyCmd('cmd-verts',this)"><i class="fas fa-copy"></i> Copiar</button>
+</div>
+<div class="cmd-block"><div class="cmd-label">Bloque 3 - Metricas</div>
+    <pre class="cmd-code" id="cmd-metrics">TotalVertices = 10*f^2 + 2
+TotalAristas = 30*f^2
+TotalCaras = 20*f^2
+LongArista = 1.051*R/f
+LongTotal = 15.77*f*R
+AreaProyectada = pi*R^2
+Eficiencia_eta = AreaProyectada / LongTotal</pre>
+    <button class="cmd-copy" onclick="copyCmd('cmd-metrics',this)"><i class="fas fa-copy"></i> Copiar</button>
+</div>
+<div class="cmd-block"><div class="cmd-label">Bloque 4 - Esfera de Referencia</div>
+    <pre class="cmd-code" id="cmd-sphere">EsferaRef = Sphere((0,0,0), R)
+SetOpacity(EsferaRef, 0.08)
+SetColor(EsferaRef, "#00b4d8")</pre>
+    <button class="cmd-copy" onclick="copyCmd('cmd-sphere',this)"><i class="fas fa-copy"></i> Copiar</button>
+</div>
+<div class="cmd-block"><div class="cmd-label">Bloque 5 - Deslizador + Etiqueta</div>
+    <pre class="cmd-code" id="cmd-slider">Slider(1,5,1,1,150,false,true,false,false)
+TextRes = "f="+f+" | V="+TotalVertices+" | E="+TotalAristas+" | F="+TotalCaras</pre>
+    <button class="cmd-copy" onclick="copyCmd('cmd-slider',this)"><i class="fas fa-copy"></i> Copiar</button>
+</div>
+
+<div class="card" style="margin-top:24px;">
+    <h3><i class="fas fa-calculator"></i> Calculadora Rapida</h3>
+    <div class="grid-2">
+        <div class="formula-box"><strong style="color:var(--gold);">Vertices totales:</strong><br><span id="res-v" style="font-size:1.35em;color:var(--accent);">42</span></div>
+        <div class="formula-box"><strong style="color:var(--gold);">Aristas totales:</strong><br><span id="res-e" style="font-size:1.35em;color:var(--accent);">120</span></div>
+        <div class="formula-box"><strong style="color:var(--gold);">Caras totales:</strong><br><span id="res-f" style="font-size:1.35em;color:var(--accent);">80</span></div>
+        <div class="formula-box"><strong style="color:var(--gold);">Long. arista:</strong><br><span id="res-l" style="font-size:1.35em;color:var(--accent);">0.526R</span></div>
+        <div class="formula-box"><strong style="color:var(--gold);">Material total:</strong><br><span id="res-lt" style="font-size:1.35em;color:var(--accent);">157.7 m</span></div>
+        <div class="formula-box"><strong style="color:var(--gold);">Eficiencia eta:</strong><br><span id="res-eta" style="font-size:1.35em;color:var(--green);">9.93%</span></div>
+    </div>
+    <div class="tip-box" style="margin-top:14px;">
+        <i class="fas fa-lightbulb"></i> &nbsp; <strong>Euler:</strong>
+        <span id="euler-check" style="color:var(--green);font-weight:700;">V - E + F = 42 - 120 + 80 = 2 Verificado</span>
+    </div>
+</div>
+</div>
+</div>
+
+<footer>
+    <p><strong>Optimizacion Metrica de Cupulas Geodesicas para Instalaciones Industriales</strong></p>
+    <p>Ingenieria Civil / Estructural &nbsp;·&nbsp; Tutor IA + SVG + Three.js + KaTeX + Web Speech API</p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// 0. KaTeX
+// ═══════════════════════════════════════════════════════
+function renderMath(){
+    if(window.renderMathInElement){
+        renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+    }else{setTimeout(renderMath,80);}
+}
+document.addEventListener('DOMContentLoaded',renderMath);
+
+// ═══════════════════════════════════════════════════════
+// 1. GLOBAL AUDIO SYSTEM (Web Speech API)
+// ═══════════════════════════════════════════════════════
+const AS = {
+    enabled: true,
+    synth: window.speechSynthesis,
+    rate: 1.0,
+    voice: null,
+    init(){
+        const load = () => {
+            const voices = this.synth.getVoices();
+            this.voice = voices.find(v => v.lang.startsWith('es')) || voices[0] || null;
+        };
+        load();
+        if(this.synth.onvoiceschanged !== undefined) this.synth.onvoiceschanged = load;
+    },
+    speak(text){
+        if(!this.enabled || !text) return;
+        this.synth.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'es-ES';
+        u.rate = this.rate;
+        u.pitch = 1.0;
+        u.volume = 1.0;
+        if(this.voice) u.voice = this.voice;
+        this.synth.speak(u);
+    },
+    stop(){ this.synth.cancel(); },
+    toggle(){
+        this.enabled = !this.enabled;
+        if(!this.enabled) this.stop();
+        const btn = document.getElementById('globalAudioBtn');
+        const icon = document.getElementById('globalAudioIcon');
+        if(this.enabled){btn.classList.remove('muted');icon.className='fas fa-volume-up';}
+        else{btn.classList.add('muted');icon.className='fas fa-volume-mute';}
+    }
+};
+AS.init();
+function toggleGlobalAudio(){ AS.toggle(); }
+
+// ═══════════════════════════════════════════════════════
+// 2. TAB SWITCHING
+// ═══════════════════════════════════════════════════════
+function switchTab(name){
+    document.querySelectorAll('.main-tab-content').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    document.getElementById('btn-'+name).classList.add('active');
+    AS.stop();
+    if(name==='guia') setTimeout(init3DViewer,200);
+}
+
+// ═══════════════════════════════════════════════════════
+// 3. SVG ANIMATOR WITH AUDIO
+// ═══════════════════════════════════════════════════════
+const animSteps = [
+    {id:'step-ico', title:'Paso 1 - Icosaedro Base',
+     desc:'El icosaedro regular tiene 20 caras triangulares, 12 vertices y 30 aristas. Cumple la formula de Euler: V menos E mas F igual a 2.',
+     narr:'El icosaedro regular es nuestro punto de partida. Tiene 20 caras triangulares, 12 vertices y 30 aristas. Verificamos la formula de Euler: 12 menos 30 mas 20 es igual a 2. Este solido sera la semilla de nuestra cupula geodesica.'},
+    {id:'step-f1', title:'Paso 2 - Subdivision f=1',
+     desc:'Con frecuencia f=1, cada cara se divide en 4 triangulos menores. La malla suma E=120 aristas y F=80 caras.',
+     narr:'Con frecuencia uno, subdividimos cada cara del icosaedro en 4 triangulos menores. Esto nos da 80 caras en total y 120 aristas en la malla completa.'},
+    {id:'step-f2', title:'Paso 3 - Subdivision f=2',
+     desc:'Con f=2, cada cara original se divide en 16 triangulos. Ahora V=42, E=120, F=80.',
+     narr:'Con frecuencia dos, cada cara original se divide en 16 triangulos. La malla tiene ahora 42 vertices, 120 aristas y 80 caras. Los triangulos invertidos representan la malla interior de la subdivision.'},
+    {id:'step-sphere', title:'Paso 4 - Proyeccion Esferica',
+     desc:'Cada vertice de la malla plana se normaliza y proyecta sobre la esfera de radio R.',
+     narr:'Cada vertice de la malla plana se normaliza dividiendolo por su norma y multiplicandolo por el radio R. Las aristas ya no son rectilineas sino arcos geodesicos curvados sobre la superficie esferica.'},
+    {id:'step-dome', title:'Paso 5 - Cupula Geodesica',
+     desc:'Se retienen solo los triangulos de la semiesfera superior, formando la cupula geodesica.',
+     narr:'Seleccionamos unicamente los triangulos con centroide en z mayor o igual a cero, la semiesfera superior. El radio R define tanto la altura como el diametro de la base circular de la cupula.'},
+    {id:'step-graph', title:'Paso 6 - Analisis Metrico eta vs f',
+     desc:'El area proyectada se estabiliza rapidamente mientras el perimetro crece linealmente. El punto de estancamiento esta entre f=3 y f=4.',
+     narr:'En la grafica vemos como el area proyectada en verde se estabiliza rapidamente. El perimetro total de aristas en dorado crece de forma lineal con f. La eficiencia eta en azul disminuye porque el material total aumenta como f. El punto optimo de diseno se encuentra entre frecuencia 3 y frecuencia 4.'}
+];
+
+let currentStep=0, autoPlayTimer=null;
+
+function buildDots(){
+    const el=document.getElementById('anim-dots');
+    el.innerHTML='';
+    animSteps.forEach((_,i)=>{
+        const d=document.createElement('div');
+        d.className='anim-dot'+(i===0?' active':'');
+        d.onclick=()=>goToStep(i);
+        el.appendChild(d);
+    });
+}
+
+function goToStep(n){
+    document.querySelectorAll('[id^="step-"]').forEach(el=>el.style.opacity='0');
+    const t=document.getElementById(animSteps[n].id);
+    if(t) setTimeout(()=>{t.style.opacity='1';},50);
+    document.querySelectorAll('.anim-dot').forEach((d,i)=>d.classList.toggle('active',i===n));
+    document.getElementById('anim-title').textContent=animSteps[n].title;
+    document.getElementById('anim-desc').textContent=animSteps[n].desc;
+    currentStep=n;
+    AS.speak(animSteps[n].narr);
+}
+
+function animStep(dir){
+    let next=currentStep+dir;
+    if(next<0)next=animSteps.length-1;
+    if(next>=animSteps.length)next=0;
+    goToStep(next);
+}
+
+function togglePlay(){
+    const btn=document.getElementById('anim-play');
+    if(autoPlayTimer){
+        clearInterval(autoPlayTimer);autoPlayTimer=null;
+        btn.innerHTML='<i class="fas fa-play"></i>';btn.classList.remove('active');
+        AS.stop();
+    }else{
+        autoPlayTimer=setInterval(()=>animStep(1),4000);
+        btn.innerHTML='<i class="fas fa-pause"></i>';btn.classList.add('active');
+    }
+}
+
+function speakCurrentStep(){ AS.speak(animSteps[currentStep].narr); }
+
+buildDots();
+goToStep(0);
+
+// ═══════════════════════════════════════════════════════
+// 4. THREE.JS 3D VIEWER
+// ═══════════════════════════════════════════════════════
+let v3d={init:false,ctrl:null,dome:null,wire:null,ring:null,mode:'wireframe',det:2,scene:null,cam:null,rend:null};
+
+function init3DViewer(){
+    if(v3d.init)return;
+    const cont=document.getElementById('viewer3d-container');
+    const canvas=document.getElementById('viewer3d-canvas');
+    const w=cont.clientWidth,h=cont.clientHeight;
+    const scene=new THREE.Scene();scene.background=new THREE.Color(0x05090f);v3d.scene=scene;
+    const cam=new THREE.PerspectiveCamera(45,w/h,0.1,200);cam.position.set(5,3.5,7);v3d.cam=cam;
+    const rend=new THREE.WebGLRenderer({canvas,antialias:true});
+    rend.setSize(w,h);rend.setPixelRatio(window.devicePixelRatio);rend.localClippingEnabled=true;v3d.rend=rend;
+    const ctrl=new THREE.OrbitControls(cam,rend.domElement);
+    ctrl.autoRotate=true;ctrl.autoRotateSpeed=1.5;ctrl.enableDamping=true;ctrl.dampingFactor=0.07;v3d.ctrl=ctrl;
+    scene.add(new THREE.AmbientLight(0x334466,1.5));
+    const dl=new THREE.DirectionalLight(0x88ccff,2);dl.position.set(5,10,7);scene.add(dl);
+    const dl2=new THREE.DirectionalLight(0xf6ad55,0.8);dl2.position.set(-8,-4,-5);scene.add(dl2);
+    const grid=new THREE.GridHelper(20,20,0x1a3a5f,0x0d2137);grid.position.y=-0.05;scene.add(grid);
+    buildDome3D(v3d.det);
+    (function animate(){requestAnimationFrame(animate);ctrl.update();rend.render(scene,cam);})();
+    window.addEventListener('resize',()=>{
+        const nw=cont.clientWidth,nh=cont.clientHeight;
+        cam.aspect=nw/nh;cam.updateProjectionMatrix();rend.setSize(nw,nh);
+    });
+    v3d.init=true;
+}
+
+function buildDome3D(detail){
+    const sc=v3d.scene;if(!sc)return;
+    ['dome','wire','ring','c1','c2'].forEach(k=>{if(v3d[k])sc.remove(v3d[k]);});
+    const clips=[
+        new THREE.Plane(new THREE.Vector3(0,-1,0),0.05),
+        new THREE.Plane(new THREE.Vector3(-1,0,0),0.08),
+        new THREE.Plane(new THREE.Vector3(0,0,1),0.08)
+    ];
+    const geo=new THREE.IcosahedronGeometry(3,detail);
+    const solidMat=new THREE.MeshPhongMaterial({color:0x0d3558,emissive:0x051525,specular:0x00b4d8,shininess:60,transparent:true,opacity:0.72,side:THREE.DoubleSide,clippingPlanes:clips});
+    const dome=new THREE.Mesh(geo,solidMat);sc.add(dome);v3d.dome=dome;
+    const wire=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:0x00b4d8,clippingPlanes:clips}));
+    sc.add(wire);v3d.wire=wire;
+    const ring=new THREE.Mesh(new THREE.RingGeometry(2.92,3.05,64),new THREE.MeshBasicMaterial({color:0xf6ad55,side:THREE.DoubleSide}));
+    ring.rotation.x=-Math.PI/2;sc.add(ring);v3d.ring=ring;
+    const cutMat=new THREE.MeshBasicMaterial({color:0x0a1e35,side:THREE.DoubleSide,transparent:true,opacity:0.85});
+    const c1=new THREE.Mesh(new THREE.PlaneGeometry(6,6),cutMat);
+    c1.rotation.y=Math.PI/2;c1.position.set(0.05,1.5,0);sc.add(c1);v3d.c1=c1;
+    const c2=new THREE.Mesh(new THREE.PlaneGeometry(6,6),cutMat.clone());
+    c2.position.set(0,1.5,-0.05);sc.add(c2);v3d.c2=c2;
+    applyMode(v3d.mode);
+}
+
+function applyMode(mode){
+    v3d.mode=mode;if(!v3d.dome)return;
+    if(mode==='wireframe'){v3d.dome.material.opacity=0.15;v3d.wire.material.color.set(0x00b4d8);v3d.wire.visible=true;}
+    else if(mode==='solid'){v3d.dome.material.opacity=0.88;v3d.wire.visible=false;}
+    else if(mode==='xray'){v3d.dome.material.opacity=0.25;v3d.wire.material.color.set(0xf6ad55);v3d.wire.visible=true;}
+    ['btn-wireframe','btn-solid','btn-xray'].forEach(id=>document.getElementById(id).classList.remove('abtn'));
+    document.getElementById('btn-'+mode).classList.add('abtn');
+}
+function setMode(mode){applyMode(mode);}
+function toggleAutoRotate(){if(v3d.ctrl)v3d.ctrl.autoRotate=!v3d.ctrl.autoRotate;}
+function updateFrequency(val){
+    document.getElementById('freqVal').textContent=val;
+    document.getElementById('faceCount').textContent=20*val*val;
+    v3d.det=parseInt(val);
+    if(v3d.init)buildDome3D(v3d.det);
+}
+
+// ═══════════════════════════════════════════════════════
+// 5. HOTSPOTS WITH AUDIO
+// ═══════════════════════════════════════════════════════
+const hotspotNarrations = {
+    apex: 'Vertice apical o nodo. Es el punto de convergencia de varias aristas. En la cupula, el nodo apical es unico y esta en la cima. Para frecuencia dos hay 42 vertices en total.',
+    pent: 'Pentagono de 5 lados. En toda cupula geodesica siempre hay exactamente 12 pentagonos, independientemente de la frecuencia. Son los herederos de los 12 vertices del icosaedro original.',
+    hex: 'Hexagono de 6 lados. Forman la mayoria de la superficie de la cupula. El numero de hexagonos es 10 f cuadrado menos 10. Para frecuencia 3 hay 80 hexagonos.',
+    edge: 'Arista o barra estructural. Elemento lineal que trabaja en traccion o compresion pura. La longitud de arista es aproximadamente 1.051 R dividido por f. A mayor frecuencia, las barras son mas cortas.',
+    tri: 'Cara triangular o panel. Cada cara es un panel de cubierta. El numero total de caras es 20 f cuadrado. Para frecuencia 2: 80 caras; frecuencia 3: 180 caras; frecuencia 4: 320 caras.'
+};
+let activeHotspot=null;
+function showHotspot(id){
+    document.querySelectorAll('.hotspot-tooltip').forEach(t=>t.classList.remove('visible'));
+    const el=document.getElementById('ht-'+id);
+    if(el&&activeHotspot!==id){el.classList.add('visible');activeHotspot=id;AS.speak(hotspotNarrations[id]);}
+    else{activeHotspot=null;AS.stop();}
+}
+document.addEventListener('click',e=>{
+    if(!e.target.classList.contains('hotspot-btn')){
+        document.querySelectorAll('.hotspot-tooltip').forEach(t=>t.classList.remove('visible'));
+        activeHotspot=null;
+    }
+});
+
+// ═══════════════════════════════════════════════════════
+// 6. MATHOS AI STYLE TUTOR
+// ═══════════════════════════════════════════════════════
+const mtpSteps = [
+    {
+        badge:'Planteamiento',
+        title:'Pregunta Central del Problema',
+        formula:'\\eta(f) = \\dfrac{A_{proy}}{L_{total}(f)} \\quad \\Rightarrow \\quad \\text{?cuándo se estanca } \\eta\\text{?}',
+        explain:'Queremos encontrar el punto en que la eficiencia eta de la cupula deja de crecer significativamente al aumentar f.',
+        highlight:null,
+        narr:'Nuestra pregunta central es: como varia la relacion entre el perimetro total y el area proyectada al aumentar la frecuencia de subdivision de la cupula geodesica, y en que punto exacto se estanca el ahorro de material.'
+    },
+    {
+        badge:'Dato 1 — Topologia',
+        title:'Datos del Icosaedro Base',
+        formula:'V=12,\\; E=30,\\; F=20 \\quad \\Rightarrow \\quad V-E+F = 2',
+        explain:'El icosaedro regular cumple la formula de Euler. Sera nuestro solido de partida para la subdivision.',
+        highlight:null,
+        narr:'Partimos del icosaedro regular. Tiene 12 vertices, 30 aristas y 20 caras. Verificamos la formula de Euler: 12 menos 30 mas 20 es igual a 2. Esta es nuestra condicion de consistencia topologica.'
+    },
+    {
+        badge:'Desarrollo — Subdivision',
+        title:'Conteo de Elementos para Frecuencia f',
+        formula:'F = 20f^2 \\qquad E = 30f^2 \\qquad V = 10f^2 + 2',
+        explain:'Al subdividir con frecuencia f, las caras, aristas y vertices crecen cuadraticamente con f.',
+        highlight:null,
+        narr:'Al subdividir cada cara del icosaedro con frecuencia f, las caras totales son 20 f cuadrado, las aristas son 30 f cuadrado, y los vertices son 10 f cuadrado mas 2. Todos los elementos crecen de forma cuadratica con f.'
+    },
+    {
+        badge:'Verificacion',
+        title:'Formula de Euler se Cumple para Todo f',
+        formula:'V-E+F = (10f^2+2) - 30f^2 + 20f^2 = 2 \\checkmark',
+        explain:'La identidad topologica de Euler se mantiene independientemente de la frecuencia de subdivision.',
+        highlight:null,
+        narr:'Verificamos la formula de Euler para la subdivision de frecuencia f. 10 f cuadrado mas 2, menos 30 f cuadrado, mas 20 f cuadrado es igual a 2. La identidad topologica se cumple para cualquier valor de f.'
+    },
+    {
+        badge:'Geometria Metrica',
+        title:'Longitud de Arista para Frecuencia f',
+        formula:'a_f \\approx \\dfrac{1.051\\,R}{f}',
+        explain:'La longitud de cada barra de la estructura disminuye inversamente proporcional a f. A mayor frecuencia, aristas mas cortas.',
+        highlight:null,
+        narr:'La longitud de cada arista o barra es aproximadamente 1.051 R dividido por f. Esto significa que a mayor frecuencia, las barras son mas cortas pero hay muchas mas.'
+    },
+    {
+        badge:'Area Proyectada',
+        title:'El Area Cubierta NO Depende de f',
+        formula:'A_{proy} = \\pi R^2 \\quad (\\text{constante, independiente de } f)',
+        explain:'La cupula siempre cubre el mismo circulo de radio R en el suelo. La frecuencia no cambia el area proyectada.',
+        highlight:null,
+        narr:'El area proyectada de la cupula es siempre pi R cuadrado. Esta es una constante que no depende de la frecuencia de subdivision. Independientemente de cuantas divisiones hagamos, la cupula cubre el mismo circulo en el suelo.'
+    },
+    {
+        badge:'Material Total',
+        title:'El Perimetro Total Crece Linealmente con f',
+        formula:'L_{total}(f) \\approx 15f^2 \\cdot \\dfrac{1.051R}{f} = 15.77\\,f\\,R',
+        explain:'Aunque cada arista individual es mas corta, su cantidad crece como f2. El efecto neto es que el material total crece como f.',
+        highlight:null,
+        narr:'El perimetro total de material es el numero de aristas multiplicado por la longitud de cada una. Esto da 15 f cuadrado por 1.051 R sobre f, que simplifica a 15.77 f R. El material total crece linealmente con f.'
+    },
+    {
+        badge:'Indice de Eficiencia',
+        title:'Calculo del Indice eta(f)',
+        formula:'\\eta(f) = \\dfrac{A_{proy}}{L_{total}(f)} = \\dfrac{\\pi R^2}{15.77\\,f\\,R} = \\dfrac{\\pi R}{15.77\\,f}',
+        explain:'La eficiencia decrece inversamente con f: a mayor subdivision, mayor material por metro cuadrado cubierto.',
+        highlight:null,
+        narr:'El indice de eficiencia eta de f es el area proyectada dividida entre el material total. Esto da pi R sobre 15.77 f. La eficiencia decrece de forma inversamente proporcional a f.'
+    },
+    {
+        badge:'Conclusion Final',
+        title:'Punto de Estancamiento y Frecuencia Optima',
+        formula:'f_{opt} = 3 \\quad \\Rightarrow \\quad V=92,\\; E=270,\\; F=180',
+        explain:'Entre f=3 y f=4 la ganancia en aproximacion esferica es solo +4.4%. El costo de fabricacion extra no se justifica.',
+        highlight:'Entre f = 3 y f = 4 la eficiencia eta aumenta solo 4.4% pero el numero de barras pasa de 270 a 480. La frecuencia optima para instalaciones industriales de mediana escala es f = 3.',
+        narr:'La conclusion es que la frecuencia optima para instalaciones industriales es f igual a 3. Entre f igual a 3 y f igual a 4 la ganancia en eficiencia es solo del 4.4%, pero el numero de barras pasa de 270 a 480. Este es el punto de estancamiento donde el costo adicional de fabricacion no se justifica.'
+    }
+];
+
+let mtpCurrent=0, mtpPlaying=false, mtpTimer=null, mtpMuted=false;
+
+function mtpRender(n){
+    const s=mtpSteps[n];
+    document.getElementById('mtp-cur').textContent=n+1;
+    document.getElementById('mtp-tot').textContent=mtpSteps.length;
+    document.getElementById('mtp-prog').style.width=((n+1)/mtpSteps.length*100)+'%';
+
+    const screen=document.getElementById('mtp-screen');
+    screen.innerHTML='';
+
+    const badge=document.createElement('div');
+    badge.className='mtp-step-badge';
+    badge.innerHTML='<i class="fas fa-circle" style="font-size:0.6em;"></i> ' + s.badge;
+    screen.appendChild(badge);
+
+    const title=document.createElement('div');
+    title.className='mtp-title-text';
+    title.textContent=s.title;
+    screen.appendChild(title);
+
+    const fArea=document.createElement('div');
+    fArea.className='mtp-formula-area';
+    fArea.innerHTML='<div id="mtp-formula-target"></div>';
+    screen.appendChild(fArea);
+
+    const explain=document.createElement('div');
+    explain.className='mtp-explain';
+    explain.textContent=s.explain;
+    screen.appendChild(explain);
+
+    if(s.highlight){
+        const hbox=document.createElement('div');
+        hbox.className='mtp-highlight-box';
+        hbox.innerHTML='<strong><i class="fas fa-star"></i> Conclusion:</strong> ' + s.highlight;
+        screen.appendChild(hbox);
+    }
+
+    // Render KaTeX in formula area
+    setTimeout(()=>{
+        const target=document.getElementById('mtp-formula-target');
+        if(target && window.katex){
+            try{
+                katex.render(s.formula, target, {displayMode:true, throwOnError:false});
+            }catch(e){target.textContent=s.formula;}
+        }
+    },80);
+
+    // Narrate
+    if(!mtpMuted) setTimeout(()=>AS.speak(s.narr), 500);
+}
+
+function mtpNext(){
+    if(mtpCurrent < mtpSteps.length-1){ mtpCurrent++; mtpRender(mtpCurrent); }
+    else if(mtpPlaying){ mtpStop(); }
+}
+function mtpPrev(){
+    if(mtpCurrent > 0){ mtpCurrent--; mtpRender(mtpCurrent); }
+}
+function mtpPlayPause(){
+    if(mtpPlaying){ mtpStop(); }
+    else{
+        mtpPlaying=true;
+        document.getElementById('mtp-play-icon').className='fas fa-pause';
+        document.getElementById('mtp-play-btn').querySelector('i').nextSibling.textContent=' Pausar';
+        const speed=parseFloat(document.getElementById('mtp-speed').value);
+        const delay=5500/speed;
+        mtpTimer=setInterval(()=>{
+            if(mtpCurrent<mtpSteps.length-1){mtpCurrent++;mtpRender(mtpCurrent);}
+            else{mtpStop();}
+        },delay);
+    }
+}
+function mtpStop(){
+    mtpPlaying=false;
+    clearInterval(mtpTimer);
+    const btn=document.getElementById('mtp-play-btn');
+    document.getElementById('mtp-play-icon').className='fas fa-play';
+}
+function mtpRestart(){ mtpStop(); mtpCurrent=0; mtpRender(0); }
+function mtpSetSpeed(v){ AS.rate=parseFloat(v); if(mtpPlaying){mtpStop();mtpPlayPause();} }
+function mtpToggleMute(){
+    mtpMuted=!mtpMuted;
+    const icon=document.getElementById('mtp-mute-icon');
+    icon.className=mtpMuted?'fas fa-volume-mute':'fas fa-volume-up';
+    if(mtpMuted)AS.stop();
+}
+
+// Initialize tutor when tab opens
+document.addEventListener('DOMContentLoaded',()=>{ mtpRender(0); });
+
+// ═══════════════════════════════════════════════════════
+// 7. INTERACTIVE MATH SIMULATOR (Mathos AI style)
+// ═══════════════════════════════════════════════════════
+function runSimulator(){
+    const f = parseFloat(document.getElementById('sim-f').value) || 3;
+    const R = parseFloat(document.getElementById('sim-R').value) || 10;
+    const H = parseFloat(document.getElementById('sim-H').value) || 10;
+
+    const output = document.getElementById('sim-output');
+    const running = document.getElementById('sim-running');
+    const runBtn = document.getElementById('sim-run-btn');
+
+    output.innerHTML = '';
+    running.classList.add('visible');
+    runBtn.disabled = true;
+
+    // Calculated values
+    const V = 10*f*f + 2;
+    const E = 30*f*f;
+    const F = 20*f*f;
+    const a = (1.051*R/f).toFixed(3);
+    const Ltotal = (15.77*f*R).toFixed(2);
+    const Aproy = (Math.PI*R*R).toFixed(2);
+    const Asup = (2*Math.PI*R*R).toFixed(2);
+    const eta = (Math.PI*R/(15.77*f*R)*100).toFixed(2);
+    const nHex = Math.max(0, 10*f*f-10);
+    const nPent = 12;
+    const euler = V - E + F;
+    const isOpt = (f==3) ? ' (¡Frecuencia optima!)' : (f < 3 ? ' (Por debajo del optimo)' : ' (Por encima del optimo)');
+
+    const steps = [
+        {
+            title: 'Datos de Entrada',
+            formula: 'f = ' + f + '    R = ' + R + ' m    H = ' + H + ' m',
+            result: 'Parametros de diseno registrados.',
+            narr: 'Frecuencia f igual a ' + f + ', radio R igual a ' + R + ' metros, altura H igual a ' + H + ' metros.'
+        },
+        {
+            title: 'Topologia — Conteo de Elementos',
+            formula: 'V = 10×' + f + '² + 2 = ' + V + '\nE = 30×' + f + '² = ' + E + '\nF = 20×' + f + '² = ' + F,
+            result: 'Total: ' + V + ' vertices, ' + E + ' aristas, ' + F + ' caras.',
+            narr: 'Con frecuencia ' + f + ', la cupula tiene ' + V + ' vertices, ' + E + ' aristas y ' + F + ' caras.'
+        },
+        {
+            title: 'Verificacion de Euler',
+            formula: 'V - E + F = ' + V + ' - ' + E + ' + ' + F + ' = ' + euler,
+            result: euler === 2 ? 'Verificado: V - E + F = 2' : 'Error en el calculo.',
+            narr: 'Verificamos la formula de Euler: ' + V + ' menos ' + E + ' mas ' + F + ' es igual a ' + euler + '. ' + (euler===2?'Verificado correctamente.':'Hay un error.')
+        },
+        {
+            title: 'Longitud de Arista Estructural',
+            formula: 'a_f = 1.051 × R / f = 1.051 × ' + R + ' / ' + f + ' = ' + a + ' m',
+            result: 'Cada barra mide ' + a + ' metros.',
+            narr: 'La longitud de cada barra estructural es 1.051 por ' + R + ' sobre ' + f + ' igual a ' + a + ' metros.'
+        },
+        {
+            title: 'Area Proyectada (Cubierta)',
+            formula: 'A_proy = π × R² = π × ' + R + '² = ' + Aproy + ' m²',
+            result: 'La cupula cubre ' + Aproy + ' m² de planta.',
+            narr: 'El area proyectada es pi por ' + R + ' al cuadrado, igual a ' + Aproy + ' metros cuadrados de planta cubierta.'
+        },
+        {
+            title: 'Material Total (Longitud de Aristas)',
+            formula: 'L_total = 15.77 × f × R = 15.77 × ' + f + ' × ' + R + ' = ' + Ltotal + ' m',
+            result: 'Se requieren ' + Ltotal + ' metros lineales de estructura.',
+            narr: 'El material total es 15.77 por ' + f + ' por ' + R + ' igual a ' + Ltotal + ' metros lineales de barras estructurales.'
+        },
+        {
+            title: 'Indice de Eficiencia eta',
+            formula: 'eta = A_proy / L_total = ' + Aproy + ' / ' + Ltotal + ' = ' + eta + '%',
+            result: 'Eficiencia eta = ' + eta + '%' + isOpt,
+            narr: 'El indice de eficiencia eta es ' + eta + ' por ciento.' + isOpt
+        },
+        {
+            title: 'Resumen de Composicion Poligonal',
+            formula: 'Pentagonos: ' + nPent + ' (constante, siempre 12)\nHexagonos: 10×' + f + '²-10 = ' + nHex + '\nTotal caras: ' + F,
+            result: nPent + ' pentagonos + ' + nHex + ' hexagonos = ' + F + ' paneles de cubierta.',
+            narr: 'La cupula tiene ' + nPent + ' pentagonos, que son siempre 12 independientemente de la frecuencia, y ' + nHex + ' hexagonos, para un total de ' + F + ' paneles de cubierta.'
+        }
+    ];
+
+    // Show steps with animation delay
+    steps.forEach((step, i) => {
+        setTimeout(() => {
+            const card = document.createElement('div');
+            card.className = 'sim-step-card';
+            card.innerHTML =
+                '<div class="sim-step-header">' +
+                    '<div class="sim-step-num">' + (i+1) + '</div>' +
+                    '<div class="sim-step-title">' + step.title + '</div>' +
+                '</div>' +
+                '<div class="sim-step-formula">' + step.formula + '</div>' +
+                '<div class="sim-step-result"><i class="fas fa-arrow-right" style="color:var(--tutor-green);margin-right:7px;"></i>' + step.result + '</div>';
+            output.appendChild(card);
+            setTimeout(() => card.classList.add('visible'), 30);
+            AS.speak(step.narr);
+
+            // Final summary after all steps
+            if(i === steps.length - 1){
+                setTimeout(() => {
+                    running.classList.remove('visible');
+                    runBtn.disabled = false;
+
+                    const finalBox = document.createElement('div');
+                    finalBox.className = 'sim-final-box';
+                    finalBox.innerHTML =
+                        '<div class="sim-final-title"><i class="fas fa-trophy"></i> Resultado Final para f=' + f + ', R=' + R + ' m</div>' +
+                        '<div class="sim-final-grid">' +
+                            '<div class="sim-final-item"><div class="sim-final-label">Vertices</div><div class="sim-final-val">' + V + '</div></div>' +
+                            '<div class="sim-final-item"><div class="sim-final-label">Aristas</div><div class="sim-final-val">' + E + '</div></div>' +
+                            '<div class="sim-final-item"><div class="sim-final-label">Caras</div><div class="sim-final-val">' + F + '</div></div>' +
+                            '<div class="sim-final-item"><div class="sim-final-label">Area (m²)</div><div class="sim-final-val">' + Aproy + '</div></div>' +
+                            '<div class="sim-final-item"><div class="sim-final-label">Material (m)</div><div class="sim-final-val">' + Ltotal + '</div></div>' +
+                            '<div class="sim-final-item"><div class="sim-final-label">Eficiencia eta</div><div class="sim-final-val">' + eta + '%</div></div>' +
+                        '</div>';
+                    output.appendChild(finalBox);
+
+                    AS.speak('Calculo completo. Para frecuencia ' + f + ' y radio ' + R + ' metros: ' + V + ' vertices, ' + E + ' aristas, ' + F + ' caras, area cubierta ' + Aproy + ' metros cuadrados, material total ' + Ltotal + ' metros lineales, eficiencia ' + eta + ' por ciento.');
+                }, 600);
+            }
+        }, i * 1500);
+    });
+}
+
+// ═══════════════════════════════════════════════════════
+// 8. PASSWORD GATE
+// ═══════════════════════════════════════════════════════
+function checkPw(){
+    const val=document.getElementById('pw-input').value.trim().toLowerCase();
+    if(btoa(val)===btoa('icosaedro1')){
+        document.getElementById('pw-gate').style.display='none';
+        document.getElementById('solution-content').style.display='block';
+        setTimeout(renderMath,100);
+        AS.speak('Acceso concedido. A continuacion se muestra la memoria de calculo completa con las deducciones matematicas del tema de cupulas geodesicas.');
+    }else{
+        const err=document.getElementById('pw-error');
+        err.style.display='block';
+        document.getElementById('pw-input').style.borderColor='#fc8181';
+        AS.speak('Contrasena incorrecta. Intenta de nuevo.');
+        setTimeout(()=>{err.style.display='none';document.getElementById('pw-input').style.borderColor='';},2500);
+    }
+}
+
+// ═══════════════════════════════════════════════════════
+// 9. GEOGEBRA GENERATOR
+// ═══════════════════════════════════════════════════════
+function updateGeoCommands(f){
+    f=parseInt(f);
+    const R=parseFloat(document.getElementById('radioInput').value)||5;
+    document.getElementById('geoFreqVal').textContent=f;
+    document.getElementById('cmd-params').textContent='f = '+f+'\nR = '+R+'\nphi = (1 + sqrt(5)) / 2';
+    const V=10*f*f+2,E=30*f*f,F=20*f*f;
+    const l=(1.051/f).toFixed(3);
+    const Lt=(15.77*f*R).toFixed(2);
+    const eta=(Math.PI*R/(15.77*f*R)*100).toFixed(2);
+    document.getElementById('res-v').textContent=V;
+    document.getElementById('res-e').textContent=E;
+    document.getElementById('res-f').textContent=F;
+    document.getElementById('res-l').textContent=l+'R';
+    document.getElementById('res-lt').textContent=Lt+' m';
+    document.getElementById('res-eta').textContent=eta+'%';
+    document.getElementById('euler-check').textContent='V-E+F = '+V+'-'+E+'+'+F+' = '+(V-E+F)+' Verificado';
+}
+updateGeoCommands(2);
+
+// ═══════════════════════════════════════════════════════
+// 10. CLIPBOARD COPY
+// ═══════════════════════════════════════════════════════
+function copyCmd(id, btn){
+    const text=document.getElementById(id).textContent;
+    const ok=()=>{btn.innerHTML='<i class="fas fa-check"></i> Copiado';btn.classList.add('copied');setTimeout(()=>{btn.innerHTML='<i class="fas fa-copy"></i> Copiar';btn.classList.remove('copied');},1800);};
+    if(navigator.clipboard){navigator.clipboard.writeText(text).then(ok).catch(()=>{fb();});}
+    else{fb();}
+    function fb(){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);ok();}
+}
+</script>
+</body>
+</html>
