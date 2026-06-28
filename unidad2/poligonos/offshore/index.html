@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -44,6 +44,100 @@
   --radius-lg:20px;
   --radius-xl:28px;
 }
+/* ===== INFO BUTTONS & MODALS ===== */
+.inf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 200, 255, 0.12);
+  border: 1px solid rgba(0, 200, 255, 0.3);
+  color: var(--accent-teal);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72em;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: all 0.2s ease;
+  vertical-align: middle;
+}
+.inf-btn:hover {
+  background: var(--accent-teal);
+  color: #000 !important;
+  box-shadow: 0 0 10px rgba(0, 255, 202, 0.5);
+  transform: scale(1.1);
+}
+.info-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(2, 12, 26, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.info-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.info-modal {
+  width: 90%;
+  max-width: 500px;
+  background: #06152d;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  padding: 24px;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+.info-modal-overlay.active .info-modal {
+  transform: scale(1);
+}
+.info-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 12px;
+}
+.info-modal-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1em;
+  color: var(--accent-teal);
+  font-weight: 700;
+}
+.info-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.4em;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.info-modal-close:hover {
+  color: var(--accent-red);
+}
+.info-modal-body {
+  font-size: 0.9em;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+.info-modal-body p {
+  margin-bottom: 12px;
+}
+.info-modal-body strong {
+  color: var(--accent-gold);
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
@@ -848,7 +942,10 @@ hr.divider{border:none;height:1px;background:linear-gradient(90deg,transparent,v
 
     <!-- WAVE SIMULATOR (Flash-style) -->
     <div class="card" style="margin-top:28px;">
-      <div class="card-title"><i class="fa-solid fa-water"></i> Simulador de Oleaje en la Plataforma — Vista 2D Contextual</div>
+      <div class="card-title">
+        <i class="fa-solid fa-water"></i> Simulador de Oleaje en la Plataforma — Vista 2D Contextual
+        <button class="inf-btn" onclick="showInfoModal('oleaje')" title="Objetivo Didáctico-Técnico">inf</button>
+      </div>
       <div class="flash-sim-container">
         <div class="flash-sim-toolbar">
           <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
@@ -1076,59 +1173,175 @@ hr.divider{border:none;height:1px;background:linear-gradient(90deg,transparent,v
     <div class="section-title"><i class="fa-solid fa-play-circle" style="color:var(--accent-teal)"></i> Simuladores Interactivos</div>
     <p class="section-sub">Simuladores estilo Flash (HTML5 Canvas) y visualización 3D con WebGL/Three.js</p>
 
-    <!-- FLASH-STYLE SIM: POLYGON CROSS SECTION -->
+    <!-- CROSS SECTION SIMULATOR v2 - REDISEÑADO -->
     <div class="card" style="margin-bottom:28px;">
-      <div class="card-title"><i class="fa-solid fa-hexagon-nodes"></i> Simulador de Sección Transversal — Polígono Flotante</div>
+      <div class="card-title">
+        <i class="fa-solid fa-wave-square" style="color:var(--accent-teal)"></i> Simulador de Sección Transversal — Estabilidad Hidrostática Real
+        <button class="inf-btn" onclick="showInfoModal('transversal')" title="Objetivo Didáctico-Técnico">inf</button>
+      </div>
+      <p style="font-size:0.85em;color:var(--text-muted);margin-bottom:18px;">Demuestra cómo el número de lados <strong style="color:var(--accent-teal)">n</strong> del polígono cambia el ancho efectivo de flotación, el radio metacéntrico <strong style="color:var(--accent-blue)">BM = B²/12d</strong> y la estabilidad <strong style="color:var(--accent-gold)">GM</strong>. Comparativa en tiempo real: Hexágono vs Dodecágono.</p>
+
+      <!-- LEGEND -->
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-bottom:18px;padding:14px 18px;background:rgba(0,0,0,0.3);border:1px solid var(--border-glass);border-radius:var(--radius-md);">
+        <span style="font-size:0.78em;display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:50%;background:#888;display:inline-block;"></span><strong style="color:#aaa;">K</strong> — Quilla (base)</span>
+        <span style="font-size:0.78em;display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:50%;background:#4488ff;display:inline-block;"></span><strong style="color:#4488ff;">B</strong> — Centro de carena (KB = d/2)</span>
+        <span style="font-size:0.78em;display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:50%;background:#ffd700;display:inline-block;"></span><strong style="color:#ffd700;">G</strong> — Centro de gravedad (KG)</span>
+        <span style="font-size:0.78em;display:flex;align-items:center;gap:6px;"><span style="width:14px;height:14px;border-radius:50%;background:#00ffca;display:inline-block;"></span><strong style="color:#00ffca;">M</strong> — Metacentro (KM = KB + BM)</span>
+        <span style="font-size:0.78em;display:flex;align-items:center;gap:6px;"><span style="width:24px;height:4px;background:linear-gradient(90deg,#ffd700,#f97316);display:inline-block;border-radius:2px;"></span><strong style="color:#ffd700;">GZ</strong> — Brazo adrizante</span>
+      </div>
+
       <div class="flash-sim-container">
         <div class="flash-sim-toolbar">
           <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
-          <span class="flash-sim-title">platform_cross_section.swf [HTML5 Canvas] — Simulador Interactivo</span>
+          <span class="flash-sim-title">hydrostatic_cross_section.html5 — K · B · G · M · BM · GM · GZ en tiempo real</span>
         </div>
-        <div class="flash-sim-canvas-wrap">
-          <canvas class="sim-canvas" id="crossCanvas" width="800" height="420"></canvas>
+        <div class="flash-sim-canvas-wrap" style="min-height:480px;">
+          <canvas class="sim-canvas" id="crossCanvas" width="900" height="480"></canvas>
         </div>
-        <div class="sim-controls">
-          <button class="sim-btn" onclick="toggleCrossSim()"><i class="fa-solid fa-play" id="crossPlayIcon"></i> <span id="crossPlayText">Iniciar</span></button>
+        <div class="sim-controls" style="flex-wrap:wrap;gap:14px;padding:18px;">
+          <button class="sim-btn" id="crossPlayBtn" onclick="toggleCrossSim()"><i class="fa-solid fa-play" id="crossPlayIcon"></i> <span id="crossPlayText">Iniciar Animación</span></button>
+
           <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
-            Lados (n):
-            <input type="range" min="3" max="16" value="12" id="crossNSlider" style="width:120px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;" oninput="updateCrossN(this.value)">
-            <span id="crossNVal" style="color:var(--accent-teal);font-weight:700;">12</span>
+            <i class="fa-solid fa-hexagon-nodes" style="color:var(--accent-teal)"></i> Lados (n):
+            <input type="range" min="3" max="16" value="12" id="crossNSlider" style="width:130px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;cursor:pointer;" oninput="updateCrossN(this.value)">
+            <span id="crossNVal" style="color:var(--accent-teal);font-weight:800;min-width:30px;">12</span>
           </label>
+
           <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
-            Calado (d):
-            <input type="range" min="1" max="8" value="3" step="0.5" id="crossDSlider" style="width:100px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;" oninput="updateCrossD(this.value)">
-            <span id="crossDVal" style="color:var(--accent-gold);font-weight:700;">3.0 m</span>
+            <i class="fa-solid fa-water" style="color:#4488ff"></i> Calado d (m):
+            <input type="range" min="1" max="8" value="3" step="0.5" id="crossDSlider" style="width:110px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;cursor:pointer;" oninput="updateCrossD(this.value)">
+            <span id="crossDVal" style="color:var(--accent-gold);font-weight:800;min-width:40px;">3.0 m</span>
           </label>
+
+          <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
+            <i class="fa-solid fa-person-falling" style="color:var(--accent-violet)"></i> KG (m):
+            <input type="range" min="0.5" max="7" value="2.5" step="0.5" id="crossKGSlider" style="width:110px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;cursor:pointer;" oninput="updateCrossKG(this.value)">
+            <span id="crossKGVal" style="color:var(--accent-violet);font-weight:800;min-width:40px;">2.5 m</span>
+          </label>
+
+          <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
+            <i class="fa-solid fa-rotate" style="color:var(--accent-red)"></i> Escora θ:
+            <input type="range" min="-25" max="25" value="0" id="crossThetaSlider" style="width:110px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;cursor:pointer;" oninput="updateCrossTheta(this.value)">
+            <span id="crossThetaVal" style="color:var(--accent-red);font-weight:800;min-width:35px;">0°</span>
+          </label>
+
           <button class="sim-btn stop" onclick="resetCrossSim()"><i class="fa-solid fa-rotate-left"></i> Reiniciar</button>
+        </div>
+
+        <!-- METRICS STRIP -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:rgba(0,200,255,0.1);border-top:1px solid rgba(0,200,255,0.15);">
+          <div style="background:#071223;padding:12px;text-align:center;">
+            <div id="cs_KB" style="font-family:'JetBrains Mono',monospace;font-size:1.1em;font-weight:800;color:#4488ff;">--</div>
+            <div style="font-size:0.68em;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">KB (m)</div>
+          </div>
+          <div style="background:#071223;padding:12px;text-align:center;">
+            <div id="cs_BM" style="font-family:'JetBrains Mono',monospace;font-size:1.1em;font-weight:800;color:#00c8ff;">--</div>
+            <div style="font-size:0.68em;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">BM (m)</div>
+          </div>
+          <div style="background:#071223;padding:12px;text-align:center;">
+            <div id="cs_GM" style="font-family:'JetBrains Mono',monospace;font-size:1.1em;font-weight:800;color:#00ffca;">--</div>
+            <div style="font-size:0.68em;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">GM (m)</div>
+          </div>
+          <div style="background:#071223;padding:12px;text-align:center;">
+            <div id="cs_GZ" style="font-family:'JetBrains Mono',monospace;font-size:1.1em;font-weight:800;color:#ffd700;">--</div>
+            <div style="font-size:0.68em;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">GZ (m)</div>
+          </div>
+          <div style="background:#071223;padding:12px;text-align:center;">
+            <div id="cs_apo" style="font-family:'JetBrains Mono',monospace;font-size:1.1em;font-weight:800;color:#a855f7;">--</div>
+            <div style="font-size:0.68em;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Apotema a (m)</div>
+          </div>
+          <div style="background:#071223;padding:12px;text-align:center;">
+            <div id="cs_status" style="font-family:'JetBrains Mono',monospace;font-size:0.9em;font-weight:800;color:#00ffca;">--</div>
+            <div style="font-size:0.68em;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Estado</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 3D VIEWER -->
-    <div class="card">
-      <div class="card-title"><i class="fa-solid fa-cube" style="color:var(--accent-violet)"></i> Visualizador 3D — Plataforma Offshore WebGL</div>
-      <p style="font-size:0.85em;color:var(--text-muted);margin-bottom:18px;">Vista tridimensional interactiva de la planta de la plataforma · Usa el mouse para rotar, desplazar y hacer zoom</p>
-      <div class="viewer3d-container">
+    <!-- 3D VIEWER v2 - REDISEÑADO -->
+    <div class="card" style="position:relative;">
+      <div class="card-title">
+        <i class="fa-solid fa-cube" style="color:var(--accent-violet)"></i> Visualizador 3D Interactivo — Isotropía del Polígono
+        <button class="inf-btn" onclick="showInfoModal('isotropia')" title="Objetivo Didáctico-Técnico">inf</button>
+      </div>
+      <p style="font-size:0.85em;color:var(--text-muted);margin-bottom:18px;">
+        Demostración física en 3D: El oleaje golpea la plataforma desde distintas direcciones. Observa cómo la distancia al centroide fluctúa en el Hexágono (15.4%), mientras que en el Dodecágono es casi circular (3.4%), garantizando estabilidad isótropa.
+      </p>
+      
+      <div class="viewer3d-container" style="position:relative;">
         <div class="viewer3d-toolbar">
           <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
-          <span class="viewer3d-title">offshore_platform_3d.wrl [WebGL / Three.js] — Interactivo</span>
+          <span class="viewer3d-title">offshore_isotropy_3d.js [Three.js WebGL] — Interactivo</span>
         </div>
-        <div id="threejsContainer" style="width:100%;height:450px;position:relative;overflow:hidden;background:#020c1a;"></div>
-        <div class="viewer3d-controls">
+
+        <!-- 3D Viewport -->
+        <div id="threejsContainer" style="width:100%;height:500px;position:relative;overflow:hidden;background:#020c1a;border-radius:0 0 var(--radius-md) var(--radius-md);">
+          
+          <!-- Metrics overlay panel -->
+          <div id="threeOverlay" style="position:absolute;top:16px;right:16px;width:240px;background:rgba(2,12,26,0.85);backdrop-filter:blur(8px);border:1px solid var(--border-glass);border-radius:var(--radius-md);padding:14px;z-index:10;pointer-events:none;font-family:'JetBrains Mono',monospace;">
+            <div style="font-size:0.7em;color:var(--accent-violet);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:700;">Métricas de Isotropía</div>
+            
+            <div style="font-size:0.8em;color:#fff;margin-bottom:8px;">
+              Polígono: <span id="v3d_name" style="color:var(--accent-teal);font-weight:700;">Hexágono (n=6)</span>
+            </div>
+            
+            <div style="border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:6px;margin-bottom:6px;">
+              <div style="font-size:0.7em;color:var(--text-muted);">Ángulo de Ola (θ)</div>
+              <div id="v3d_angle" style="font-size:1.1em;color:#ffd700;font-weight:700;">0°</div>
+            </div>
+
+            <div style="border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:6px;margin-bottom:6px;">
+              <div style="font-size:0.7em;color:var(--text-muted);">Radio de Contacto (R_θ)</div>
+              <div id="v3d_r_theta" style="font-size:1.1em;color:#00ffca;font-weight:700;">--</div>
+            </div>
+
+            <div style="border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:6px;margin-bottom:6px;">
+              <div style="font-size:0.7em;color:var(--text-muted);">Fluctuación (R vs apotema)</div>
+              <div id="v3d_variation" style="font-size:1.1em;color:#ff4d6d;font-weight:700;">--</div>
+            </div>
+
+            <div>
+              <div style="font-size:0.7em;color:var(--text-muted);">Isotropía de Estabilidad</div>
+              <div id="v3d_status" style="font-size:0.85em;color:#ff4d6d;font-weight:700;margin-top:2px;">BAJA (Crítica)</div>
+            </div>
+          </div>
+
+          <!-- Color legend overlay -->
+          <div style="position:absolute;bottom:16px;left:16px;background:rgba(2,12,26,0.8);backdrop-filter:blur(6px);border:1px solid var(--border-glass);border-radius:var(--radius-sm);padding:8px 12px;z-index:10;pointer-events:none;font-size:0.75em;display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#e11d48;display:inline-block;"></span><span style="color:#aaa;">Círculo Exterior (Circunradio R)</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#059669;display:inline-block;"></span><span style="color:#aaa;">Círculo Interior (Apotema a)</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#eab308;display:inline-block;"></span><span style="color:#aaa;">Radio de Contacto Actual</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;background:#f97316;display:inline-block;clip-path:polygon(0 40%, 70% 40%, 70% 0, 100% 50%, 70% 100%, 70% 60%, 0 60%);"></span><span style="color:#aaa;">Dirección del Ola (Vector)</span></div>
+          </div>
+        </div>
+
+        <!-- 3D Controls -->
+        <div class="viewer3d-controls" style="flex-wrap:wrap;gap:12px;padding:16px;">
           <button class="viewer3d-btn active" id="btn3d-hex" onclick="show3DPolygon(6)">⬡ Hexágono</button>
           <button class="viewer3d-btn" id="btn3d-oct" onclick="show3DPolygon(8)">⬡ Octógono</button>
           <button class="viewer3d-btn" id="btn3d-dod" onclick="show3DPolygon(12)">⬡ Dodecágono</button>
-          <button class="viewer3d-btn" onclick="toggle3DWaves()"><i class="fa-solid fa-water"></i> Oleaje</button>
+          
+          <button class="viewer3d-btn" onclick="toggle3DWaveRotation()" id="btn3d-wave-rot"><i class="fa-solid fa-spin fa-arrows-spin"></i> Rotar Ola</button>
+          
+          <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
+            Dirección Ola:
+            <input type="range" min="0" max="360" value="0" id="waveAngle3DSlider" style="width:100px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;cursor:pointer;" oninput="update3DWaveAngle(this.value)">
+            <span id="label3D_angle" style="color:var(--accent-gold);font-weight:800;min-width:35px;">0°</span>
+          </label>
+
           <button class="viewer3d-btn" onclick="toggle3DWireframe()"><i class="fa-solid fa-border-all"></i> Wireframe</button>
           <button class="viewer3d-btn" onclick="reset3DCamera()"><i class="fa-solid fa-camera"></i> Reset Cámara</button>
-          <span class="sim-label" id="label3D">Mostrando: Hexágono (n=6)</span>
+          <span class="sim-label" id="label3D" style="margin-left:auto;">Hexágono (n=6)</span>
         </div>
       </div>
     </div>
 
     <!-- FLASH-STYLE SIM: WAVE IMPACT -->
     <div class="card" style="margin-top:28px;">
-      <div class="card-title"><i class="fa-solid fa-arrows-spin"></i> Simulador de Impacto de Olas — Distribución de Fuerzas</div>
+      <div class="card-title">
+        <i class="fa-solid fa-arrows-spin"></i> Simulador de Impacto de Olas — Distribución de Fuerzas
+        <button class="inf-btn" onclick="showInfoModal('impacto')" title="Objetivo Didáctico-Técnico">inf</button>
+      </div>
       <div class="flash-sim-container">
         <div class="flash-sim-toolbar">
           <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
@@ -1165,49 +1378,43 @@ hr.divider{border:none;height:1px;background:linear-gradient(90deg,transparent,v
 <section id="tab-estabilidad" class="tab-panel">
   <div class="container">
     <div class="section-title"><i class="fa-solid fa-anchor" style="color:var(--accent-blue)"></i> Simulador de Estabilidad e Hidrostática</div>
-    <p class="section-sub">Herramienta protegida — Simulación dinámica del metacentro y brazo adrizante GZ</p>
+    <p class="section-sub">Simulación dinámica interactiva del metacentro, altura metacéntrica GM y brazo adrizante GZ</p>
 
-    <div id="stabilityGate">
-      <div class="password-gate">
-        <i class="fa-solid fa-lock" style="font-size:3em;color:var(--accent-blue);margin-bottom:20px;display:block;"></i>
-        <h3>Acceso Restringido — Simulador de Estabilidad</h3>
-        <p style="color:var(--text-muted);font-size:0.88em;margin-bottom:24px;">Ingrese la clave del curso para desbloquear el simulador dinámico</p>
-        <input type="password" class="password-input" id="stabPassword" placeholder="••••" maxlength="10" onkeypress="if(event.key==='Enter')checkPassword()">
-        <button class="password-btn" onclick="checkPassword()">Acceder</button>
-        <p id="pwError" style="color:var(--accent-red);font-size:0.82em;margin-top:12px;display:none;">Clave incorrecta. Inténtalo de nuevo.</p>
-      </div>
-    </div>
-
-    <div id="stabilityContent" style="display:none;">
-      <div class="success-box"><i class="fa-solid fa-unlock"></i> Simulador desbloqueado — Modifique los parámetros para ver la respuesta hidrostática en tiempo real</div>
-      <div class="stability-sim">
-        <div class="stability-canvas-wrap">
-          <canvas id="stabilityCanvas" width="400" height="400"></canvas>
+    <div id="stabilityContent">
+      <div class="card">
+        <div class="card-title">
+          <i class="fa-solid fa-anchor" style="color:var(--accent-blue)"></i> Simulador Dinámico de Estabilidad e Hidrostática
+          <button class="inf-btn" onclick="showInfoModal('estabilidad')" title="Objetivo Didáctico-Técnico">inf</button>
         </div>
-        <div class="stability-controls-panel">
-          <div class="control-group">
-            <div class="control-label">Ángulo de Escora (θ) <span id="thetaVal" style="color:var(--accent-teal);">0°</span></div>
-            <input type="range" class="control-slider" min="-35" max="35" value="0" id="thetaSlider" oninput="updateStability()">
+        <div class="stability-sim">
+          <div class="stability-canvas-wrap">
+            <canvas id="stabilityCanvas" width="400" height="400"></canvas>
           </div>
-          <div class="control-group">
-            <div class="control-label">Ancho de Base (B) <span id="bVal" style="color:var(--accent-blue);">20 m</span></div>
-            <input type="range" class="control-slider" min="10" max="40" value="20" id="bSlider" oninput="updateStability()">
+          <div class="stability-controls-panel">
+            <div class="control-group">
+              <div class="control-label">Ángulo de Escora (θ) <span id="thetaVal" style="color:var(--accent-teal);">0°</span></div>
+              <input type="range" class="control-slider" min="-35" max="35" value="0" id="thetaSlider" oninput="updateStability()">
+            </div>
+            <div class="control-group">
+              <div class="control-label">Ancho de Base (B) <span id="bVal" style="color:var(--accent-blue);">20 m</span></div>
+              <input type="range" class="control-slider" min="10" max="40" value="20" id="bSlider" oninput="updateStability()">
+            </div>
+            <div class="control-group">
+              <div class="control-label">Calado (d) <span id="dVal" style="color:var(--accent-gold);">4 m</span></div>
+              <input type="range" class="control-slider" min="1" max="10" value="4" step="0.5" id="dSlider" oninput="updateStability()">
+            </div>
+            <div class="control-group">
+              <div class="control-label">Altura CG (KG) <span id="kgVal" style="color:var(--accent-violet);">3 m</span></div>
+              <input type="range" class="control-slider" min="0.5" max="8" value="3" step="0.5" id="kgSlider" oninput="updateStability()">
+            </div>
+            <div class="stability-metrics-grid">
+              <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metBM">--</div><div class="stab-metric-lbl">BM (m)</div></div>
+              <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metKB">--</div><div class="stab-metric-lbl">KB (m)</div></div>
+              <div class="stab-metric"><div class="stab-metric-val stab-positive" id="metGM">--</div><div class="stab-metric-lbl">GM (m)</div></div>
+              <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metGZ">--</div><div class="stab-metric-lbl">GZ (m)</div></div>
+            </div>
+            <div id="stabStatus" class="success-box" style="font-size:0.82em;margin:0;">Ingrese un ángulo de escora para ver el resultado.</div>
           </div>
-          <div class="control-group">
-            <div class="control-label">Calado (d) <span id="dVal" style="color:var(--accent-gold);">4 m</span></div>
-            <input type="range" class="control-slider" min="1" max="10" value="4" step="0.5" id="dSlider" oninput="updateStability()">
-          </div>
-          <div class="control-group">
-            <div class="control-label">Altura CG (KG) <span id="kgVal" style="color:var(--accent-violet);">3 m</span></div>
-            <input type="range" class="control-slider" min="0.5" max="8" value="3" step="0.5" id="kgSlider" oninput="updateStability()">
-          </div>
-          <div class="stability-metrics-grid">
-            <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metBM">--</div><div class="stab-metric-lbl">BM (m)</div></div>
-            <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metKB">--</div><div class="stab-metric-lbl">KB (m)</div></div>
-            <div class="stab-metric"><div class="stab-metric-val stab-positive" id="metGM">--</div><div class="stab-metric-lbl">GM (m)</div></div>
-            <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metGZ">--</div><div class="stab-metric-lbl">GZ (m)</div></div>
-          </div>
-          <div id="stabStatus" class="success-box" style="font-size:0.82em;margin:0;">Ingrese un ángulo de escora para ver el resultado.</div>
         </div>
       </div>
     </div>
@@ -1318,6 +1525,9 @@ print("Gráfico generado exitosamente.")
 </textarea>
           <div class="ide-actions">
             <button class="ide-run-btn" onclick="runPython()"><i class="fa-solid fa-play"></i> Ejecutar Script</button>
+            <button class="sim-btn" id="copyPyBtn" onclick="copyPythonCode()" style="font-size:0.78em;padding:7px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;">
+              <i class="fa-solid fa-copy"></i> Copiar Código
+            </button>
             <button class="sim-btn" onclick="resetPython()" style="font-size:0.78em;padding:7px 14px;">
               <i class="fa-solid fa-rotate-left"></i> Restablecer
             </button>
@@ -1412,6 +1622,19 @@ function showTab(id) {
     'tab-estabilidad':'btn-estabilidad','tab-python':'btn-python','tab-videos':'btn-videos'
   };
   document.getElementById(btnMap[id]).classList.add('active');
+
+  // Trigger Three.js redraw and resize when the tab becomes visible
+  if (id === 'tab-simuladores' && typeof renderer3D !== 'undefined' && renderer3D && camera3D) {
+    const container = document.getElementById('threejsContainer');
+    if (container) {
+      setTimeout(() => {
+        const w = container.clientWidth || 800;
+        renderer3D.setSize(w, 500);
+        camera3D.aspect = w / 500;
+        camera3D.updateProjectionMatrix();
+      }, 50); // slight timeout to allow CSS display block transition
+    }
+  }
 }
 function showInnerTab(id, parentId) {
   const parent = document.getElementById(parentId);
@@ -1564,14 +1787,17 @@ function drawWaveFrame(t) {
   ctx.fillText(`Polígono n=${waveN} | Plataforma Offshore — Golfo de Guayaquil`, 20, seaY-22);
 }
 
-/* ===== CROSS SECTION SIMULATOR ===== */
-let crossAnimId = null, crossRunning = false, crossT = 0, crossN = 12, crossD = 3;
-function initCrossSim() { drawCrossFrame(0); }
+/* ===== CROSS SECTION SIMULATOR v2 — REDISEÑADO ===== */
+let crossAnimId = null, crossRunning = false, crossT = 0;
+let crossN = 12, crossD = 3.0, crossKG = 2.5, crossTheta = 0;
+
+function initCrossSim() { updateCrossMetrics(); drawCrossFrame(0); }
+
 function toggleCrossSim() {
-  if(crossRunning){
+  if (crossRunning) {
     cancelAnimationFrame(crossAnimId); crossRunning = false;
     document.getElementById('crossPlayIcon').className = 'fa-solid fa-play';
-    document.getElementById('crossPlayText').textContent = 'Iniciar';
+    document.getElementById('crossPlayText').textContent = 'Iniciar Animación';
   } else {
     crossRunning = true;
     document.getElementById('crossPlayIcon').className = 'fa-solid fa-pause';
@@ -1579,88 +1805,279 @@ function toggleCrossSim() {
     animateCross();
   }
 }
-function animateCross(){
-  crossT += 0.025; drawCrossFrame(crossT);
-  if(crossRunning) crossAnimId = requestAnimationFrame(animateCross);
+function animateCross() {
+  crossT += 0.022;
+  // Animate a gentle wave-induced tilt when running
+  const autoTheta = Math.sin(crossT * 0.8) * 12;
+  drawCrossFrame(crossT, autoTheta);
+  if (crossRunning) crossAnimId = requestAnimationFrame(animateCross);
 }
-function updateCrossN(v){crossN=parseInt(v);document.getElementById('crossNVal').textContent=v;drawCrossFrame(crossT);}
-function updateCrossD(v){crossD=parseFloat(v);document.getElementById('crossDVal').textContent=v+' m';drawCrossFrame(crossT);}
-function resetCrossSim(){cancelAnimationFrame(crossAnimId);crossRunning=false;crossT=0;crossN=12;crossD=3;document.getElementById('crossNSlider').value=12;document.getElementById('crossDSlider').value=3;document.getElementById('crossNVal').textContent=12;document.getElementById('crossDVal').textContent='3.0 m';document.getElementById('crossPlayIcon').className='fa-solid fa-play';document.getElementById('crossPlayText').textContent='Iniciar';drawCrossFrame(0);}
-function drawCrossFrame(t){
+function updateCrossN(v) { crossN = parseInt(v); document.getElementById('crossNVal').textContent = v; updateCrossMetrics(); drawCrossFrame(crossT); }
+function updateCrossD(v) { crossD = parseFloat(v); document.getElementById('crossDVal').textContent = v + ' m'; updateCrossMetrics(); drawCrossFrame(crossT); }
+function updateCrossKG(v) { crossKG = parseFloat(v); document.getElementById('crossKGVal').textContent = v + ' m'; updateCrossMetrics(); drawCrossFrame(crossT); }
+function updateCrossTheta(v) { crossTheta = parseFloat(v); document.getElementById('crossThetaVal').textContent = v + '°'; drawCrossFrame(crossT); }
+function resetCrossSim() {
+  cancelAnimationFrame(crossAnimId); crossRunning = false; crossT = 0;
+  crossN = 12; crossD = 3.0; crossKG = 2.5; crossTheta = 0;
+  document.getElementById('crossNSlider').value = 12;
+  document.getElementById('crossDSlider').value = 3;
+  document.getElementById('crossKGSlider').value = 2.5;
+  document.getElementById('crossThetaSlider').value = 0;
+  document.getElementById('crossNVal').textContent = '12';
+  document.getElementById('crossDVal').textContent = '3.0 m';
+  document.getElementById('crossKGVal').textContent = '2.5 m';
+  document.getElementById('crossThetaVal').textContent = '0°';
+  document.getElementById('crossPlayIcon').className = 'fa-solid fa-play';
+  document.getElementById('crossPlayText').textContent = 'Iniciar Animación';
+  updateCrossMetrics(); drawCrossFrame(0);
+}
+function updateCrossMetrics() {
+  // Using APOTEMA as the effective half-width B/2 (worst-case direction)
+  // Apotema = R * cos(π/n), and R from area A=1000
+  const A = 1000;
+  const R_circ = Math.sqrt(2 * A / (crossN * Math.sin(2 * Math.PI / crossN)));
+  const apotema = R_circ * Math.cos(Math.PI / crossN);
+  const B_eff = 2 * apotema; // effective beam (apotema-based)
+  const KB = crossD / 2;
+  const BM = (B_eff * B_eff) / (12 * crossD);
+  const GM = KB + BM - crossKG;
+  const GZ = GM * Math.sin(crossTheta * Math.PI / 180);
+  document.getElementById('cs_KB').textContent = KB.toFixed(2) + ' m';
+  document.getElementById('cs_BM').textContent = BM.toFixed(2) + ' m';
+  const gmEl = document.getElementById('cs_GM');
+  gmEl.textContent = GM.toFixed(2) + ' m';
+  gmEl.style.color = GM > 0 ? '#00ffca' : '#ff4d6d';
+  const gzEl = document.getElementById('cs_GZ');
+  gzEl.textContent = GZ.toFixed(2) + ' m';
+  gzEl.style.color = GZ >= 0 ? '#ffd700' : '#ff4d6d';
+  document.getElementById('cs_apo').textContent = apotema.toFixed(2) + ' m';
+  const stEl = document.getElementById('cs_status');
+  if (GM > 0) { stEl.textContent = '✓ ESTABLE'; stEl.style.color = '#00ffca'; }
+  else { stEl.textContent = '✗ INESTABLE'; stEl.style.color = '#ff4d6d'; }
+}
+
+function drawCrossFrame(t, autoTilt) {
   const canvas = document.getElementById('crossCanvas');
-  if(!canvas) return;
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W=canvas.width, H=canvas.height;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#020c1a'; ctx.fillRect(0,0,W,H);
-  // Grid
-  ctx.strokeStyle='rgba(0,200,255,0.07)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  // Water oscillation
-  const waveOff = 12*Math.sin(t);
-  const waterY = H/2 + waveOff;
-  const cx = W/2, scalePx = 30;
-  const R_water = 1000; // area
-  const Rpx = 90; // visual radius
-  // Polygon cross section (front view)
-  ctx.save();
-  ctx.translate(cx, waterY - crossD*scalePx/2);
-  // Draw polygon top view
-  ctx.beginPath();
-  for(let i=0;i<crossN;i++){
-    const a = 2*Math.PI*i/crossN - Math.PI/2;
-    const x = Rpx*Math.cos(a), y = crossD*scalePx*0.15*Math.sin(a);
-    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // ── BACKGROUND ──
+  ctx.fillStyle = '#020c1a'; ctx.fillRect(0, 0, W, H);
+  // subtle grid
+  ctx.strokeStyle = 'rgba(0,200,255,0.05)'; ctx.lineWidth = 1;
+  for (let gx = 0; gx < W; gx += 50) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+  for (let gy = 0; gy < H; gy += 50) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+  // ── COMPUTE GEOMETRY ──
+  const A = 1000;
+  const R_circ = Math.sqrt(2 * A / (crossN * Math.sin(2 * Math.PI / crossN)));
+  const apotema = R_circ * Math.cos(Math.PI / crossN);
+  const B_eff = 2 * apotema;
+  const KB = crossD / 2;
+  const BM = (B_eff * B_eff) / (12 * crossD);
+  const GM = KB + BM - crossKG;
+  const effectiveTheta = (autoTilt !== undefined) ? autoTilt : crossTheta;
+  const GZ = GM * Math.sin(effectiveTheta * Math.PI / 180);
+
+  // ── WAVE SURFACE ──
+  const waveAmp = crossRunning ? 8 : 3;
+  const waterBaseY = H * 0.52;
+  const waveY = (x) => waterBaseY + waveAmp * Math.sin(x / 70 + t) + waveAmp * 0.5 * Math.sin(x / 40 - t * 1.3);
+
+  // ── LAYOUT: Two panels side by side ──
+  // LEFT: selected polygon (n), RIGHT: comparison (hex n=6 vs dod n=12)
+  const panelW = W / 2 - 10;
+
+  // ─── DRAW PANEL (reusable) ───
+  function drawPanel(panelX, n, d, kg, theta, label, isWinner) {
+    const R = Math.sqrt(2 * A / (n * Math.sin(2 * Math.PI / n)));
+    const apo = R * Math.cos(Math.PI / n);
+    const Bw = 2 * apo;
+    const kb = d / 2;
+    const bm = (Bw * Bw) / (12 * d);
+    const gm = kb + bm - kg;
+    const gz = gm * Math.sin(theta * Math.PI / 180);
+    const isStable = gm > 0;
+
+    // Scale: fit platform in panel
+    const scale = Math.min(panelW * 0.38 / apo, (H * 0.35) / (d + crossKG + bm + 2));
+    const halfBpx = apo * scale;
+    const dPx = d * scale;
+    const kgPx = kg * scale;
+    const bmPx = bm * scale;
+    const kbPx = kb * scale;
+
+    // Center X and waterline Y for this panel
+    const pcx = panelX + panelW / 2;
+    const wl = waterBaseY + (crossRunning ? waveAmp * Math.sin(pcx / 70 + t) : 0);
+    // Keel Y
+    const kY = wl + kbPx * 2; // keel is d below waterline
+
+    ctx.save();
+    ctx.translate(pcx, wl);
+    ctx.rotate(theta * Math.PI / 180);
+
+    // ── Submerged hull (below waterline in local coords) ──
+    const subGrad = ctx.createLinearGradient(-halfBpx, 0, halfBpx, dPx);
+    subGrad.addColorStop(0, isWinner ? 'rgba(0,100,80,0.85)' : 'rgba(10,40,90,0.85)');
+    subGrad.addColorStop(1, isWinner ? 'rgba(0,60,50,0.95)' : 'rgba(5,20,50,0.95)');
+    ctx.fillStyle = subGrad;
+    ctx.beginPath();
+    ctx.roundRect(-halfBpx, 0, halfBpx * 2, dPx, [0, 0, 8, 8]);
+    ctx.fill();
+    ctx.strokeStyle = isWinner ? '#00ffca' : '#00c8ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // ── Above-water hull ──
+    const deckH = kgPx * 0.6;
+    const deckGrad = ctx.createLinearGradient(0, -deckH, 0, 0);
+    deckGrad.addColorStop(0, isWinner ? 'rgba(0,80,60,0.9)' : 'rgba(20,50,100,0.9)');
+    deckGrad.addColorStop(1, isWinner ? 'rgba(0,120,90,0.7)' : 'rgba(20,80,150,0.7)');
+    ctx.fillStyle = deckGrad;
+    ctx.beginPath();
+    ctx.roundRect(-halfBpx * 0.9, -deckH, halfBpx * 1.8, deckH, [8, 8, 0, 0]);
+    ctx.fill();
+    ctx.strokeStyle = isWinner ? '#00ffca' : '#00c8ff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // ── Superstructure ──
+    ctx.fillStyle = isWinner ? 'rgba(0,180,120,0.6)' : 'rgba(30,80,180,0.6)';
+    ctx.fillRect(-halfBpx * 0.3, -deckH - kgPx * 0.35, halfBpx * 0.6, kgPx * 0.35);
+
+    // ── Waterline mark on hull ──
+    ctx.strokeStyle = 'rgba(0,255,202,0.9)'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 3]);
+    ctx.beginPath(); ctx.moveTo(-halfBpx - 8, 0); ctx.lineTo(halfBpx + 8, 0); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#00ffca'; ctx.font = 'bold 9px JetBrains Mono';
+    ctx.fillText('WL', halfBpx + 10, 4);
+
+    // ── Key Points (K, B, G, M) in local rotated coords ──
+    // K = keel bottom = dPx below WL
+    const Ky = dPx;
+    // B = center of buoyancy = kbPx below WL
+    const By = kbPx;
+    // G = center of gravity = kgPx above K = dPx - kgPx below WL
+    const Gy = dPx - kgPx;
+    // M = metacenter = (dPx - kgPx) - bmPx above G... M is at KB+BM from K
+    const My = dPx - (kb + bm) * scale;
+
+    // vertical axis K→M
+    ctx.strokeStyle = 'rgba(150,150,150,0.3)'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(0, Ky); ctx.lineTo(0, My - 8); ctx.stroke();
+    ctx.setLineDash([]);
+
+    function drawPoint(py, color, letter, labelRight) {
+      ctx.beginPath(); ctx.arc(0, py, 5, 0, Math.PI * 2);
+      ctx.fillStyle = color; ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.font = 'bold 11px Inter';
+      ctx.fillText(letter, labelRight ? 9 : -20, py + 4);
+    }
+
+    drawPoint(Ky, '#888888', 'K', true);   // K keel
+    drawPoint(By, '#4488ff', 'B', true);   // B buoyancy
+    drawPoint(Gy, '#ffd700', 'G', true);   // G gravity
+    drawPoint(My, '#00ffca', 'M', true);   // M metacenter
+
+    // BM bracket (B to M)
+    ctx.strokeStyle = 'rgba(0,200,255,0.5)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(-halfBpx * 0.15, By); ctx.lineTo(-halfBpx * 0.15, My); ctx.stroke();
+    ctx.fillStyle = '#00c8ff'; ctx.font = '9px JetBrains Mono';
+    ctx.fillText('BM', -halfBpx * 0.15 - 28, (By + My) / 2 + 4);
+
+    // GM bracket with color
+    const gmColor = isStable ? '#00ffca' : '#ff4d6d';
+    ctx.strokeStyle = gmColor; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(halfBpx * 0.2, Gy); ctx.lineTo(halfBpx * 0.2, My); ctx.stroke();
+    ctx.fillStyle = gmColor; ctx.font = 'bold 9px JetBrains Mono';
+    ctx.fillText('GM=' + gm.toFixed(1) + 'm', halfBpx * 0.2 + 4, (Gy + My) / 2 + 4);
+
+    // GZ arm (if tilted)
+    if (Math.abs(gz) > 0.05) {
+      const gzLen = Math.min(Math.abs(gz) * scale * 2, halfBpx * 0.8);
+      const gzDir = gz >= 0 ? 1 : -1;
+      ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(0, Gy); ctx.lineTo(gzDir * gzLen, Gy + 10); ctx.stroke();
+      // arrowhead
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.moveTo(gzDir * gzLen, Gy + 10);
+      ctx.lineTo(gzDir * (gzLen - 8), Gy + 4);
+      ctx.lineTo(gzDir * (gzLen - 8), Gy + 16);
+      ctx.closePath(); ctx.fill();
+      ctx.font = 'bold 9px JetBrains Mono';
+      ctx.fillStyle = '#f97316';
+      ctx.fillText('GZ=' + Math.abs(gz).toFixed(2) + 'm', gzDir * gzLen + gzDir * 5, Gy + 8);
+    }
+
+    ctx.restore();
+
+    // ── Panel header label ──
+    const headerColor = isWinner ? '#00ffca' : '#00c8ff';
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(panelX + 4, 6, panelW - 8, 36);
+    ctx.strokeStyle = headerColor + '44'; ctx.lineWidth = 1; ctx.strokeRect(panelX + 4, 6, panelW - 8, 36);
+    ctx.fillStyle = headerColor; ctx.font = 'bold 11px Orbitron,Inter';
+    ctx.fillText(label, panelX + 12, 22);
+    ctx.fillStyle = isStable ? '#00ffca' : '#ff4d6d'; ctx.font = '10px JetBrains Mono';
+    ctx.fillText(isStable ? '✓ ESTABLE  GM=' + gm.toFixed(2) + 'm' : '✗ INESTABLE  GM=' + gm.toFixed(2) + 'm', panelX + 12, 36);
+
+    // ── Bottom formula strip ──
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(panelX + 4, H - 36, panelW - 8, 30);
+    ctx.fillStyle = '#8db4cc'; ctx.font = '9px JetBrains Mono';
+    ctx.fillText(`n=${n}  B=${Bw.toFixed(1)}m  d=${d}m  KB=${kb.toFixed(2)}m  BM=${bm.toFixed(2)}m`, panelX + 10, H - 20);
+    ctx.fillStyle = headerColor;
+    ctx.fillText(`Apotema=${apo.toFixed(2)}m  R=${R.toFixed(2)}m  e=${((1-Math.cos(Math.PI/n))*100).toFixed(1)}%`, panelX + 10, H - 8);
   }
-  ctx.closePath();
-  ctx.fillStyle='rgba(26,58,107,0.9)'; ctx.fill();
-  ctx.strokeStyle='#00c8ff'; ctx.lineWidth=2; ctx.stroke();
-  // Side rect (cross section)
-  const halfB = Rpx;
-  const dPx = crossD*scalePx;
-  ctx.fillStyle='rgba(10,37,80,0.95)'; ctx.fillRect(-halfB, y||0, halfB*2, dPx*0.7);
-  ctx.strokeStyle='#0a8fbf'; ctx.lineWidth=1.5; ctx.strokeRect(-halfB, y||0, halfB*2, dPx*0.7);
-  // Waterline on body
-  ctx.strokeStyle='rgba(0,255,202,0.8)'; ctx.lineWidth=2; ctx.setLineDash([8,4]);
-  ctx.beginPath(); ctx.moveTo(-halfB-20,dPx*0.35); ctx.lineTo(halfB+20,dPx*0.35); ctx.stroke();
-  ctx.setLineDash([]);
-  // Labels
-  ctx.fillStyle='#00ffca'; ctx.font='bold 11px Inter';
-  ctx.fillText('B = '+( Rpx*2/scalePx*2 ).toFixed(1)+' m', halfB+5, dPx*0.35+4);
-  ctx.fillStyle='#ffd700'; ctx.fillText('d = '+crossD+' m', 5, dPx*0.6);
-  // KB point
-  const KBpx = dPx*0.35/2;
-  ctx.beginPath(); ctx.arc(0,KBpx,5,0,Math.PI*2);
-  ctx.fillStyle='#ff4d6d'; ctx.fill();
-  ctx.fillStyle='#ff4d6d'; ctx.fillText('B',6,KBpx+4);
-  // KG
-  const KGpx = -15;
-  ctx.beginPath(); ctx.arc(0,KGpx,5,0,Math.PI*2);
-  ctx.fillStyle='#ffd700'; ctx.fill();
-  ctx.fillStyle='#ffd700'; ctx.fillText('G',6,KGpx+4);
-  ctx.restore();
-  // Water surface
-  ctx.beginPath(); ctx.moveTo(0,waterY);
-  for(let x=0;x<=W;x++){
-    ctx.lineTo(x, waterY + 10*Math.sin(x/60+t) + 5*Math.sin(x/35-t*1.2));
-  }
-  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
-  let wg=ctx.createLinearGradient(0,waterY,0,H);
-  wg.addColorStop(0,'rgba(0,150,200,0.3)'); wg.addColorStop(1,'rgba(0,50,80,0.2)');
-  ctx.fillStyle=wg; ctx.fill();
-  ctx.strokeStyle='rgba(0,200,255,0.5)'; ctx.lineWidth=1.5;
-  ctx.beginPath(); ctx.moveTo(0,waterY);
-  for(let x=0;x<=W;x++) ctx.lineTo(x,waterY+10*Math.sin(x/60+t)+5*Math.sin(x/35-t*1.2));
+
+  // ── WATER SURFACE (drawn before panels so hulls appear on top) ──
+  // Water below line
+  ctx.beginPath(); ctx.moveTo(0, waveY(0));
+  for (let x = 0; x <= W; x += 4) ctx.lineTo(x, waveY(x));
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  const wg = ctx.createLinearGradient(0, waterBaseY, 0, H);
+  wg.addColorStop(0, 'rgba(0,80,160,0.45)');
+  wg.addColorStop(1, 'rgba(0,20,50,0.6)');
+  ctx.fillStyle = wg; ctx.fill();
+
+  // Wave line
+  ctx.strokeStyle = 'rgba(0,200,255,0.5)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, waveY(0));
+  for (let x = 0; x <= W; x += 4) ctx.lineTo(x, waveY(x));
   ctx.stroke();
-  // BM formula overlay
-  const B2 = (Rpx*2*2/scalePx);
-  const BM = (B2*B2)/(12*crossD);
-  ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(12,12,240,52); ctx.strokeStyle='rgba(0,200,255,0.2)'; ctx.strokeRect(12,12,240,52);
-  ctx.fillStyle='#00ffca'; ctx.font='bold 12px JetBrains Mono';
-  ctx.fillText(`n = ${crossN} lados | d = ${crossD} m`, 20, 32);
-  ctx.fillStyle='#8db4cc'; ctx.font='11px JetBrains Mono';
-  ctx.fillText(`BM = B²/(12·d) ≈ ${BM.toFixed(2)} m`, 20, 52);
+
+  // ── DIVIDER line between panels ──
+  ctx.strokeStyle = 'rgba(0,200,255,0.12)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── LEFT PANEL: current polygon (n selected by user) ──
+  const effectiveT = (autoTilt !== undefined) ? autoTilt : crossTheta;
+  drawPanel(0, crossN, crossD, crossKG, effectiveT,
+    `n=${crossN} — ${['','','','Triángulo','Cuadrado','Pentágono','Hexágono','Heptágono','Octógono','Nonágono','Decágono','Undecágono','Dodecágono'][crossN] || 'Polígono'}`,
+    crossN >= 10);
+
+  // ── RIGHT PANEL: fixed comparison (hexagon n=6 vs dodecagon n=12) ──
+  // Show hex if current is not hex, else show dod
+  const compN = (crossN === 6) ? 12 : 6;
+  const compLabel = compN === 12 ? 'n=12 — Dodecágono (GANADOR)' : 'n=6 — Hexágono (referencia)';
+  drawPanel(W / 2 + 10, compN, crossD, crossKG, effectiveT, compLabel, compN === 12);
+
+  // ── CENTER TOP LABEL ──
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(W/2 - 100, H - 56, 200, 18);
+  ctx.fillStyle = '#8db4cc'; ctx.font = '9px JetBrains Mono'; ctx.textAlign = 'center';
+  ctx.fillText('← Tu polígono seleccionado · Polígono comparativo →', W/2, H - 43);
+  ctx.textAlign = 'left';
+
+  // Update metrics strip
+  updateCrossMetrics();
 }
 
 /* ===== FORCE DISTRIBUTION SIMULATOR ===== */
@@ -1674,200 +2091,472 @@ function animateForce(){forceT+=0.03;drawForceFrame(forceT);if(forceRunning)forc
 function setWaveAngle(v){forceAngle=parseInt(v);document.getElementById('waveAngleVal').textContent=v+'°';drawForceFrame(forceT);}
 function setForcePoly(v){forcePoly=parseInt(v);drawForceFrame(forceT);}
 function resetForceSim(){cancelAnimationFrame(forceAnimId);forceRunning=false;forceT=0;forceAngle=45;forcePoly=12;document.getElementById('waveAngle').value=45;document.getElementById('waveAngleVal').textContent='45°';document.getElementById('forcePoly').value=12;document.getElementById('forcePlayBtn').innerHTML='<i class="fa-solid fa-play"></i> Iniciar';drawForceFrame(0);}
-function drawForceFrame(t){
-  const canvas=document.getElementById('forceCanvas');
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#020c1a';ctx.fillRect(0,0,W,H);
-  const cx=W/2,cy=H/2,R=110;
-  // Draw polygon
-  ctx.beginPath();
-  for(let i=0;i<forcePoly;i++){
-    const a=2*Math.PI*i/forcePoly-Math.PI/2;
-    const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
-    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+function drawForceFrame(t) {
+  const canvas = document.getElementById('forceCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  
+  // ── BACKGROUND ──
+  ctx.fillStyle = '#020c1a'; ctx.fillRect(0, 0, W, H);
+  
+  // Subtle grid
+  ctx.strokeStyle = 'rgba(0,200,255,0.04)'; ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  const waveRad = forceAngle * Math.PI / 180;
+  const panelW = W / 2;
+
+  // ── DRAW WAVE FRONTS IN BACKGROUND ──
+  ctx.strokeStyle = 'rgba(0, 200, 255, 0.07)'; ctx.lineWidth = 1.5;
+  const waveSpacing = 55;
+  const waveSpeed = t * 24;
+  for (let d = -400; d < W + 400; d += waveSpacing) {
+    const wavePos = d + (waveSpeed % waveSpacing);
+    ctx.beginPath();
+    const startX = wavePos - 1000 * Math.sin(waveRad);
+    const startY = -1000 * Math.cos(waveRad);
+    const endX = wavePos + 1000 * Math.sin(waveRad);
+    const endY = 1000 * Math.cos(waveRad);
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
   }
-  ctx.closePath();
-  ctx.fillStyle='rgba(7,22,40,0.9)';ctx.fill();
-  ctx.strokeStyle='#00c8ff';ctx.lineWidth=2;ctx.stroke();
-  // Wave direction arrow
-  const waveRad=forceAngle*Math.PI/180;
-  const arrowLen=130;
-  const ax=cx-arrowLen*Math.cos(waveRad)+6*Math.sin(t)*Math.cos(waveRad+Math.PI/2);
-  const ay=cy-arrowLen*Math.sin(waveRad)+6*Math.sin(t)*Math.sin(waveRad+Math.PI/2);
-  ctx.strokeStyle='rgba(0,200,255,0.6)';ctx.lineWidth=1;ctx.setLineDash([6,3]);
-  ctx.beginPath();ctx.moveTo(W*0.05,cy-100*Math.sin(waveRad));ctx.lineTo(cx+20*Math.cos(waveRad),cy+20*Math.sin(waveRad));ctx.stroke();ctx.setLineDash([]);
-  // Wave force on nearest side/vertex
-  const impactAngle=waveRad;
-  // Find nearest vertex to impact direction
-  let nearestV=-1,minDist=1e9;
-  for(let i=0;i<forcePoly;i++){
-    const a=2*Math.PI*i/forcePoly-Math.PI/2;
-    const dx=Math.cos(a)-Math.cos(impactAngle),dy=Math.sin(a)-Math.sin(impactAngle);
-    const d=dx*dx+dy*dy;
-    if(d<minDist){minDist=d;nearestV=i;}
+
+  // ── DIVIDER ──
+  ctx.strokeStyle = 'rgba(0, 200, 255, 0.12)'; ctx.lineWidth = 1; ctx.setLineDash([6, 4]);
+  ctx.beginPath(); ctx.moveTo(panelW, 0); ctx.lineTo(panelW, H); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── PANEL DRAWING FUNCTION ──
+  function drawForcePanel(xOffset, n, label, isWinner) {
+    const cx = xOffset + panelW / 2;
+    const cy = H / 2;
+    const R = 85; // visual radius
+
+    // Draw polygon
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const a = 2 * Math.PI * i / n - Math.PI / 2;
+      const x = cx + R * Math.cos(a), y = cy + R * Math.sin(a);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = isWinner ? 'rgba(0, 40, 50, 0.85)' : 'rgba(10, 25, 55, 0.85)';
+    ctx.fill();
+    ctx.strokeStyle = isWinner ? '#00ffca' : '#00c8ff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Centroide G
+    ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffd700'; ctx.fill();
+    ctx.fillStyle = '#ffd700'; ctx.font = 'bold 9px Inter';
+    ctx.fillText('G', cx + 7, cy + 3);
+
+    // Calculate forces at all vertices
+    let peakForce = 0;
+    let sumForces = 0;
+    let forceVals = [];
+
+    for (let i = 0; i < n; i++) {
+      const a = 2 * Math.PI * i / n - Math.PI / 2;
+      const vx = cx + R * Math.cos(a);
+      const vy = cy + R * Math.sin(a);
+
+      // Force magnitude proportional to alignment with wave direction: max(0, -cos(a - waveRad))
+      const cosDiff = -Math.cos(a - waveRad);
+      const fMag = Math.max(0, cosDiff);
+      
+      forceVals.push(fMag);
+      sumForces += fMag;
+      if (fMag > peakForce) peakForce = fMag;
+
+      if (fMag > 0.01) {
+        // Draw force arrow pushing ON the vertex
+        const fLen = 35 + fMag * 40 + 4 * Math.sin(t * 3.5 + i);
+        const startX = vx - fLen * Math.cos(waveRad);
+        const startY = vy - fLen * Math.sin(waveRad);
+
+        ctx.strokeStyle = isWinner ? '#00ffca' : '#ff4d6d';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(vx, vy);
+        ctx.stroke();
+
+        // Arrow head at (vx, vy) pointing along waveRad
+        ctx.fillStyle = isWinner ? '#00ffca' : '#ff4d6d';
+        ctx.save();
+        ctx.translate(vx, vy);
+        ctx.rotate(waveRad);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(-8, -4);
+        ctx.lineTo(-8, 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Calculations of force distribution uniformity
+    const avgForce = sumForces / n;
+    let variance = 0;
+    forceVals.forEach(v => { variance += (v - avgForce) * (v - avgForce); });
+    const stdDev = Math.sqrt(variance / n);
+    const loadImbalance = (stdDev / (peakForce || 1)) * 100;
+
+    // Header label
+    const headerColor = isWinner ? '#00ffca' : '#00c8ff';
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(xOffset + 10, 10, panelW - 20, 36);
+    ctx.strokeStyle = headerColor + '44'; ctx.lineWidth = 1; ctx.strokeRect(xOffset + 10, 10, panelW - 20, 36);
+    ctx.fillStyle = headerColor; ctx.font = 'bold 11px Orbitron,Inter';
+    ctx.fillText(label, xOffset + 18, 26);
+    ctx.fillStyle = isWinner ? '#00ffca' : '#ff4d6d'; ctx.font = '9px JetBrains Mono';
+    ctx.fillText(`Carga Máx: ${(peakForce*100).toFixed(0)}% | Desviación Carga: ${(stdDev*100).toFixed(1)}%`, xOffset + 18, 40);
+
+    // Bottom info box
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(xOffset + 10, H - 42, panelW - 20, 32);
+    ctx.fillStyle = '#8db4cc'; ctx.font = '10px JetBrains Mono';
+    ctx.fillText(`Distribución: ${loadImbalance < 48 ? '✓ HOMOGÉNEA (Bajo Estrés)' : '✗ DESEQUILIBRADA (Peligro)'}`, xOffset + 18, H - 28);
+    ctx.fillStyle = headerColor; ctx.font = '9px JetBrains Mono';
+    ctx.fillText(`Ángulo Ola: ${forceAngle}° | n = ${n}`, xOffset + 18, H - 14);
   }
-  const na=2*Math.PI*nearestV/forcePoly-Math.PI/2;
-  const vx=cx+R*Math.cos(na),vy=cy+R*Math.sin(na);
-  // Draw force arrow at vertex
-  const fLen=60+10*Math.sin(t*2);
-  ctx.strokeStyle='#ff4d6d';ctx.lineWidth=2.5;ctx.fillStyle='#ff4d6d';
-  ctx.beginPath();ctx.moveTo(vx-fLen*Math.cos(na),vy-fLen*Math.sin(na));ctx.lineTo(vx,vy);ctx.stroke();
-  // arrowhead
-  const ah=10,aw=6;
-  ctx.save();ctx.translate(vx,vy);ctx.rotate(na);
-  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-ah,-aw);ctx.lineTo(-ah,aw);ctx.closePath();ctx.fill();ctx.restore();
-  // Moment arm label
-  const armLen=R*Math.cos(na-impactAngle);
-  ctx.strokeStyle='rgba(255,215,0,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
-  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(vx,vy);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='#ffd700';ctx.font='bold 12px JetBrains Mono';
-  ctx.fillText(`R = ${(R*2/110).toFixed(2)}×scale`,cx+5,cy+15);
-  // G point
-  ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);
-  ctx.fillStyle='#ffd700';ctx.fill();
-  ctx.fillStyle='#ffd700';ctx.font='bold 11px Inter';ctx.fillText('G',cx+8,cy+5);
-  // Info box
-  ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(8,8,230,56);ctx.strokeStyle='rgba(255,77,109,0.3)';ctx.strokeRect(8,8,230,56);
-  ctx.fillStyle='#ff4d6d';ctx.font='bold 12px JetBrains Mono';
-  ctx.fillText(`Polígono n=${forcePoly} | Ola: ${forceAngle}°`,16,28);
-  ctx.fillStyle='#ffd700';ctx.font='11px JetBrains Mono';
-  ctx.fillText(`Vértice impactado: V${nearestV+1} de ${forcePoly}`,16,50);
+
+  // Draw Left Panel (selected)
+  const leftN = forcePoly;
+  const leftLabel = leftN === 6 ? 'n=6 — Hexágono (Carga Asimétrica)' : leftN === 8 ? 'n=8 — Octógono (Estrés Medio)' : `n=${leftN} — Polígono seleccionado`;
+  drawForcePanel(0, leftN, leftLabel, leftN >= 10);
+
+  // Draw Right Panel (comparison)
+  const rightN = (leftN === 12) ? 6 : 12;
+  const rightLabel = rightN === 12 ? 'n=12 — Dodecágono (Isotropía Estructural)' : 'n=6 — Hexágono (Referencia)';
+  drawForcePanel(panelW, rightN, rightLabel, rightN === 12);
 }
 
 /* ===== 3D VIEWER (Three.js) ===== */
-let scene3D,camera3D,renderer3D,platformMesh,waterMesh,waveMesh,anim3DId,wavesOn=false,wireframe3D=false,current3DN=6;
-function init3D(){
-  const container=document.getElementById('threejsContainer');
-  if(!container||typeof THREE==='undefined')return;
-  scene3D=new THREE.Scene();
-  scene3D.background=new THREE.Color(0x020c1a);
-  scene3D.fog=new THREE.FogExp2(0x020c1a,0.018);
-  camera3D=new THREE.PerspectiveCamera(45,container.clientWidth/container.clientHeight,0.1,500);
-  camera3D.position.set(40,30,55);camera3D.lookAt(0,0,0);
-  renderer3D=new THREE.WebGLRenderer({antialias:true,alpha:true});
-  renderer3D.setSize(container.clientWidth,450);
-  renderer3D.shadowMap.enabled=true;
+let scene3D, camera3D, renderer3D, anim3DId;
+let platformGroup = null, innerCircleLine = null, outerCircleLine = null;
+let waveArrowMesh = null, contactVectorLine = null;
+let current3DN = 6, wireframe3D = false, wave3DRotating = true;
+let wave3DAngle = 0, waves3DT = 0;
+
+function init3D() {
+  const container = document.getElementById('threejsContainer');
+  if (!container || typeof THREE === 'undefined') return;
+
+  scene3D = new THREE.Scene();
+  scene3D.background = new THREE.Color(0x020c1a);
+  scene3D.fog = new THREE.FogExp2(0x020c1a, 0.012);
+
+  const w = container.clientWidth || 800;
+  camera3D = new THREE.PerspectiveCamera(40, w / 500, 0.1, 500);
+  camera3D.position.set(0, 32, 48); // pedagogical overhead angle
+  camera3D.lookAt(0, 0, 0);
+
+  renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer3D.setSize(w, 500);
+  renderer3D.shadowMap.enabled = true;
   container.appendChild(renderer3D.domElement);
+
   // Lights
-  const ambient=new THREE.AmbientLight(0x102030,0.8);scene3D.add(ambient);
-  const dir=new THREE.DirectionalLight(0x00c8ff,1.5);dir.position.set(30,50,20);dir.castShadow=true;scene3D.add(dir);
-  const point=new THREE.PointLight(0x00ffca,1,80);point.position.set(-20,15,0);scene3D.add(point);
-  const point2=new THREE.PointLight(0xffd700,0.5,60);point2.position.set(20,-5,-20);scene3D.add(point2);
-  // Water plane
-  const waterGeo=new THREE.PlaneGeometry(200,200,40,40);
-  const waterMat=new THREE.MeshPhongMaterial({color:0x072040,transparent:true,opacity:0.7,wireframe:false,side:THREE.DoubleSide});
-  waterMesh=new THREE.Mesh(waterGeo,waterMat);waterMesh.rotation.x=-Math.PI/2;waterMesh.position.y=0;scene3D.add(waterMesh);
-  // Grid
-  const grid=new THREE.GridHelper(160,20,0x0a3060,0x061530);scene3D.add(grid);
-  show3DPolygon(6);
-  // Axes
-  const axesHelper=new THREE.AxesHelper(15);scene3D.add(axesHelper);
-  // Mouse orbit (simple)
-  let isDragging=false,prevX=0,prevY=0,camTheta=0.8,camPhi=0.5,camDist=70;
-  renderer3D.domElement.addEventListener('mousedown',e=>{isDragging=true;prevX=e.clientX;prevY=e.clientY;});
-  renderer3D.domElement.addEventListener('mouseup',()=>isDragging=false);
-  renderer3D.domElement.addEventListener('mousemove',e=>{
-    if(!isDragging)return;
-    camTheta-=(e.clientX-prevX)*0.008;camPhi-=(e.clientY-prevY)*0.008;
-    camPhi=Math.max(0.1,Math.min(1.4,camPhi));
-    camera3D.position.x=camDist*Math.sin(camPhi)*Math.sin(camTheta);
-    camera3D.position.y=camDist*Math.cos(camPhi);
-    camera3D.position.z=camDist*Math.sin(camPhi)*Math.cos(camTheta);
-    camera3D.lookAt(0,0,0);prevX=e.clientX;prevY=e.clientY;
+  const ambient = new THREE.AmbientLight(0x0d1f3d, 0.85); scene3D.add(ambient);
+  const dir = new THREE.DirectionalLight(0x00c8ff, 1.6); dir.position.set(30, 40, 20); dir.castShadow = true; scene3D.add(dir);
+  const point = new THREE.PointLight(0x00ffca, 1.2, 80); point.position.set(-20, 10, 0); scene3D.add(point);
+  const point2 = new THREE.PointLight(0xffd700, 0.6, 60); point2.position.set(20, -5, -20); scene3D.add(point2);
+
+  // Sea water grid (plane)
+  const waterGeo = new THREE.PlaneGeometry(160, 160, 30, 30);
+  const waterMat = new THREE.MeshPhongMaterial({
+    color: 0x051d38,
+    transparent: true,
+    opacity: 0.6,
+    wireframe: false,
+    shininess: 90,
+    side: THREE.DoubleSide
   });
-  renderer3D.domElement.addEventListener('wheel',e=>{
-    camDist=Math.max(20,Math.min(150,camDist+e.deltaY*0.05));
-    camera3D.position.setLength(camDist);e.preventDefault();
-  },{passive:false});
-  // Touch
-  renderer3D.domElement.addEventListener('touchstart',e=>{isDragging=true;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;});
-  renderer3D.domElement.addEventListener('touchend',()=>isDragging=false);
-  renderer3D.domElement.addEventListener('touchmove',e=>{
-    if(!isDragging)return;
-    camTheta-=(e.touches[0].clientX-prevX)*0.008;camPhi-=(e.touches[0].clientY-prevY)*0.008;
-    camPhi=Math.max(0.1,Math.min(1.4,camPhi));
-    camera3D.position.x=camDist*Math.sin(camPhi)*Math.sin(camTheta);
-    camera3D.position.y=camDist*Math.cos(camPhi);
-    camera3D.position.z=camDist*Math.sin(camPhi)*Math.cos(camTheta);
-    camera3D.lookAt(0,0,0);prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;e.preventDefault();
-  },{passive:false});
+  const waterMesh = new THREE.Mesh(waterGeo, waterMat);
+  waterMesh.rotation.x = -Math.PI / 2;
+  waterMesh.position.y = -0.5;
+  scene3D.add(waterMesh);
+
+  // Thin structural grid
+  const grid = new THREE.GridHelper(160, 20, 0x0a3060, 0x061530);
+  grid.position.y = -0.49;
+  scene3D.add(grid);
+
+  // Create platform group to easily rotate or clear children
+  platformGroup = new THREE.Group();
+  scene3D.add(platformGroup);
+
+  show3DPolygon(6);
+
+  // Mouse orbit
+  let isDragging = false, prevX = 0, prevY = 0, camTheta = Math.PI/2, camPhi = 0.6, camDist = 58;
+  
+  function updateCamPos() {
+    camera3D.position.x = camDist * Math.sin(camPhi) * Math.sin(camTheta);
+    camera3D.position.y = camDist * Math.cos(camPhi);
+    camera3D.position.z = camDist * Math.sin(camPhi) * Math.cos(camTheta);
+    camera3D.lookAt(0, 0, 0);
+  }
+
+  renderer3D.domElement.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+  renderer3D.domElement.addEventListener('mouseup', () => isDragging = false);
+  renderer3D.domElement.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    camTheta -= (e.clientX - prevX) * 0.008; camPhi -= (e.clientY - prevY) * 0.008;
+    camPhi = Math.max(0.05, Math.min(1.4, camPhi));
+    updateCamPos(); prevX = e.clientX; prevY = e.clientY;
+  });
+  renderer3D.domElement.addEventListener('wheel', e => {
+    camDist = Math.max(20, Math.min(120, camDist + e.deltaY * 0.05));
+    updateCamPos(); e.preventDefault();
+  }, { passive: false });
+
+  // Touch controls
+  renderer3D.domElement.addEventListener('touchstart', e => { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; });
+  renderer3D.domElement.addEventListener('touchend', () => isDragging = false);
+  renderer3D.domElement.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    camTheta -= (e.touches[0].clientX - prevX) * 0.008; camPhi -= (e.touches[0].clientY - prevY) * 0.008;
+    camPhi = Math.max(0.05, Math.min(1.4, camPhi));
+    updateCamPos(); prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; e.preventDefault();
+  }, { passive: false });
+
   animate3D();
 }
-function show3DPolygon(n){
-  current3DN=n;
-  if(!scene3D)return;
-  if(platformMesh){scene3D.remove(platformMesh);platformMesh.geometry.dispose();}
-  const shape=new THREE.Shape();
-  for(let i=0;i<n;i++){
-    const a=2*Math.PI*i/n-Math.PI/2;
-    const x=18*Math.cos(a),y=18*Math.sin(a);
-    i===0?shape.moveTo(x,y):shape.lineTo(x,y);
+
+function show3DPolygon(n) {
+  current3DN = n;
+  if (!scene3D || !platformGroup) return;
+
+  // Clear previous children
+  while (platformGroup.children.length > 0) {
+    const obj = platformGroup.children[0];
+    platformGroup.remove(obj);
+    if (obj.geometry) obj.geometry.dispose();
+  }
+
+  // Base dimensions matching Area = 1000m²
+  const A = 1000;
+  const scale = 0.65; // scale to fit scene nicely
+  const R = Math.sqrt(2 * A / (n * Math.sin(2 * Math.PI / n)));
+  const apo = R * Math.cos(Math.PI / n);
+  const Rpx = R * scale;
+  const apopx = apo * scale;
+
+  // 1. Draw outer boundary circle (Circunradio R) in neon red
+  const outerCircleGeo = new THREE.RingGeometry(Rpx - 0.12, Rpx + 0.12, 64);
+  const outerCircleMat = new THREE.MeshBasicMaterial({ color: 0xe11d48, side: THREE.DoubleSide });
+  outerCircleLine = new THREE.Mesh(outerCircleGeo, outerCircleMat);
+  outerCircleLine.rotation.x = -Math.PI / 2;
+  outerCircleLine.position.y = 0.05;
+  platformGroup.add(outerCircleLine);
+
+  // 2. Draw inner boundary circle (Apotema a) in neon green
+  const innerCircleGeo = new THREE.RingGeometry(apopx - 0.12, apopx + 0.12, 64);
+  const innerCircleMat = new THREE.MeshBasicMaterial({ color: 0x059669, side: THREE.DoubleSide });
+  innerCircleLine = new THREE.Mesh(innerCircleGeo, innerCircleMat);
+  innerCircleLine.rotation.x = -Math.PI / 2;
+  innerCircleLine.position.y = 0.06;
+  platformGroup.add(innerCircleLine);
+
+  // 3. Create the extruded 3D Polygon hull
+  const shape = new THREE.Shape();
+  for (let i = 0; i < n; i++) {
+    const a = 2 * Math.PI * i / n - Math.PI / 2;
+    const x = Rpx * Math.cos(a), y = Rpx * Math.sin(a);
+    i === 0 ? shape.moveTo(x, y) : shape.lineTo(x, y);
   }
   shape.closePath();
-  const extrudeSettings={depth:4,bevelEnabled:true,bevelThickness:0.3,bevelSize:0.2,bevelSegments:3};
-  const geo=new THREE.ExtrudeGeometry(shape,extrudeSettings);
-  const colors={6:0x1a3a6b,8:0x1a2a5b,12:0x0a3060};
-  const edgeColors={6:0x00c8ff,8:0x00aaff,12:0x00ffca};
-  const mat=new THREE.MeshPhongMaterial({color:colors[n]||0x0a3060,transparent:false,opacity:1,wireframe:wireframe3D,emissive:edgeColors[n]||0x00c8ff,emissiveIntensity:0.08,shininess:80,side:THREE.DoubleSide});
-  platformMesh=new THREE.Mesh(geo,mat);
-  platformMesh.rotation.x=-Math.PI/2;platformMesh.position.y=1;platformMesh.castShadow=true;scene3D.add(platformMesh);
-  // Edge highlight
-  const edges=new THREE.EdgesGeometry(geo,15);
-  const lineMat=new THREE.LineBasicMaterial({color:edgeColors[n]||0x00c8ff,linewidth:2});
-  const lineSegs=new THREE.LineSegments(edges,lineMat);
-  lineSegs.rotation.x=-Math.PI/2;lineSegs.position.y=1.02;scene3D.add(lineSegs);
-  // Superstructure box
-  const deckGeo=new THREE.BoxGeometry(6,3,6);
-  const deckMat=new THREE.MeshPhongMaterial({color:0x2a5a9b,emissive:0x00c8ff,emissiveIntensity:0.05});
-  const deck=new THREE.Mesh(deckGeo,deckMat);deck.position.set(0,7,0);scene3D.add(deck);
-  // G center sphere
-  const gGeo=new THREE.SphereGeometry(0.8,16,16);
-  const gMat=new THREE.MeshPhongMaterial({color:0xffd700,emissive:0xffd700,emissiveIntensity:0.5});
-  const gMesh=new THREE.Mesh(gGeo,gMat);gMesh.position.set(0,4,0);scene3D.add(gMesh);
-  // Update buttons
-  ['btn3d-hex','btn3d-oct','btn3d-dod'].forEach(b=>document.getElementById(b).classList.remove('active'));
-  const btnMap={6:'btn3d-hex',8:'btn3d-oct',12:'btn3d-dod'};
-  if(btnMap[n])document.getElementById(btnMap[n]).classList.add('active');
-  const nameMap={6:'Hexágono (n=6)',8:'Octógono (n=8)',12:'Dodecágono (n=12)'};
-  document.getElementById('label3D').textContent='Mostrando: '+(nameMap[n]||`n=${n}`);
-}
-let wavesT=0;
-function animate3D(){
-  anim3DId=requestAnimationFrame(animate3D);
-  if(wavesOn && waterMesh){
-    wavesT+=0.03;
-    const pos=waterMesh.geometry.attributes.position;
-    for(let i=0;i<pos.count;i++){
-      const x=pos.getX(i),z=pos.getZ(i);
-      pos.setY(i,2*Math.sin(x/10+wavesT)+1.5*Math.sin(z/8+wavesT*0.7));
-    }
-    pos.needsUpdate=true;waterMesh.geometry.computeVertexNormals();
-  }
-  if(platformMesh && wavesOn){
-    platformMesh.position.y=1+0.8*Math.sin(wavesT*0.6);
-    platformMesh.rotation.z=0.04*Math.sin(wavesT*0.5);
-  }
-  if(renderer3D && scene3D && camera3D) renderer3D.render(scene3D,camera3D);
-}
-function toggle3DWaves(){wavesOn=!wavesOn;if(!wavesOn&&waterMesh){const pos=waterMesh.geometry.attributes.position;for(let i=0;i<pos.count;i++)pos.setY(i,0);pos.needsUpdate=true;}if(platformMesh){platformMesh.position.y=1;platformMesh.rotation.z=0;}}
-function toggle3DWireframe(){wireframe3D=!wireframe3D;show3DPolygon(current3DN);}
-function reset3DCamera(){if(camera3D){camera3D.position.set(40,30,55);camera3D.lookAt(0,0,0);}}
 
-/* ===== PASSWORD ===== */
-function checkPassword(){
-  const pw=document.getElementById('stabPassword').value;
-  if(pw==='1980'){
-    document.getElementById('stabilityGate').style.display='none';
-    document.getElementById('stabilityContent').style.display='block';
-    updateStability();
+  const extrudeSettings = { depth: 3, bevelEnabled: true, bevelThickness: 0.2, bevelSize: 0.1, bevelSegments: 3 };
+  const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  const colors = { 6: 0x0e2443, 8: 0x071e3d, 12: 0x031835 };
+  const edgeColors = { 6: 0x3b82f6, 8: 0x6366f1, 12: 0xa855f7 };
+
+  const mat = new THREE.MeshPhongMaterial({
+    color: colors[n] || 0x0a3060,
+    transparent: false,
+    opacity: 0.95,
+    wireframe: wireframe3D,
+    emissive: edgeColors[n] || 0x00c8ff,
+    emissiveIntensity: wireframe3D ? 0.4 : 0.05,
+    shininess: 90,
+    side: THREE.DoubleSide
+  });
+
+  const platformMesh = new THREE.Mesh(geo, mat);
+  platformMesh.rotation.x = -Math.PI / 2;
+  platformMesh.position.y = -3.0; // submerge part of it
+  platformMesh.castShadow = true;
+  platformGroup.add(platformMesh);
+
+  // 4. Edges highlights
+  if (!wireframe3D) {
+    const edges = new THREE.EdgesGeometry(geo, 15);
+    const lineMat = new THREE.LineBasicMaterial({ color: edgeColors[n] || 0x00c8ff, linewidth: 2 });
+    const lineSegs = new THREE.LineSegments(edges, lineMat);
+    lineSegs.rotation.x = -Math.PI / 2;
+    lineSegs.position.y = -3.01;
+    platformGroup.add(lineSegs);
+  }
+
+  // 5. Superstructure columns + deck
+  const deckGeo = new THREE.BoxGeometry(4, 2, 4);
+  const deckMat = new THREE.MeshPhongMaterial({ color: 0x1f3c6d, emissive: 0x00ffca, emissiveIntensity: 0.06 });
+  const deck = new THREE.Mesh(deckGeo, deckMat);
+  deck.position.set(0, 1, 0);
+  platformGroup.add(deck);
+
+  // G Center (Gold sphere)
+  const gGeo = new THREE.SphereGeometry(0.5, 16, 16);
+  const gMat = new THREE.MeshPhongMaterial({ color: 0xffd700, emissive: 0xffd700, emissiveIntensity: 0.6 });
+  const gMesh = new THREE.Mesh(gGeo, gMat);
+  gMesh.position.set(0, 2.0, 0);
+  platformGroup.add(gMesh);
+
+  // 6. Contact Vector line (radial vector to wave contact)
+  const vectorGeo = new THREE.BufferGeometry();
+  const vectorPoints = [new THREE.Vector3(0, 0.1, 0), new THREE.Vector3(0, 0.1, 0)];
+  vectorGeo.setFromPoints(vectorPoints);
+  const vectorMat = new THREE.LineBasicMaterial({ color: 0xeab308, linewidth: 3 });
+  contactVectorLine = new THREE.Line(vectorGeo, vectorMat);
+  scene3D.add(contactVectorLine);
+
+  // 7. Wave direction arrow (mesh)
+  const arrowGeo = new THREE.ConeGeometry(0.7, 2, 8);
+  const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
+  waveArrowMesh = new THREE.Mesh(arrowGeo, arrowMat);
+  waveArrowMesh.rotation.x = Math.PI / 2;
+  scene3D.add(waveArrowMesh);
+
+  // Update HTML buttons active states
+  ['btn3d-hex', 'btn3d-oct', 'btn3d-dod'].forEach(b => document.getElementById(b).classList.remove('active'));
+  const btnMap = { 6: 'btn3d-hex', 8: 'btn3d-oct', 12: 'btn3d-dod' };
+  if (btnMap[n]) document.getElementById(btnMap[n]).classList.add('active');
+
+  const nameMap = { 6: 'Hexágono (n=6)', 8: 'Octógono (n=8)', 12: 'Dodecágono (n=12)' };
+  document.getElementById('label3D').textContent = nameMap[n] || `n=${n}`;
+  document.getElementById('v3d_name').textContent = nameMap[n] || `n=${n}`;
+
+  // Update 3D overlay color coding
+  const statEl = document.getElementById('v3d_status');
+  if (n === 6) { statEl.textContent = '❌ BAJA (Fluctuación 15.4%)'; statEl.style.color = '#ff4d6d'; }
+  else if (n === 8) { statEl.textContent = '⚠ MODERADA (Fluctuación 8.2%)'; statEl.style.color = '#ffd700'; }
+  else { statEl.textContent = '✓ EXCELENTE (Fluctuación 3.4%)'; statEl.style.color = '#00ffca'; }
+
+  update3DMetrics();
+}
+
+function update3DWaveAngle(v) {
+  wave3DAngle = parseInt(v);
+  document.getElementById('label3D_angle').textContent = v + '°';
+  document.getElementById('v3d_angle').textContent = v + '°';
+  update3DMetrics();
+}
+
+function toggle3DWaveRotation() {
+  wave3DRotating = !wave3DRotating;
+  const btn = document.getElementById('btn3d-wave-rot');
+  if (wave3DRotating) {
+    btn.classList.add('active');
+    btn.innerHTML = '<i class="fa-solid fa-spin fa-arrows-spin"></i> Rotando Ola';
   } else {
-    document.getElementById('pwError').style.display='block';
-    document.getElementById('stabPassword').style.borderColor='var(--accent-red)';
-    setTimeout(()=>{document.getElementById('stabPassword').style.borderColor='';},2000);
+    btn.classList.remove('active');
+    btn.innerHTML = '<i class="fa-solid fa-arrows-spin"></i> Rotar Ola';
   }
 }
+
+function update3DMetrics() {
+  if (!platformGroup) return;
+
+  const n = current3DN;
+  const A = 1000;
+  const R = Math.sqrt(2 * A / (n * Math.sin(2 * Math.PI / n)));
+  const apo = R * Math.cos(Math.PI / n);
+
+  const thetaRad = wave3DAngle * Math.PI / 180;
+  const sectorAngle = 2 * Math.PI / n;
+  const tempAngle = thetaRad + Math.PI / 2; // match canvas/webgl orientation
+  const sector = Math.floor((tempAngle + sectorAngle / 2) / sectorAngle);
+  const sectorCenter = sector * sectorAngle;
+  const diff = tempAngle - sectorCenter;
+  const R_theta = apo / Math.cos(diff);
+
+  const scale = 0.65;
+  const R_theta_px = R_theta * scale;
+
+  // 1. Update contact vector line
+  if (contactVectorLine) {
+    const endX = R_theta_px * Math.cos(thetaRad);
+    const endZ = R_theta_px * Math.sin(thetaRad);
+    const positions = contactVectorLine.geometry.attributes.position.array;
+    positions[3] = endX;
+    positions[4] = 0.1;
+    positions[5] = endZ;
+    contactVectorLine.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // 2. Update Wave arrow position
+  if (waveArrowMesh) {
+    const arrowDist = R * scale + 6.0;
+    const ax = arrowDist * Math.cos(thetaRad);
+    const az = arrowDist * Math.sin(thetaRad);
+    waveArrowMesh.position.set(ax, 0.2, az);
+    waveArrowMesh.rotation.y = -thetaRad + Math.PI/2;
+  }
+
+  // 3. Update overlay panel text
+  document.getElementById('v3d_r_theta').textContent = R_theta.toFixed(2) + ' m';
+  
+  const maxVarPercent = ((R - apo) / apo * 100).toFixed(1);
+  const currentVarPercent = ((R_theta - apo) / apo * 100).toFixed(1);
+  document.getElementById('v3d_variation').textContent = `${currentVarPercent}% (Max: ${maxVarPercent}%)`;
+}
+
+function animate3D() {
+  anim3DId = requestAnimationFrame(animate3D);
+  waves3DT += 0.02;
+
+  // Gentle floating animation of platform
+  if (platformGroup) {
+    platformGroup.position.y = 0.3 * Math.sin(waves3DT * 1.1);
+    platformGroup.rotation.z = 0.02 * Math.sin(waves3DT * 0.9);
+    platformGroup.rotation.x = 0.015 * Math.sin(waves3DT * 0.7);
+  }
+
+  // Automatically rotate wave arrow
+  if (wave3DRotating) {
+    wave3DAngle = (wave3DAngle + 0.6) % 360;
+    document.getElementById('waveAngle3DSlider').value = Math.round(wave3DAngle);
+    document.getElementById('label3D_angle').textContent = Math.round(wave3DAngle) + '°';
+    document.getElementById('v3d_angle').textContent = Math.round(wave3DAngle) + '°';
+    update3DMetrics();
+  }
+
+  if (renderer3D && scene3D && camera3D) {
+    renderer3D.render(scene3D, camera3D);
+  }
+}
+
+function toggle3DWireframe() {
+  wireframe3D = !wireframe3D;
+  show3DPolygon(current3DN);
+}
+
+function reset3DCamera() {
+  if (camera3D) {
+    camera3D.position.set(0, 32, 48);
+    camera3D.lookAt(0, 0, 0);
+  }
+}
+
 
 /* ===== STABILITY SIMULATOR ===== */
 let stabAnimId=null;
@@ -2030,6 +2719,20 @@ function resetPython(){
   document.getElementById('pyConsole').textContent='▶ Listo. Presione "Ejecutar Script" para iniciar el análisis...';
   document.getElementById('matplotCanvas').style.display='none';
 }
+function copyPythonCode() {
+  const code = document.getElementById('pyCode').value;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.getElementById('copyPyBtn');
+    btn.innerHTML = '<i class="fa-solid fa-check" style="color:#00ffca"></i> ¡Copiado!';
+    btn.style.borderColor = '#00ffca';
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copiar Código';
+      btn.style.borderColor = '';
+    }, 2000);
+  }).catch(err => {
+    alert('No se pudo copiar el código: ' + err);
+  });
+}
 
 /* ===== POLYGON CALCULATOR ===== */
 const polyNames={3:'Triángulo',4:'Cuadrado',5:'Pentágono',6:'Hexágono',7:'Heptágono',8:'Octógono',9:'Nonágono',10:'Decágono',11:'Undecágono',12:'Dodecágono',13:'Tridecágono',14:'Tetradecágono',15:'Pentadecágono',16:'Hexadecágono'};
@@ -2075,6 +2778,85 @@ function updatePolyCalc(){
   ctx.strokeStyle='rgba(255,77,109,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
   ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy-aPx);ctx.stroke();ctx.setLineDash([]);
   ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fillStyle='#ffd700';ctx.fill();
+}
+
+/* ===== INFO MODAL LOGIC ===== */
+function showInfoModal(type) {
+  const infoData = {
+    oleaje: {
+      title: "Objetivo: Simulador de Oleaje 2D",
+      html: `<p><strong>Objetivo Didáctico-Técnico:</strong></p>
+             <p>Visualizar el comportamiento dinámico de la plataforma frente al oleaje en el Golfo de Guayaquil.</p>
+             <p>Demuestra la diferencia de amplitud en la oscilación vertical (heave) y el balanceo (pitch/roll). Ilustra cómo la base del polígono interactúa con la cresta y el seno de las olas de manera continua.</p>`
+    },
+    transversal: {
+      title: "Objetivo: Sección Transversal",
+      html: `<p><strong>Objetivo Didáctico-Técnico:</strong></p>
+             <p>Mostrar la mecánica hidrostática y la estabilidad inicial a través del cálculo de los puntos <strong>K, B, G y M</strong>.</p>
+             <p>Visualiza en tiempo real cómo varía la altura metacéntrica (<strong>GM</strong>) y el brazo adrizante (<strong>GZ</strong>) según la geometría de la base. Permite comparar lado a lado el hexágono ($n=6$) contra el dodecágono ($n=12$), demostrando que este último minimiza la excentricidad a un 3.4%.</p>`
+    },
+    isotropia: {
+      title: "Objetivo: Visualizador 3D de Isotropía",
+      html: `<p><strong>Objetivo Didáctico-Técnico:</strong></p>
+             <p>Demostrar físicamente la isotropía rotacional del dodecágono frente al oleaje proveniente de cualquier dirección.</p>
+             <p>Visualiza de manera tridimensional cómo el radio de contacto ($R_\\theta$) fluctúa fuertemente en el hexágono ($15.4\\%$) al rotar la dirección de la ola, mientras que en el dodecágono la fluctuación es mínima ($3.4\\%$, casi un círculo perfecto), logrando que la plataforma responda con igual estabilidad desde cualquier ángulo.</p>`
+    },
+    impacto: {
+      title: "Objetivo: Simulador de Impacto de Fuerzas",
+      html: `<p><strong>Objetivo Didáctico-Técnico:</strong></p>
+             <p>Analizar la distribución de fuerzas de impacto del oleaje sobre los vértices del polígono base.</p>
+             <p>Muestra cómo se transmiten los vectores de fuerza. Ayuda a entender que al tener más vértices (como el dodecágono con 12), las fuerzas de impacto localizadas en cada arista se minimizan y distribuyen de forma más homogénea, reduciendo el estrés estructural de la plataforma.</p>`
+    },
+    estabilidad: {
+      title: "Objetivo: Simulador Hidrostático de Estabilidad",
+      html: `<p><strong>Objetivo Didáctico-Técnico:</strong></p>
+             <p>Analizar la relación de estabilidad inicial y el efecto de las dimensiones críticas: manga ($B$), calado ($d$) y la posición del centro de gravedad ($KG$).</p>
+             <p>Demuestra la ecuación fundamental del metacentro $BM = B^2 / 12d$ y el cálculo de la altura metacéntrica $GM = KB + BM - KG$. Muestra dinámicamente cómo un centro de gravedad excesivamente alto genera un brazo adrizante $GZ$ negativo, provocando la inestabilidad y el vuelco de la estructura.</p>`
+    }
+  };
+
+  const data = infoData[type];
+  if (!data) return;
+
+  let overlay = document.getElementById('infoModalOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'infoModalOverlay';
+    overlay.className = 'info-modal-overlay';
+    overlay.innerHTML = `
+      <div class="info-modal">
+        <div class="info-modal-header">
+          <div class="info-modal-title" id="infoModalTitle"></div>
+          <button class="info-modal-close" onclick="closeInfoModal()">&times;</button>
+        </div>
+        <div class="info-modal-body" id="infoModalBody"></div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeInfoModal();
+    });
+  }
+
+  document.getElementById('infoModalTitle').textContent = data.title;
+  document.getElementById('infoModalBody').innerHTML = data.html;
+
+  // Render LaTeX math in popups if needed
+  if(typeof renderMathInElement === 'function') {
+    renderMathInElement(document.getElementById('infoModalBody'), { delimiters: [
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},
+      {left:'\\\\[',right:'\\\\]',display:true},{left:'\\\\(',right:'\\\\)',display:false}
+    ]});
+  }
+
+  overlay.classList.add('active');
+}
+
+function closeInfoModal() {
+  const overlay = document.getElementById('infoModalOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+  }
 }
 
 // Init calls
