@@ -1,0 +1,2084 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tema 4: Estabilidad Hidrostática · Plataforma Offshore · Polígonos Regulares</title>
+    <meta name="description" content="Dashboard interactivo premium: Diseño de Plataforma Flotante Offshore con Polígonos Regulares - Estabilidad Hidrostática en el Golfo de Guayaquil">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <!-- Three.js for 3D -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <style>
+/* ============================================================
+   DESIGN SYSTEM — DEEP OCEAN x MATHGPTPRO FUSION
+   ============================================================ */
+:root{
+  --bg-primary:#050e1a;
+  --bg-secondary:#071628;
+  --bg-card:#0d2035;
+  --bg-glass:rgba(7,22,40,0.85);
+  --accent-blue:#00c8ff;
+  --accent-teal:#00ffca;
+  --accent-gold:#f5c542;
+  --accent-red:#ff4d6d;
+  --accent-violet:#a855f7;
+  --text-primary:#e8f4fd;
+  --text-secondary:#8db4cc;
+  --text-muted:#4a7a99;
+  --border-glass:rgba(0,200,255,0.18);
+  --border-card:rgba(0,200,255,0.12);
+  --shadow-glow:0 0 30px rgba(0,200,255,0.18);
+  --shadow-card:0 8px 32px rgba(0,0,0,0.45);
+  --math-bg:#0a1628;
+  --math-step-bg:#0e2040;
+  --math-step-border:#1e4080;
+  --math-highlight:#ffd700;
+  --radius-sm:8px;
+  --radius-md:14px;
+  --radius-lg:20px;
+  --radius-xl:28px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  line-height:1.7;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-track{background:var(--bg-primary);}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--accent-blue),var(--accent-teal));border-radius:4px;}
+
+/* ===== ANIMATED BACKGROUND ===== */
+body::before{
+  content:'';
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse at 15% 20%,rgba(0,200,255,0.07) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 80%,rgba(0,255,202,0.06) 0%,transparent 55%),
+    radial-gradient(ellipse at 50% 50%,rgba(168,85,247,0.04) 0%,transparent 60%);
+  pointer-events:none;z-index:0;animation:bgShift 20s ease-in-out infinite alternate;
+}
+@keyframes bgShift{
+  0%{opacity:0.7;}100%{opacity:1;}
+}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;min-height:55vh;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#020d1a 0%,#071628 40%,#0a2540 100%);
+  overflow:hidden;padding:60px 20px;text-align:center;z-index:1;
+}
+.hero-particles{
+  position:absolute;inset:0;overflow:hidden;z-index:1;
+}
+.hero-particles span{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:var(--accent-blue);opacity:0;
+  animation:particles 8s linear infinite;
+}
+@keyframes particles{
+  0%{transform:translateY(110vh) translateX(0);opacity:0;}
+  10%{opacity:1;}
+  90%{opacity:1;}
+  100%{transform:translateY(-10vh) translateX(30px);opacity:0;}
+}
+.hero-content{position:relative;z-index:2;max-width:1100px;margin:0 auto;}
+.hero-badge{
+  display:inline-block;
+  background:linear-gradient(135deg,rgba(0,200,255,0.15),rgba(0,255,202,0.1));
+  border:1.5px solid var(--accent-teal);
+  color:var(--accent-teal);
+  padding:8px 28px;border-radius:50px;
+  font-size:0.8em;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:22px;
+  box-shadow:0 0 20px rgba(0,255,202,0.2);
+  animation:glow 3s ease-in-out infinite alternate;
+}
+@keyframes glow{
+  from{box-shadow:0 0 20px rgba(0,255,202,0.2);}
+  to{box-shadow:0 0 35px rgba(0,255,202,0.5);}
+}
+.hero h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.7em,4.5vw,3.8em);
+  font-weight:900;line-height:1.15;margin-bottom:18px;
+  background:linear-gradient(135deg,#ffffff 0%,var(--accent-blue) 50%,var(--accent-teal) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-shadow:none;
+}
+.hero-subtitle{
+  font-size:clamp(0.95em,1.8vw,1.2em);
+  font-weight:400;max-width:750px;margin:0 auto 35px;
+  color:var(--text-secondary);
+}
+.hero-stats{
+  display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:35px;
+}
+.stat-item{
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border-glass);
+  padding:14px 22px;border-radius:var(--radius-md);
+  text-align:center;min-width:150px;
+  box-shadow:var(--shadow-glow);
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+}
+.stat-item:hover{transform:translateY(-4px);box-shadow:0 0 40px rgba(0,200,255,0.3);}
+.stat-number{font-size:2em;font-weight:900;color:var(--accent-teal);font-family:'Orbitron',sans-serif;display:block;}
+.stat-label{font-size:0.72em;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-secondary);}
+
+/* ===== STICKY TABS NAV ===== */
+.main-tabs-nav{
+  position:sticky;top:0;z-index:1000;
+  background:rgba(5,14,26,0.95);
+  border-bottom:2px solid rgba(0,200,255,0.25);
+  backdrop-filter:blur(20px);
+  box-shadow:0 4px 30px rgba(0,0,0,0.5);
+}
+.tabs-nav-container{
+  max-width:1280px;margin:0 auto;
+  display:flex;justify-content:space-around;
+  padding:8px 16px;flex-wrap:wrap;gap:4px;
+}
+.main-tab-button{
+  background:transparent;border:none;
+  color:var(--text-muted);
+  padding:12px 18px;
+  font-family:'Inter',sans-serif;font-size:clamp(0.75em,1.3vw,0.9em);font-weight:600;
+  cursor:pointer;border-radius:var(--radius-sm);
+  transition:all 0.3s ease;
+  display:flex;align-items:center;gap:8px;
+  position:relative;
+}
+.main-tab-button::after{
+  content:'';position:absolute;bottom:-2px;left:50%;right:50%;
+  height:2px;background:var(--accent-teal);
+  transition:all 0.3s ease;border-radius:2px;
+}
+.main-tab-button:hover{color:var(--accent-blue);background:rgba(0,200,255,0.08);}
+.main-tab-button.active{color:var(--accent-teal);}
+.main-tab-button.active::after{left:10%;right:10%;}
+
+/* ===== CONTENT SECTIONS ===== */
+.tab-panel{display:none;animation:fadeInUp 0.4s ease;}
+.tab-panel.active{display:block;}
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.container{max-width:1280px;margin:0 auto;padding:40px 20px;}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border-card);
+  border-radius:var(--radius-lg);
+  padding:30px;
+  box-shadow:var(--shadow-card);
+  transition:border-color 0.3s ease,box-shadow 0.3s ease;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent-blue),var(--accent-teal),transparent);
+  opacity:0;transition:opacity 0.3s ease;
+}
+.card:hover::before{opacity:1;}
+.card:hover{border-color:var(--border-glass);box-shadow:var(--shadow-glow);}
+
+.card-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.2em;font-weight:700;
+  color:var(--accent-blue);
+  margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+}
+
+/* ===== MATHGPTPRO STYLE EQUATION SOLVER ===== */
+.math-solver{
+  background:var(--math-bg);
+  border:1px solid var(--math-step-border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  font-family:'Inter',sans-serif;
+  box-shadow:0 8px 40px rgba(0,0,0,0.6);
+}
+.math-solver-header{
+  background:linear-gradient(135deg,#0f2040,#162e5a);
+  padding:18px 25px;
+  display:flex;align-items:center;gap:14px;
+  border-bottom:1px solid var(--math-step-border);
+}
+.math-solver-icon{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,#1d4ed8,#7c3aed);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3em;color:white;flex-shrink:0;
+}
+.math-solver-title{
+  font-size:1.05em;font-weight:700;color:#e2e8f0;
+}
+.math-solver-subtitle{
+  font-size:0.78em;color:#64748b;margin-top:3px;
+}
+.math-steps{padding:25px;}
+.math-step{
+  background:var(--math-step-bg);
+  border:1px solid var(--math-step-border);
+  border-left:4px solid var(--accent-blue);
+  border-radius:var(--radius-sm);
+  padding:18px 20px;
+  margin-bottom:14px;
+  position:relative;
+  transition:border-left-color 0.3s ease;
+}
+.math-step:hover{border-left-color:var(--accent-teal);}
+.math-step-number{
+  position:absolute;top:-10px;left:16px;
+  background:linear-gradient(135deg,var(--accent-blue),var(--accent-teal));
+  color:#000;font-size:0.7em;font-weight:800;
+  padding:3px 10px;border-radius:12px;
+  letter-spacing:1px;text-transform:uppercase;
+}
+.math-step-title{
+  font-weight:700;color:#93c5fd;font-size:0.95em;
+  margin-bottom:10px;margin-top:8px;
+}
+.math-step-content{color:var(--text-secondary);font-size:0.88em;line-height:1.9;}
+.math-formula-block{
+  background:#080f1e;
+  border:1px solid #1e3a5f;
+  border-radius:var(--radius-sm);
+  padding:14px 20px;margin:12px 0;
+  text-align:center;
+  font-size:1.05em;
+  overflow-x:auto;
+}
+.math-result-box{
+  background:linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,255,202,0.06));
+  border:2px solid var(--accent-teal);
+  border-radius:var(--radius-md);
+  padding:20px 24px;
+  margin-top:20px;text-align:center;
+}
+.math-result-label{
+  font-size:0.8em;text-transform:uppercase;letter-spacing:2px;
+  color:var(--accent-teal);font-weight:700;margin-bottom:8px;
+}
+.math-result-value{
+  font-size:1.8em;font-weight:900;
+  font-family:'Orbitron',sans-serif;
+  color:#fff;
+}
+.conclusion-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(245,197,66,0.15),rgba(245,197,66,0.05));
+  border:1.5px solid var(--accent-gold);
+  color:var(--accent-gold);
+  padding:10px 20px;border-radius:50px;
+  font-weight:700;font-size:0.85em;margin-top:16px;
+  box-shadow:0 0 20px rgba(245,197,66,0.2);
+}
+
+/* ===== VIDEO SECTION (MathGPTPro style) ===== */
+.video-section{margin:40px 0;}
+.video-section-header{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:24px;padding-bottom:14px;
+  border-bottom:1px solid var(--border-glass);
+}
+.video-section-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,#dc2626,#b91c1c);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3em;color:white;flex-shrink:0;
+  box-shadow:0 4px 15px rgba(220,38,38,0.4);
+}
+.video-section-title{font-family:'Orbitron',sans-serif;font-size:1.15em;font-weight:700;color:var(--text-primary);}
+.video-section-sub{font-size:0.8em;color:var(--text-muted);}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;}
+.video-card{
+  background:var(--bg-card);border:1px solid var(--border-card);
+  border-radius:var(--radius-md);overflow:hidden;
+  box-shadow:var(--shadow-card);
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+}
+.video-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,0.6),0 0 20px rgba(0,200,255,0.15);}
+.video-wrapper{
+  position:relative;padding-bottom:56.25%;height:0;overflow:hidden;
+}
+.video-wrapper iframe{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  border:none;
+}
+.video-info{padding:16px 20px;}
+.video-tag{
+  display:inline-block;background:rgba(0,200,255,0.12);
+  border:1px solid rgba(0,200,255,0.3);
+  color:var(--accent-blue);font-size:0.72em;font-weight:700;
+  padding:3px 10px;border-radius:20px;
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;
+}
+.video-caption{font-size:0.88em;font-weight:600;color:var(--text-primary);line-height:1.5;}
+.video-desc{font-size:0.78em;color:var(--text-muted);margin-top:5px;}
+
+/* ===== FLASH SIMULATOR (HTML5) ===== */
+.flash-sim-container{
+  background:linear-gradient(135deg,#020c1a,#041020);
+  border:2px solid rgba(0,200,255,0.2);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(0,200,255,0.1),var(--shadow-card);
+  position:relative;
+}
+.flash-sim-toolbar{
+  background:linear-gradient(135deg,#0a1830,#071223);
+  padding:12px 20px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(0,200,255,0.15);
+}
+.flash-sim-toolbar .dot{
+  width:12px;height:12px;border-radius:50%;
+}
+.dot-red{background:#ff5f57;}
+.dot-yellow{background:#febc2e;}
+.dot-green{background:#28c840;}
+.flash-sim-title{
+  margin-left:8px;font-size:0.82em;font-weight:600;
+  color:var(--text-secondary);font-family:'JetBrains Mono',monospace;
+}
+.flash-sim-canvas-wrap{
+  display:flex;justify-content:center;align-items:center;
+  padding:0;min-height:400px;background:#020c1a;
+}
+canvas.sim-canvas{
+  max-width:100%;display:block;
+}
+.sim-controls{
+  background:#071223;padding:16px 20px;
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+  border-top:1px solid rgba(0,200,255,0.15);
+}
+.sim-btn{
+  background:linear-gradient(135deg,var(--accent-blue),var(--accent-teal));
+  border:none;color:#000;padding:8px 20px;border-radius:20px;
+  font-weight:700;font-size:0.82em;cursor:pointer;
+  transition:all 0.3s ease;text-transform:uppercase;letter-spacing:1px;
+}
+.sim-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,200,255,0.4);}
+.sim-btn.stop{background:linear-gradient(135deg,#ff4d6d,#c9184a);}
+.sim-label{font-size:0.78em;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+
+/* ===== 3D VIEWER ===== */
+.viewer3d-container{
+  background:#020c1a;
+  border:2px solid rgba(168,85,247,0.25);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(168,85,247,0.1),var(--shadow-card);
+}
+.viewer3d-toolbar{
+  background:linear-gradient(135deg,#1a0a30,#12071f);
+  padding:12px 20px;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(168,85,247,0.2);
+}
+.viewer3d-title{
+  margin-left:8px;font-size:0.82em;font-weight:600;
+  color:var(--accent-violet);font-family:'JetBrains Mono',monospace;
+}
+#threejs-canvas{width:100%;height:450px;display:block;}
+.viewer3d-controls{
+  background:#12071f;padding:16px 20px;
+  display:flex;gap:12px;flex-wrap:wrap;align-items:center;
+  border-top:1px solid rgba(168,85,247,0.2);
+}
+.viewer3d-btn{
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  border:none;color:#fff;padding:8px 18px;border-radius:20px;
+  font-weight:700;font-size:0.82em;cursor:pointer;
+  transition:all 0.3s ease;text-transform:uppercase;letter-spacing:1px;
+}
+.viewer3d-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(168,85,247,0.4);}
+.viewer3d-btn.active{background:linear-gradient(135deg,var(--accent-teal),var(--accent-blue));color:#000;}
+
+/* ===== AUDIO PLAYER (Pitch Shark Tank) ===== */
+.audio-pitch-section{
+  background:linear-gradient(135deg,rgba(245,197,66,0.08),rgba(245,197,66,0.03));
+  border:2px solid rgba(245,197,66,0.3);
+  border-radius:var(--radius-lg);
+  padding:28px;margin:24px 0;
+  position:relative;overflow:hidden;
+}
+.audio-pitch-section::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent-gold),#f97316,var(--accent-gold));
+  animation:shimmer 3s linear infinite;
+}
+@keyframes shimmer{
+  0%{background-position:0% 0%;}
+  100%{background-position:200% 0%;}
+}
+.audio-pitch-header{
+  display:flex;align-items:center;gap:14px;margin-bottom:20px;
+}
+.audio-pitch-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5em;color:white;
+  box-shadow:0 6px 20px rgba(245,158,11,0.4);
+}
+.audio-pitch-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.1em;font-weight:700;color:var(--accent-gold);
+}
+.audio-pitch-sub{font-size:0.8em;color:var(--text-muted);margin-top:3px;}
+.audio-player-custom{
+  background:rgba(0,0,0,0.3);
+  border:1px solid rgba(245,197,66,0.25);
+  border-radius:var(--radius-md);
+  padding:20px;
+}
+.audio-controls-row{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.audio-play-btn{
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent-gold),#f97316);
+  border:none;color:#000;
+  font-size:1.3em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:all 0.3s ease;
+  box-shadow:0 6px 20px rgba(245,158,11,0.4);
+}
+.audio-play-btn:hover{transform:scale(1.1);box-shadow:0 8px 30px rgba(245,158,11,0.6);}
+.audio-track-info{flex:1;}
+.audio-track-title{font-weight:700;font-size:0.9em;color:var(--text-primary);}
+.audio-progress-bar{
+  height:6px;background:rgba(255,255,255,0.1);border-radius:3px;
+  margin-top:8px;overflow:hidden;cursor:pointer;position:relative;
+}
+.audio-progress-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--accent-gold),#f97316);
+  border-radius:3px;transition:width 0.1s linear;
+}
+.audio-time{font-size:0.75em;color:var(--text-muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+.audio-script-toggle{
+  background:rgba(245,197,66,0.1);border:1px solid rgba(245,197,66,0.3);
+  color:var(--accent-gold);padding:8px 16px;border-radius:20px;
+  font-size:0.8em;font-weight:600;cursor:pointer;
+  transition:all 0.3s ease;
+}
+.audio-script-toggle:hover{background:rgba(245,197,66,0.2);}
+.pitch-script{
+  background:#0a1020;border:1px solid rgba(245,197,66,0.2);
+  border-radius:var(--radius-md);padding:24px;margin-top:20px;
+  display:none;
+}
+.pitch-script.open{display:block;animation:fadeInUp 0.3s ease;}
+.pitch-segment{
+  border-left:3px solid var(--accent-gold);
+  padding:12px 18px;margin-bottom:16px;
+  background:rgba(245,197,66,0.04);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.pitch-segment-time{
+  font-size:0.72em;font-family:'JetBrains Mono',monospace;
+  color:var(--accent-gold);font-weight:700;margin-bottom:6px;
+}
+.pitch-segment-text{font-size:0.85em;color:var(--text-secondary);line-height:1.8;}
+
+/* ===== COMPARISON TABLE ===== */
+.comparison-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;
+  margin:24px 0;
+}
+.polygon-card{
+  background:var(--math-step-bg);
+  border:1px solid var(--math-step-border);
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  transition:all 0.3s ease;
+  position:relative;
+}
+.polygon-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-glow);}
+.polygon-card.winner{
+  border-color:var(--accent-teal);
+  box-shadow:0 0 25px rgba(0,255,202,0.2);
+}
+.polygon-card-header{
+  padding:16px 20px;
+  background:linear-gradient(135deg,#0f2040,#0a1830);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.polygon-name{
+  font-family:'Orbitron',sans-serif;
+  font-size:1em;font-weight:700;color:var(--text-primary);
+}
+.polygon-icon{font-size:2em;}
+.polygon-badge{
+  font-size:0.7em;font-weight:700;
+  padding:4px 12px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:1px;
+}
+.badge-winner{background:rgba(0,255,202,0.15);color:var(--accent-teal);border:1px solid var(--accent-teal);}
+.badge-good{background:rgba(0,200,255,0.1);color:var(--accent-blue);border:1px solid var(--accent-blue);}
+.badge-base{background:rgba(255,255,255,0.07);color:var(--text-muted);border:1px solid var(--text-muted);}
+.polygon-metrics{padding:20px;}
+.metric-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);
+  font-size:0.83em;
+}
+.metric-row:last-child{border-bottom:none;}
+.metric-label{color:var(--text-muted);}
+.metric-value{font-weight:700;color:var(--text-primary);font-family:'JetBrains Mono',monospace;}
+.metric-value.good{color:var(--accent-teal);}
+.metric-value.best{color:var(--accent-gold);}
+
+/* ===== STABILITY SIMULATOR ===== */
+.stability-sim{
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+}
+@media(max-width:768px){.stability-sim{grid-template-columns:1fr;}}
+.stability-canvas-wrap{
+  background:#020c1a;border:1px solid var(--border-glass);
+  border-radius:var(--radius-md);overflow:hidden;
+  display:flex;justify-content:center;align-items:center;min-height:350px;
+}
+#stabilityCanvas{max-width:100%;display:block;}
+.stability-controls-panel{
+  display:flex;flex-direction:column;gap:16px;
+}
+.control-group{background:var(--math-step-bg);border:1px solid var(--math-step-border);border-radius:var(--radius-md);padding:16px;}
+.control-label{font-size:0.8em;font-weight:600;color:var(--accent-blue);margin-bottom:8px;display:flex;justify-content:space-between;}
+.control-slider{width:100%;-webkit-appearance:none;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;}
+.control-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--accent-blue),var(--accent-teal));cursor:pointer;box-shadow:0 2px 10px rgba(0,200,255,0.4);}
+.stability-metrics-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;
+}
+.stab-metric{
+  background:#020c1a;border:1px solid var(--math-step-border);
+  border-radius:var(--radius-sm);padding:12px;text-align:center;
+}
+.stab-metric-val{font-size:1.5em;font-weight:900;font-family:'Orbitron',sans-serif;}
+.stab-metric-lbl{font-size:0.7em;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-top:4px;}
+.stab-positive{color:var(--accent-teal);}
+.stab-negative{color:var(--accent-red);}
+.stab-neutral{color:var(--accent-blue);}
+
+/* ===== PASSWORD GATE ===== */
+.password-gate{
+  text-align:center;padding:60px 20px;
+  background:linear-gradient(135deg,#020c1a,#0a1828);
+  border:1px solid var(--border-glass);border-radius:var(--radius-lg);
+}
+.password-gate h3{font-family:'Orbitron',sans-serif;color:var(--accent-blue);font-size:1.3em;margin-bottom:20px;}
+.password-input{
+  background:rgba(0,0,0,0.4);border:2px solid var(--border-glass);
+  color:var(--text-primary);padding:12px 20px;border-radius:var(--radius-md);
+  font-size:1em;font-family:'JetBrains Mono',monospace;text-align:center;
+  width:200px;outline:none;
+  transition:border-color 0.3s ease;
+}
+.password-input:focus{border-color:var(--accent-blue);}
+.password-btn{
+  background:linear-gradient(135deg,var(--accent-blue),var(--accent-teal));
+  border:none;color:#000;padding:12px 28px;border-radius:var(--radius-md);
+  font-weight:700;font-size:0.9em;cursor:pointer;margin-left:10px;
+  transition:all 0.3s ease;
+}
+.password-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-glow);}
+
+/* ===== PYTHON IDE ===== */
+.ide-container{
+  background:#020c1a;border:1px solid rgba(0,200,255,0.2);
+  border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:var(--shadow-card);
+}
+.ide-topbar{
+  background:#071223;padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(0,200,255,0.12);
+}
+.ide-topbar .dot{width:11px;height:11px;border-radius:50%;}
+.ide-filename{margin-left:10px;font-size:0.78em;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+.ide-textarea{
+  width:100%;min-height:260px;max-height:400px;
+  background:#020c1a;color:#a8d8ea;
+  border:none;resize:vertical;
+  padding:20px;font-family:'JetBrains Mono',monospace;font-size:0.85em;line-height:1.8;
+  outline:none;
+}
+.ide-actions{
+  background:#071223;padding:12px 16px;
+  display:flex;gap:10px;align-items:center;
+  border-top:1px solid rgba(0,200,255,0.12);
+}
+.ide-run-btn{
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  border:none;color:#fff;padding:8px 20px;
+  border-radius:20px;font-weight:700;font-size:0.82em;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  transition:all 0.3s ease;
+}
+.ide-run-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(34,197,94,0.4);}
+.ide-console{
+  background:#040d1a;border-top:1px solid rgba(0,200,255,0.12);
+  padding:16px;min-height:100px;max-height:200px;overflow-y:auto;
+  font-family:'JetBrains Mono',monospace;font-size:0.8em;color:#00ff41;
+  white-space:pre-wrap;
+}
+#matplotCanvas{
+  display:none;background:#fff;border-radius:var(--radius-md);
+  margin:16px auto;max-width:550px;width:100%;
+}
+
+/* ===== POLYGON CALC ===== */
+.poly-calc{
+  display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;
+}
+@media(max-width:700px){.poly-calc{grid-template-columns:1fr;}}
+#polyCanvas{background:#020c1a;border:1px solid var(--border-glass);border-radius:var(--radius-md);}
+.poly-results{display:flex;flex-direction:column;gap:12px;}
+.poly-result-item{
+  background:var(--math-step-bg);border:1px solid var(--math-step-border);
+  border-radius:var(--radius-sm);padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.poly-result-key{font-size:0.82em;color:var(--text-muted);}
+.poly-result-val{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent-teal);font-size:0.9em;}
+
+/* ===== MISC UTILITY ===== */
+.section-title{
+  font-family:'Orbitron',sans-serif;font-size:1.5em;font-weight:800;
+  color:var(--text-primary);margin-bottom:10px;
+}
+.section-sub{color:var(--text-muted);font-size:0.9em;margin-bottom:30px;}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:24px;margin-bottom:28px;}
+.tag{
+  display:inline-block;font-size:0.72em;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+  padding:4px 12px;border-radius:20px;margin-right:6px;margin-bottom:6px;
+}
+.tag-blue{background:rgba(0,200,255,0.1);color:var(--accent-blue);border:1px solid rgba(0,200,255,0.3);}
+.tag-teal{background:rgba(0,255,202,0.1);color:var(--accent-teal);border:1px solid rgba(0,255,202,0.3);}
+.tag-gold{background:rgba(245,197,66,0.1);color:var(--accent-gold);border:1px solid rgba(245,197,66,0.3);}
+.tag-violet{background:rgba(168,85,247,0.1);color:var(--accent-violet);border:1px solid rgba(168,85,247,0.3);}
+.alert-box{
+  background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.3);
+  border-left:4px solid var(--accent-red);border-radius:var(--radius-sm);
+  padding:14px 18px;margin:16px 0;font-size:0.88em;color:var(--text-secondary);
+}
+.info-box{
+  background:rgba(0,200,255,0.06);border:1px solid rgba(0,200,255,0.2);
+  border-left:4px solid var(--accent-blue);border-radius:var(--radius-sm);
+  padding:14px 18px;margin:16px 0;font-size:0.88em;color:var(--text-secondary);
+}
+.success-box{
+  background:rgba(0,255,202,0.06);border:1px solid rgba(0,255,202,0.2);
+  border-left:4px solid var(--accent-teal);border-radius:var(--radius-sm);
+  padding:14px 18px;margin:16px 0;font-size:0.88em;color:var(--text-secondary);
+}
+hr.divider{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border-glass),transparent);margin:32px 0;}
+.footer{
+  background:#020c1a;border-top:1px solid var(--border-glass);
+  text-align:center;padding:30px;color:var(--text-muted);font-size:0.82em;
+}
+.footer span{color:var(--accent-teal);}
+
+/* Tabs within panels */
+.inner-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.inner-tab{
+  background:transparent;border:1px solid var(--border-glass);
+  color:var(--text-muted);padding:8px 18px;border-radius:var(--radius-sm);
+  cursor:pointer;font-size:0.82em;font-weight:600;font-family:'Inter',sans-serif;
+  transition:all 0.3s ease;
+}
+.inner-tab:hover,.inner-tab.active{
+  background:rgba(0,200,255,0.1);border-color:var(--accent-blue);color:var(--accent-blue);
+}
+.inner-panel{display:none;}
+.inner-panel.active{display:block;animation:fadeInUp 0.3s ease;}
+
+/* responsive */
+@media(max-width:640px){
+  .video-grid{grid-template-columns:1fr;}
+  .comparison-grid{grid-template-columns:1fr;}
+  .stability-sim{grid-template-columns:1fr;}
+}
+    </style>
+</head>
+<body>
+
+<!-- ANIMATED PARTICLES -->
+<div class="hero-particles">
+  <span style="left:8%;animation-delay:0s;animation-duration:7s;"></span>
+  <span style="left:20%;animation-delay:1.2s;animation-duration:9s;"></span>
+  <span style="left:35%;animation-delay:2.4s;animation-duration:6.5s;background:#00ffca"></span>
+  <span style="left:52%;animation-delay:0.8s;animation-duration:8s;background:#a855f7"></span>
+  <span style="left:68%;animation-delay:3s;animation-duration:7.5s;"></span>
+  <span style="left:80%;animation-delay:1.8s;animation-duration:6s;background:#ffd700"></span>
+  <span style="left:93%;animation-delay:2s;animation-duration:9.5s;"></span>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🌊 Ingeniería Marina · Golfo de Guayaquil · Ecuador</div>
+    <h1>Estabilidad Hidrostática<span>mediante Polígonos Regulares</span></h1>
+    <p class="hero-subtitle">Diseño de la Planta Base de una Plataforma Flotante Offshore · Análisis Métrico Comparativo de Hexágono, Octógono y Dodecágono · Pitch Shark Tank de Ingeniería</p>
+    <div class="hero-stats">
+      <div class="stat-item"><span class="stat-number">3</span><span class="stat-label">Polígonos Comparados</span></div>
+      <div class="stat-item"><span class="stat-number">6.93%</span><span class="stat-label">Reducción del Radio R</span></div>
+      <div class="stat-item"><span class="stat-number">n=12</span><span class="stat-label">Ganador: Dodecágono</span></div>
+      <div class="stat-item"><span class="stat-number">10 min</span><span class="stat-label">Pitch Shark Tank</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN NAVIGATION TABS -->
+<nav class="main-tabs-nav" aria-label="Navegación principal">
+  <div class="tabs-nav-container">
+    <button class="main-tab-button active" onclick="showTab('tab-pitch')" id="btn-pitch">
+      <i class="fa-solid fa-shark"></i> Pitch Shark Tank
+    </button>
+    <button class="main-tab-button" onclick="showTab('tab-comparativa')" id="btn-comparativa">
+      <i class="fa-solid fa-chart-bar"></i> Comparativa de Fórmulas
+    </button>
+    <button class="main-tab-button" onclick="showTab('tab-simuladores')" id="btn-simuladores">
+      <i class="fa-solid fa-play-circle"></i> Simuladores Flash / 3D
+    </button>
+    <button class="main-tab-button" onclick="showTab('tab-estabilidad')" id="btn-estabilidad">
+      <i class="fa-solid fa-anchor"></i> Simulador de Estabilidad
+    </button>
+    <button class="main-tab-button" onclick="showTab('tab-python')" id="btn-python">
+      <i class="fa-brands fa-python"></i> Editor Python
+    </button>
+    <button class="main-tab-button" onclick="showTab('tab-videos')" id="btn-videos">
+      <i class="fa-brands fa-youtube"></i> Videos
+    </button>
+  </div>
+</nav>
+
+<!-- ==========================================
+     TAB 1: PITCH SHARK TANK (CON AUDIO)
+     ========================================== -->
+<section id="tab-pitch" class="tab-panel active">
+  <div class="container">
+    <div class="section-title"><i class="fa-solid fa-shark" style="color:var(--accent-gold)"></i> Pitch de Ingeniería — Shark Tank</div>
+    <p class="section-sub">Presentación oral de 10 minutos — Venta del diseño dodecagonal al "inversionista" (el profesor)</p>
+
+    <!-- AUDIO PLAYER -->
+    <div class="audio-pitch-section">
+      <div class="audio-pitch-header">
+        <div class="audio-pitch-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+        <div>
+          <div class="audio-pitch-title">🎙️ Guía de Audio del Pitch</div>
+          <div class="audio-pitch-sub">Narración estructurada para la presentación de 10 minutos — Reproduzca y siga el guion</div>
+        </div>
+      </div>
+      <div class="audio-player-custom">
+        <div class="audio-controls-row">
+          <button class="audio-play-btn" id="audioPlayBtn" onclick="toggleAudio()">
+            <i class="fa-solid fa-play" id="audioPlayIcon"></i>
+          </button>
+          <div class="audio-track-info">
+            <div class="audio-track-title">🎙️ Pitch: "El Dodecágono es el Campeón" — Plataforma Offshore</div>
+            <div class="audio-progress-bar" id="audioProgressBar" onclick="seekAudio(event)">
+              <div class="audio-progress-fill" id="audioProgressFill"></div>
+            </div>
+            <div class="audio-time" id="audioTime">0:00 / Síntesis de voz Web Speech API</div>
+          </div>
+          <button class="audio-script-toggle" onclick="toggleScript()">
+            <i class="fa-solid fa-scroll"></i> Ver Guion
+          </button>
+          <button class="sim-btn" onclick="speakPitch()" style="font-size:0.75em;padding:8px 14px;">
+            <i class="fa-solid fa-volume-high"></i> Leer en voz alta
+          </button>
+          <button class="sim-btn stop" onclick="stopSpeech()" style="font-size:0.75em;padding:8px 14px;">
+            <i class="fa-solid fa-stop"></i> Detener
+          </button>
+        </div>
+      </div>
+
+      <!-- PITCH SCRIPT -->
+      <div class="pitch-script" id="pitchScript">
+        <div class="pitch-segment">
+          <div class="pitch-segment-time">⏱ 0:00 – 1:30 | APERTURA — GANCHO EMOCIONAL</div>
+          <div class="pitch-segment-text" id="seg1">"Señor inversionista: Imagine que usted está parado sobre una plataforma en el Golfo de Guayaquil. El oleaje golpea a 2.5 metros por segundo. Un mal diseño geométrico puede costarte 3 millones de dólares en reparaciones anuales. Hoy le presentamos la solución que la ingeniería de polígonos nos da gratuitamente: el dodecágono regular. No necesitamos fórmulas complicadas. Solo geometría plana. Solo área, perímetro y circunradio."</div>
+        </div>
+        <div class="pitch-segment">
+          <div class="pitch-segment-time">⏱ 1:30 – 3:30 | EL PROBLEMA — ¿Por qué importa la geometría?</div>
+          <div class="pitch-segment-text" id="seg2">"Una plataforma hexagonal regular con área de 1,000 m² tiene un circunradio R de 19.61 metros. Eso significa que el punto más alejado del centro está a casi 20 metros. Cuando una ola oblicua golpea ese vértice, genera un brazo de palanca de 19.61 metros para inclinar la plataforma. Con el dodecágono, ese mismo brazo se reduce a 18.26 metros. Una diferencia del 6.93%. En ingeniería naval, eso es la diferencia entre una plataforma estable y una que requiere sistemas de compensación activa de 500,000 dólares."</div>
+        </div>
+        <div class="pitch-segment">
+          <div class="pitch-segment-time">⏱ 3:30 – 5:30 | LA SOLUCIÓN — Fórmulas de Polígono</div>
+          <div class="pitch-segment-text" id="seg3">"Usamos solo geometría plana. El circunradio de un polígono regular de n lados con área A es: R = √(A / (n/2 · sin(2π/n))). Para n=6: R₆ ≈ 0.6204√A. Para n=12: R₁₂ ≈ 0.5774√A. La apotema del dodecágono es 0.9659 veces el circunradio, dejando una excentricidad de solo el 3.5%, casi un círculo perfecto. Esto significa que no importa desde qué ángulo venga la ola, la respuesta estructural será casi idéntica. Eso se llama estabilidad isótropa."</div>
+        </div>
+        <div class="pitch-segment">
+          <div class="pitch-segment-time">⏱ 5:30 – 7:30 | EL IMPACTO — Dinero y Material</div>
+          <div class="pitch-segment-text" id="seg4">"¿Qué significa esto en dinero? El hexágono tiene un perímetro de 117.68 metros. El dodecágono tiene 113.43 metros. Ahorramos 4.25 metros de blindaje estructural en el perímetro. Si el acero naval cuesta 8,000 dólares por metro lineal de sección reforzada, estamos hablando de 34,000 dólares de ahorro solo en materiales perimetrales. Multiplique por la vida útil de 25 años, y obtenemos más de 800,000 dólares en ahorro total."</div>
+        </div>
+        <div class="pitch-segment">
+          <div class="pitch-segment-time">⏱ 7:30 – 9:00 | VENTAJA TÉCNICA — Momento Metacéntrico</div>
+          <div class="pitch-segment-text" id="seg5">"El metacentro es el punto clave. Para una sección rectangular simplificada de ancho B y calado d, el radio metacéntrico BM = B²/(12d). En el dodecágono, el 'ancho efectivo' tiene menos variación angular que en el hexágono. Esto estabiliza el metacentro M, manteniendo GM positivo en mayor rango de ángulos de escora. En términos simples: el dodecágono vuelve a su posición vertical más eficientemente después de ser golpeado por una ola."</div>
+        </div>
+        <div class="pitch-segment">
+          <div class="pitch-segment-time">⏱ 9:00 – 10:00 | CIERRE — El Ask</div>
+          <div class="pitch-segment-text" id="seg6">"Señor inversionista, le presentamos una solución geométrica que reduce el circunradio crítico en un 6.93%, baja el perímetro estructural en un 3.6%, y entrega estabilidad isótropa sin sistemas activos de compensación. Le pedimos 2 millones de dólares para la fase de construcción del prototipo a escala 1:10 en el laboratorio naval de la ESPOL. El retorno proyectado en 5 años es 8 veces la inversión. El dodecágono no es solo una figura geométrica; es la arquitectura del ahorro. ¿Están listos para invertir?"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WAVE SIMULATOR (Flash-style) -->
+    <div class="card" style="margin-top:28px;">
+      <div class="card-title"><i class="fa-solid fa-water"></i> Simulador de Oleaje en la Plataforma — Vista 2D Contextual</div>
+      <div class="flash-sim-container">
+        <div class="flash-sim-toolbar">
+          <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+          <span class="flash-sim-title">offshore_wave_simulator.swf [HTML5 Canvas]</span>
+        </div>
+        <div class="flash-sim-canvas-wrap">
+          <canvas class="sim-canvas" id="waveCanvas" width="800" height="380"></canvas>
+        </div>
+        <div class="sim-controls">
+          <button class="sim-btn" id="wavePlayBtn" onclick="toggleWaveSim()"><i class="fa-solid fa-play"></i> Iniciar Simulación</button>
+          <button class="sim-btn" onclick="changePolygon(-1)"><i class="fa-solid fa-minus"></i> Menos Lados</button>
+          <button class="sim-btn" onclick="changePolygon(1)"><i class="fa-solid fa-plus"></i> Más Lados</button>
+          <button class="sim-btn stop" onclick="resetWaveSim()"><i class="fa-solid fa-rotate-left"></i> Reiniciar</button>
+          <span class="sim-label" id="polygonLabel">n = 6 lados (Hexágono)</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- CONTEXT CARDS -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-location-dot"></i> Contexto: Golfo de Guayaquil</div>
+        <div class="tag tag-blue">Costa Ecuatoriana</div>
+        <div class="tag tag-teal">Ingeniería Marina</div>
+        <p style="font-size:0.88em;color:var(--text-secondary);margin-top:12px;line-height:1.9;">
+          El Golfo de Guayaquil presenta oleaje promedio de <strong style="color:var(--accent-teal)">1.5–3.0 m</strong> de altura con periodos de 6–10 segundos. Las corrientes dominantes son de 0.5–1.2 m/s. Una plataforma flotante offshore en esta región requiere estabilidad hidrostática multidireccional para soportar operaciones de exploración, logística portuaria y energía mareomotriz.
+        </p>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-compass-drafting"></i> Restricción del Proyecto</div>
+        <div class="tag tag-gold">Solo Geometría Plana</div>
+        <div class="tag tag-violet">Polígonos Regulares</div>
+        <p style="font-size:0.88em;color:var(--text-secondary);margin-top:12px;line-height:1.9;">
+          El análisis se limita estrictamente a <strong style="color:var(--accent-gold)">geometría plana de polígonos regulares</strong>: Área 2D (A), Perímetro (P), Apotema (a), Circunradio (R), Inercia del área de flotación (I). No se usa cálculo diferencial avanzado ni hidrodinámica 3D. El metacentro se obtiene de la sección transversal simplificada.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     TAB 2: COMPARATIVA DE FÓRMULAS (MathGPTPro style)
+     ========================================== -->
+<section id="tab-comparativa" class="tab-panel">
+  <div class="container">
+    <div class="section-title"><i class="fa-solid fa-square-root-variable" style="color:var(--accent-blue)"></i> Comparativa de Polígonos — Estilo Solucionador MathGPTPro</div>
+    <p class="section-sub">Resolución paso a paso de las propiedades métricas para A = 1,000 m² de flotación</p>
+
+    <!-- POLYGON CARDS SUMMARY -->
+    <div class="comparison-grid">
+      <div class="polygon-card">
+        <div class="polygon-card-header">
+          <div class="polygon-name">Hexágono Regular</div>
+          <span class="polygon-icon">⬡</span>
+          <span class="polygon-badge badge-base">n = 6</span>
+        </div>
+        <div class="polygon-metrics">
+          <div class="metric-row"><span class="metric-label">Área</span><span class="metric-value">1,000.00 m²</span></div>
+          <div class="metric-row"><span class="metric-label">Lado (L)</span><span class="metric-value">19.61 m</span></div>
+          <div class="metric-row"><span class="metric-label">Circunradio (R)</span><span class="metric-value">19.61 m</span></div>
+          <div class="metric-row"><span class="metric-label">Apotema (a)</span><span class="metric-value">16.99 m</span></div>
+          <div class="metric-row"><span class="metric-label">Perímetro</span><span class="metric-value">117.68 m</span></div>
+          <div class="metric-row"><span class="metric-label">Excentricidad</span><span class="metric-value">15.4%</span></div>
+          <div class="metric-row"><span class="metric-label">Inercia I<sub>x</sub></span><span class="metric-value">41,667 m⁴</span></div>
+        </div>
+      </div>
+      <div class="polygon-card">
+        <div class="polygon-card-header">
+          <div class="polygon-name">Octógono Regular</div>
+          <span class="polygon-icon">⬡</span>
+          <span class="polygon-badge badge-good">n = 8</span>
+        </div>
+        <div class="polygon-metrics">
+          <div class="metric-row"><span class="metric-label">Área</span><span class="metric-value">1,000.00 m²</span></div>
+          <div class="metric-row"><span class="metric-label">Lado (L)</span><span class="metric-value">12.88 m</span></div>
+          <div class="metric-row"><span class="metric-label">Circunradio (R)</span><span class="metric-value good">16.82 m</span></div>
+          <div class="metric-row"><span class="metric-label">Apotema (a)</span><span class="metric-value">15.56 m</span></div>
+          <div class="metric-row"><span class="metric-label">Perímetro</span><span class="metric-value">103.05 m</span></div>
+          <div class="metric-row"><span class="metric-label">Excentricidad</span><span class="metric-value">7.5%</span></div>
+          <div class="metric-row"><span class="metric-label">Inercia I<sub>x</sub></span><span class="metric-value">43,100 m⁴</span></div>
+        </div>
+      </div>
+      <div class="polygon-card winner">
+        <div class="polygon-card-header">
+          <div class="polygon-name">Dodecágono Regular</div>
+          <span class="polygon-icon">⬡</span>
+          <span class="polygon-badge badge-winner">🏆 n = 12</span>
+        </div>
+        <div class="polygon-metrics">
+          <div class="metric-row"><span class="metric-label">Área</span><span class="metric-value">1,000.00 m²</span></div>
+          <div class="metric-row"><span class="metric-label">Lado (L)</span><span class="metric-value">9.31 m</span></div>
+          <div class="metric-row"><span class="metric-label">Circunradio (R)</span><span class="metric-value best">18.26 m ✓ MÍNIMO</span></div>
+          <div class="metric-row"><span class="metric-label">Apotema (a)</span><span class="metric-value best">17.63 m</span></div>
+          <div class="metric-row"><span class="metric-label">Perímetro</span><span class="metric-value">111.84 m</span></div>
+          <div class="metric-row"><span class="metric-label">Excentricidad</span><span class="metric-value best">3.5% ✓</span></div>
+          <div class="metric-row"><span class="metric-label">Inercia I<sub>x</sub></span><span class="metric-value">44,200 m⁴</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATHGPTPRO EQUATION SOLVER -->
+    <div class="math-solver" style="margin:28px 0;">
+      <div class="math-solver-header">
+        <div class="math-solver-icon">∑</div>
+        <div>
+          <div class="math-solver-title">Solucionador de Estabilidad · Plataforma Offshore</div>
+          <div class="math-solver-subtitle">Resolución paso a paso — Geometría Plana de Polígonos Regulares · n=6 vs n=12</div>
+        </div>
+      </div>
+      <div class="math-steps">
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 01</span>
+          <div class="math-step-title">Fórmula General del Área de un Polígono Regular</div>
+          <div class="math-step-content">El área de un polígono regular de <em>n</em> lados con circunradio <em>R</em> es:</div>
+          <div class="math-formula-block">\[A = \frac{n \cdot R^2}{2} \cdot \sin\!\left(\frac{2\pi}{n}\right)\]</div>
+          <div class="math-step-content">Despejando <em>R</em> dado <em>A</em>:
+            <div class="math-formula-block">\[R = \sqrt{\frac{2A}{n \cdot \sin(2\pi/n)}}\]</div>
+          </div>
+        </div>
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 02</span>
+          <div class="math-step-title">Cálculo del Circunradio — Hexágono (n = 6)</div>
+          <div class="math-step-content">Para n = 6: sin(2π/6) = sin(60°) = √3/2 ≈ 0.8660</div>
+          <div class="math-formula-block">\[R_6 = \sqrt{\frac{2 \times 1000}{6 \times 0.8660}} = \sqrt{\frac{2000}{5.196}} = \sqrt{384.9} \approx 19.61 \text{ m}\]</div>
+        </div>
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 03</span>
+          <div class="math-step-title">Cálculo del Circunradio — Dodecágono (n = 12)</div>
+          <div class="math-step-content">Para n = 12: sin(2π/12) = sin(30°) = 0.5</div>
+          <div class="math-formula-block">\[R_{12} = \sqrt{\frac{2 \times 1000}{12 \times 0.5}} = \sqrt{\frac{2000}{6}} = \sqrt{333.3} \approx 18.26 \text{ m}\]</div>
+        </div>
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 04</span>
+          <div class="math-step-title">Comparativa de Circunradios</div>
+          <div class="math-formula-block">\[\frac{R_6 - R_{12}}{R_6} = \frac{19.61 - 18.26}{19.61} \approx 0.0688 \approx 6.93\%\]</div>
+          <div class="math-step-content">El dodecágono minimiza el circunradio en un <strong style="color:var(--accent-gold)">6.93%</strong> respecto al hexágono con la misma área de flotación.</div>
+        </div>
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 05</span>
+          <div class="math-step-title">Apotema (Distancia del Centroide al Lado)</div>
+          <div class="math-formula-block">\[a = R \cdot \cos\!\left(\frac{\pi}{n}\right)\]</div>
+          <div class="math-step-content">Hexágono: a₆ = 19.61 × cos(30°) = 19.61 × 0.866 ≈ <strong>16.99 m</strong><br>
+          Dodecágono: a₁₂ = 18.26 × cos(15°) = 18.26 × 0.9659 ≈ <strong>17.63 m</strong></div>
+        </div>
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 06</span>
+          <div class="math-step-title">Excentricidad Geométrica (Índice de Isotropía)</div>
+          <div class="math-formula-block">\[e = \frac{R - a}{R} = 1 - \cos\!\left(\frac{\pi}{n}\right)\]</div>
+          <div class="math-step-content">
+            Hexágono: e₆ = 1 – cos(30°) = 1 – 0.866 ≈ <strong style="color:var(--accent-red)">13.4%</strong> — Alta anisotropía<br>
+            Dodecágono: e₁₂ = 1 – cos(15°) = 1 – 0.9659 ≈ <strong style="color:var(--accent-teal)">3.4%</strong> — Casi isótropo ✓
+          </div>
+        </div>
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 07</span>
+          <div class="math-step-title">Radio Metacéntrico (Sección Rectangular Simplificada)</div>
+          <div class="math-step-content">Para sección transversal de ancho B y calado d, la inercia de la línea de agua es I = B³/12. El volumen sumergido es V = B·d. Entonces:</div>
+          <div class="math-formula-block">\[BM = \frac{I}{V} = \frac{B^3/12}{B \cdot d} = \frac{B^2}{12 \cdot d}\]</div>
+          <div class="math-step-content">El dodecágono, por su apotema mayor (17.63 m vs 16.99 m), tiene una "anchura efectiva mínima" B_min mayor, mejorando el radio metacéntrico BM en la dirección más desfavorable.</div>
+        </div>
+
+        <div class="math-step">
+          <span class="math-step-number">Paso 08</span>
+          <div class="math-step-title">Altura Metacéntrica GM</div>
+          <div class="math-formula-block">\[GM = KB + BM - KG\]</div>
+          <div class="math-step-content">donde KB = d/2 (centroide de la carena al fondo), BM = B²/(12d), KG = altura del centro de gravedad. Para que la plataforma sea estable se requiere <strong style="color:var(--accent-teal)">GM > 0</strong>. El dodecágono mantiene GM positivo en un rango angular de escora mayor.</div>
+        </div>
+
+        <div class="math-result-box">
+          <div class="math-result-label">🏆 Conclusión Demostrada</div>
+          <div class="math-result-value">Dodecágono (n=12) Gana</div>
+          <div style="margin-top:14px;font-size:0.9em;color:var(--text-secondary);">
+            Minimiza R en 6.93% · Excentricidad 3.4% · Mayor BM · Estabilidad Isótropa
+          </div>
+          <div style="margin-top:12px;">
+            <span class="conclusion-badge"><i class="fa-solid fa-trophy"></i> R₁₂ = 18.26 m &lt; R₆ = 19.61 m</span>
+            <span class="conclusion-badge" style="border-color:var(--accent-blue);color:var(--accent-blue);"><i class="fa-solid fa-check"></i> GM > 0 en mayor rango</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- INNER TABS FOR EACH POLYGON DETAIL -->
+    <div class="card" style="margin-top:28px;">
+      <div class="card-title"><i class="fa-solid fa-table"></i> Detalles Completos por Polígono</div>
+      <div class="inner-tabs">
+        <button class="inner-tab active" onclick="showInnerTab('poly-hex','tab-comparativa')">⬡ Hexágono n=6</button>
+        <button class="inner-tab" onclick="showInnerTab('poly-oct','tab-comparativa')">⬡ Octógono n=8</button>
+        <button class="inner-tab" onclick="showInnerTab('poly-dod','tab-comparativa')">⬡ Dodecágono n=12</button>
+      </div>
+      <div id="poly-hex" class="inner-panel active">
+        <div class="info-box"><strong>Hexágono (n=6):</strong> Primera opción. Simple de construir. Pero el circunradio grande (19.61 m) crea un brazo de palanca considerable ante olas oblicuas. La excentricidad del 13.4% genera "ejes débiles" que requieren sistemas activos de estabilización.</div>
+        <div class="math-formula-block">\[A_{hex} = \frac{3\sqrt{3}}{2}L^2 \quad;\quad R = L \quad;\quad a = L\frac{\sqrt{3}}{2} \quad;\quad P = 6L\]</div>
+        <p style="font-size:0.85em;color:var(--text-secondary);padding:0 8px;">Para A=1000 m²: L = R = 19.61 m, a = 16.99 m, P = 117.68 m, e = 13.4%</p>
+      </div>
+      <div id="poly-oct" class="inner-panel">
+        <div class="info-box"><strong>Octógono (n=8):</strong> Solución intermedia. Reduce el circunradio a 16.82 m y la excentricidad a 7.5%. Buen equilibrio entre facilidad constructiva y estabilidad. Perímetro de 103.05 m.</div>
+        <div class="math-formula-block">\[A_{oct} = 2(1+\sqrt{2})L^2 \quad;\quad R = \frac{L}{2\sin(22.5°)} \quad;\quad a = \frac{L}{2\tan(22.5°)}\]</div>
+        <p style="font-size:0.85em;color:var(--text-secondary);padding:0 8px;">Para A=1000 m²: L = 12.88 m, R = 16.82 m, a = 15.56 m, P = 103.05 m, e = 7.5%</p>
+      </div>
+      <div id="poly-dod" class="inner-panel">
+        <div class="success-box"><strong>✓ Dodecágono (n=12) — GANADOR:</strong> Minimiza el circunradio (18.26 m), excentricidad de solo 3.4%, perímetro 111.84 m. Se acerca a un círculo (forma óptima) mientras sigue siendo un polígono fabricable con módulos rectos de acero.</div>
+        <div class="math-formula-block">\[A_{12} = 3L^2(2+\sqrt{3}) \quad;\quad R = \frac{L}{2\sin(15°)} \quad;\quad a = R\cos(15°)\]</div>
+        <p style="font-size:0.85em;color:var(--text-secondary);padding:0 8px;">Para A=1000 m²: L = 9.31 m, R = 18.26 m, a = 17.63 m, P = 111.84 m, e = 3.4%</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     TAB 3: SIMULADORES FLASH / 3D
+     ========================================== -->
+<section id="tab-simuladores" class="tab-panel">
+  <div class="container">
+    <div class="section-title"><i class="fa-solid fa-play-circle" style="color:var(--accent-teal)"></i> Simuladores Interactivos</div>
+    <p class="section-sub">Simuladores estilo Flash (HTML5 Canvas) y visualización 3D con WebGL/Three.js</p>
+
+    <!-- FLASH-STYLE SIM: POLYGON CROSS SECTION -->
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title"><i class="fa-solid fa-hexagon-nodes"></i> Simulador de Sección Transversal — Polígono Flotante</div>
+      <div class="flash-sim-container">
+        <div class="flash-sim-toolbar">
+          <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+          <span class="flash-sim-title">platform_cross_section.swf [HTML5 Canvas] — Simulador Interactivo</span>
+        </div>
+        <div class="flash-sim-canvas-wrap">
+          <canvas class="sim-canvas" id="crossCanvas" width="800" height="420"></canvas>
+        </div>
+        <div class="sim-controls">
+          <button class="sim-btn" onclick="toggleCrossSim()"><i class="fa-solid fa-play" id="crossPlayIcon"></i> <span id="crossPlayText">Iniciar</span></button>
+          <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
+            Lados (n):
+            <input type="range" min="3" max="16" value="12" id="crossNSlider" style="width:120px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;" oninput="updateCrossN(this.value)">
+            <span id="crossNVal" style="color:var(--accent-teal);font-weight:700;">12</span>
+          </label>
+          <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
+            Calado (d):
+            <input type="range" min="1" max="8" value="3" step="0.5" id="crossDSlider" style="width:100px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;" oninput="updateCrossD(this.value)">
+            <span id="crossDVal" style="color:var(--accent-gold);font-weight:700;">3.0 m</span>
+          </label>
+          <button class="sim-btn stop" onclick="resetCrossSim()"><i class="fa-solid fa-rotate-left"></i> Reiniciar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D VIEWER -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-cube" style="color:var(--accent-violet)"></i> Visualizador 3D — Plataforma Offshore WebGL</div>
+      <p style="font-size:0.85em;color:var(--text-muted);margin-bottom:18px;">Vista tridimensional interactiva de la planta de la plataforma · Usa el mouse para rotar, desplazar y hacer zoom</p>
+      <div class="viewer3d-container">
+        <div class="viewer3d-toolbar">
+          <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+          <span class="viewer3d-title">offshore_platform_3d.wrl [WebGL / Three.js] — Interactivo</span>
+        </div>
+        <div id="threejsContainer" style="width:100%;height:450px;position:relative;overflow:hidden;background:#020c1a;"></div>
+        <div class="viewer3d-controls">
+          <button class="viewer3d-btn active" id="btn3d-hex" onclick="show3DPolygon(6)">⬡ Hexágono</button>
+          <button class="viewer3d-btn" id="btn3d-oct" onclick="show3DPolygon(8)">⬡ Octógono</button>
+          <button class="viewer3d-btn" id="btn3d-dod" onclick="show3DPolygon(12)">⬡ Dodecágono</button>
+          <button class="viewer3d-btn" onclick="toggle3DWaves()"><i class="fa-solid fa-water"></i> Oleaje</button>
+          <button class="viewer3d-btn" onclick="toggle3DWireframe()"><i class="fa-solid fa-border-all"></i> Wireframe</button>
+          <button class="viewer3d-btn" onclick="reset3DCamera()"><i class="fa-solid fa-camera"></i> Reset Cámara</button>
+          <span class="sim-label" id="label3D">Mostrando: Hexágono (n=6)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLASH-STYLE SIM: WAVE IMPACT -->
+    <div class="card" style="margin-top:28px;">
+      <div class="card-title"><i class="fa-solid fa-arrows-spin"></i> Simulador de Impacto de Olas — Distribución de Fuerzas</div>
+      <div class="flash-sim-container">
+        <div class="flash-sim-toolbar">
+          <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+          <span class="flash-sim-title">wave_impact_forces.swf [HTML5 Canvas] — Distribución vectorial de fuerzas</span>
+        </div>
+        <div class="flash-sim-canvas-wrap">
+          <canvas class="sim-canvas" id="forceCanvas" width="800" height="400"></canvas>
+        </div>
+        <div class="sim-controls">
+          <button class="sim-btn" id="forcePlayBtn" onclick="toggleForceSim()"><i class="fa-solid fa-play"></i> Iniciar</button>
+          <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
+            Ángulo de ola (°):
+            <input type="range" min="0" max="360" value="45" id="waveAngle" style="width:120px;height:6px;-webkit-appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;" oninput="setWaveAngle(this.value)">
+            <span id="waveAngleVal" style="color:var(--accent-blue);font-weight:700;">45°</span>
+          </label>
+          <label class="sim-label" style="display:flex;align-items:center;gap:8px;">
+            Polígono:
+            <select id="forcePoly" onchange="setForcePoly(this.value)" style="background:#071223;color:var(--accent-teal);border:1px solid var(--border-glass);border-radius:4px;padding:4px 8px;font-size:0.82em;">
+              <option value="6">Hexágono (n=6)</option>
+              <option value="8">Octógono (n=8)</option>
+              <option value="12" selected>Dodecágono (n=12)</option>
+            </select>
+          </label>
+          <button class="sim-btn stop" onclick="resetForceSim()"><i class="fa-solid fa-rotate-left"></i> Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     TAB 4: SIMULADOR DE ESTABILIDAD (Password)
+     ========================================== -->
+<section id="tab-estabilidad" class="tab-panel">
+  <div class="container">
+    <div class="section-title"><i class="fa-solid fa-anchor" style="color:var(--accent-blue)"></i> Simulador de Estabilidad e Hidrostática</div>
+    <p class="section-sub">Herramienta protegida — Simulación dinámica del metacentro y brazo adrizante GZ</p>
+
+    <div id="stabilityGate">
+      <div class="password-gate">
+        <i class="fa-solid fa-lock" style="font-size:3em;color:var(--accent-blue);margin-bottom:20px;display:block;"></i>
+        <h3>Acceso Restringido — Simulador de Estabilidad</h3>
+        <p style="color:var(--text-muted);font-size:0.88em;margin-bottom:24px;">Ingrese la clave del curso para desbloquear el simulador dinámico</p>
+        <input type="password" class="password-input" id="stabPassword" placeholder="••••" maxlength="10" onkeypress="if(event.key==='Enter')checkPassword()">
+        <button class="password-btn" onclick="checkPassword()">Acceder</button>
+        <p id="pwError" style="color:var(--accent-red);font-size:0.82em;margin-top:12px;display:none;">Clave incorrecta. Inténtalo de nuevo.</p>
+      </div>
+    </div>
+
+    <div id="stabilityContent" style="display:none;">
+      <div class="success-box"><i class="fa-solid fa-unlock"></i> Simulador desbloqueado — Modifique los parámetros para ver la respuesta hidrostática en tiempo real</div>
+      <div class="stability-sim">
+        <div class="stability-canvas-wrap">
+          <canvas id="stabilityCanvas" width="400" height="400"></canvas>
+        </div>
+        <div class="stability-controls-panel">
+          <div class="control-group">
+            <div class="control-label">Ángulo de Escora (θ) <span id="thetaVal" style="color:var(--accent-teal);">0°</span></div>
+            <input type="range" class="control-slider" min="-35" max="35" value="0" id="thetaSlider" oninput="updateStability()">
+          </div>
+          <div class="control-group">
+            <div class="control-label">Ancho de Base (B) <span id="bVal" style="color:var(--accent-blue);">20 m</span></div>
+            <input type="range" class="control-slider" min="10" max="40" value="20" id="bSlider" oninput="updateStability()">
+          </div>
+          <div class="control-group">
+            <div class="control-label">Calado (d) <span id="dVal" style="color:var(--accent-gold);">4 m</span></div>
+            <input type="range" class="control-slider" min="1" max="10" value="4" step="0.5" id="dSlider" oninput="updateStability()">
+          </div>
+          <div class="control-group">
+            <div class="control-label">Altura CG (KG) <span id="kgVal" style="color:var(--accent-violet);">3 m</span></div>
+            <input type="range" class="control-slider" min="0.5" max="8" value="3" step="0.5" id="kgSlider" oninput="updateStability()">
+          </div>
+          <div class="stability-metrics-grid">
+            <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metBM">--</div><div class="stab-metric-lbl">BM (m)</div></div>
+            <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metKB">--</div><div class="stab-metric-lbl">KB (m)</div></div>
+            <div class="stab-metric"><div class="stab-metric-val stab-positive" id="metGM">--</div><div class="stab-metric-lbl">GM (m)</div></div>
+            <div class="stab-metric"><div class="stab-metric-val stab-neutral" id="metGZ">--</div><div class="stab-metric-lbl">GZ (m)</div></div>
+          </div>
+          <div id="stabStatus" class="success-box" style="font-size:0.82em;margin:0;">Ingrese un ángulo de escora para ver el resultado.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     TAB 5: EDITOR PYTHON
+     ========================================== -->
+<section id="tab-python" class="tab-panel">
+  <div class="container">
+    <div class="section-title"><i class="fa-brands fa-python" style="color:#3b82f6"></i> Editor IDE — Python Interactivo</div>
+    <p class="section-sub">Calcula y visualiza las propiedades del polígono base — Simula matplotlib.pyplot en canvas</p>
+    <div class="grid-2" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-hexagon-nodes"></i> Calculadora de Polígono</div>
+        <div class="poly-calc">
+          <canvas id="polyCanvas" width="200" height="200"></canvas>
+          <div>
+            <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:8px;">Número de lados (n)</label>
+            <input type="range" class="control-slider" min="3" max="16" value="12" id="polyN" oninput="updatePolyCalc()">
+            <span id="polyNVal" style="color:var(--accent-teal);font-weight:700;font-size:0.9em;display:block;margin:6px 0 12px;">n = 12 — Dodecágono</span>
+            <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:8px;">Área deseada A (m²)</label>
+            <input type="number" id="polyArea" value="1000" min="100" max="10000" style="background:rgba(0,0,0,0.3);border:1px solid var(--border-glass);color:var(--text-primary);padding:8px 12px;border-radius:8px;width:100%;font-size:0.9em;outline:none;margin-bottom:12px;" oninput="updatePolyCalc()">
+            <div class="poly-results" id="polyResults"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-code"></i> Código Python Generado</div>
+        <div class="ide-container">
+          <div class="ide-topbar">
+            <div class="dot dot-red"></div><div class="dot dot-yellow"></div><div class="dot dot-green"></div>
+            <span class="ide-filename">offshore_polygon.py — Python 3.11</span>
+          </div>
+          <textarea class="ide-textarea" id="pyCode">import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+# ===== PARÁMETROS DEL POLÍGONO OFFSHORE =====
+n = 12          # número de lados (dodecágono)
+A = 1000        # área de flotación en m²
+
+# ===== CÁLCULOS DE GEOMETRÍA PLANA =====
+# Fórmula: A = (n * R²/2) * sin(2π/n)  →  R = sqrt(2A / (n * sin(2π/n)))
+R = np.sqrt(2 * A / (n * np.sin(2 * np.pi / n)))
+a = R * np.cos(np.pi / n)               # apotema
+L = 2 * R * np.sin(np.pi / n)           # longitud de lado
+P = n * L                                # perímetro
+e = (1 - np.cos(np.pi / n)) * 100       # excentricidad en %
+
+print("=" * 45)
+print(f"  PLATAFORMA OFFSHORE — Polígono n={n}")
+print("=" * 45)
+print(f"  Área (A)         = {A:.2f} m²")
+print(f"  Circunradio (R)  = {R:.4f} m")
+print(f"  Apotema (a)      = {a:.4f} m")
+print(f"  Lado (L)         = {L:.4f} m")
+print(f"  Perímetro (P)    = {P:.4f} m")
+print(f"  Excentricidad    = {e:.2f}%")
+print("=" * 45)
+
+# ===== VISUALIZACIÓN DE LA PLANTA DEL POLÍGONO =====
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+fig.patch.set_facecolor('#0a1628')
+
+ax = axes[0]
+ax.set_facecolor('#020c1a')
+angles = np.linspace(0, 2 * np.pi, n + 1)
+xs = R * np.cos(angles)
+ys = R * np.sin(angles)
+ax.fill(xs, ys, alpha=0.3, color='#00c8ff')
+ax.plot(xs, ys, color='#00ffca', linewidth=2, label=f'Planta (n={n})')
+ax.plot(0, 0, 'o', color='#ffd700', markersize=8, label='Centroide G')
+ax.plot([0, R], [0, 0], '--', color='#a855f7', linewidth=1.5, label=f'R = {R:.2f} m')
+ax.plot([0, 0], [0, a], '--', color='#ff4d6d', linewidth=1.5, label=f'a = {a:.2f} m')
+theta_c = np.linspace(0, 2*np.pi, 200)
+ax.plot(R*np.cos(theta_c), R*np.sin(theta_c), ':', color='#ffd700', alpha=0.3, linewidth=1)
+ax.set_aspect('equal')
+ax.set_title(f'Planta Base — Polígono n={n}', color='white')
+ax.legend(loc='upper right', fontsize=8)
+ax.tick_params(colors='#8db4cc')
+for sp in ax.spines.values():
+    sp.set_edgecolor('#1e4080')
+ax.set_xlabel('x (m)', color='#8db4cc')
+ax.set_ylabel('y (m)', color='#8db4cc')
+
+ax2 = axes[1]
+ax2.set_facecolor('#020c1a')
+polygons = [6, 8, 12]
+names = ['Hexágono\nn=6', 'Octógono\nn=8', 'Dodecágono\nn=12']
+colors = ['#ff4d6d', '#00c8ff', '#00ffca']
+R_vals = [np.sqrt(2*A/(k*np.sin(2*np.pi/k))) for k in polygons]
+bars = ax2.bar(names, R_vals, color=colors, width=0.5, edgecolor='#1e4080', linewidth=1.2)
+ax2.set_facecolor('#020c1a')
+ax2.set_title('Comparativa de Circunradios', color='white')
+ax2.set_ylabel('R (metros)', color='#8db4cc')
+ax2.tick_params(colors='#8db4cc')
+for sp in ax2.spines.values():
+    sp.set_edgecolor('#1e4080')
+for bar, val in zip(bars, R_vals):
+    ax2.text(bar.get_x()+bar.get_width()/2, bar.get_height()+0.15, f'{val:.2f} m',
+             ha='center', color='white', fontweight='bold', fontsize=9)
+plt.tight_layout()
+plt.show()
+print("Gráfico generado exitosamente.")
+</textarea>
+          <div class="ide-actions">
+            <button class="ide-run-btn" onclick="runPython()"><i class="fa-solid fa-play"></i> Ejecutar Script</button>
+            <button class="sim-btn" onclick="resetPython()" style="font-size:0.78em;padding:7px 14px;">
+              <i class="fa-solid fa-rotate-left"></i> Restablecer
+            </button>
+          </div>
+          <canvas id="matplotCanvas" width="550" height="260" style="display:none;margin:16px auto;max-width:100%;border-radius:12px;"></canvas>
+          <div class="ide-console" id="pyConsole">▶ Listo. Presione "Ejecutar Script" para iniciar el análisis...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     TAB 6: VIDEOS
+     ========================================== -->
+<section id="tab-videos" class="tab-panel">
+  <div class="container">
+    <div class="section-title"><i class="fa-brands fa-youtube" style="color:#dc2626"></i> Videos Educativos</div>
+    <p class="section-sub">Recursos audiovisuales verificados — Estabilidad offshore, polígonos regulares y geometría plana</p>
+
+    <div class="video-section">
+      <div class="video-section-header">
+        <div class="video-section-icon"><i class="fa-brands fa-youtube"></i></div>
+        <div>
+          <div class="video-section-title">Ingeniería Marina · Plataformas Offshore</div>
+          <div class="video-section-sub">4 videos verificados · IDs confirmados por el usuario</div>
+        </div>
+      </div>
+      <div class="video-grid">
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/C_qPNwz4SwA" title="PLATAFORMA OFFSHORE | Innovación que desafía el océano" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Ingeniería Offshore</span>
+            <div class="video-caption">PLATAFORMA OFFSHORE | Innovación que desafía el océano</div>
+            <div class="video-desc">Qué es una plataforma offshore, tipos existentes y cómo garantizan estabilidad ante condiciones marinas extremas.</div>
+          </div>
+        </div>
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/aHkZr6uID80" title="Flotación y estabilidad de cuerpos sumergidos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Estabilidad Flotante</span>
+            <div class="video-caption">Flotación y Estabilidad — Metacentro, Centro de Carena y GM</div>
+            <div class="video-desc">Análisis de estabilidad inicial: centro de gravedad, metacentro y altura metacéntrica GM aplicados a la plataforma.</div>
+          </div>
+        </div>
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/kmHBXVVUbRE" title="Cómo medir un solar o terreno con superficies irregulares" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Geometría Plana</span>
+            <div class="video-caption">Cómo medir un solar o terreno con superficies irregulares</div>
+            <div class="video-desc">Medición de áreas con polígonos — base matemática para calcular la planta de flotación de la plataforma offshore.</div>
+          </div>
+        </div>
+        <div class="video-card">
+          <div class="video-wrapper">
+            <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/YEGmF3u-L1o" title="Cómo instalar un sistema de riego enterrado I Guía paso a paso I LEROY MERLIN" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-tag">Ingeniería Aplicada</span>
+            <div class="video-caption">Cómo instalar un sistema de riego enterrado — Guía paso a paso</div>
+            <div class="video-desc">Trazado por zonas y diseño geométrico de redes — metodología aplicable a la distribución estructural de la plataforma.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>Tema 4: Ingeniería Marina / Costera · Diseño de Plataforma Flotante Offshore · Polígonos Regulares</p>
+  <p style="margin-top:8px;">Geometría Plana · Sin Cálculo Diferencial Avanzado · <span>Golfo de Guayaquil, Ecuador</span></p>
+</footer>
+
+<!-- ========================================
+     JAVASCRIPT
+     ======================================== -->
+<script>
+/* ===== TAB MANAGEMENT ===== */
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.main-tab-button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const btnMap = {
+    'tab-pitch':'btn-pitch','tab-comparativa':'btn-comparativa','tab-simuladores':'btn-simuladores',
+    'tab-estabilidad':'btn-estabilidad','tab-python':'btn-python','tab-videos':'btn-videos'
+  };
+  document.getElementById(btnMap[id]).classList.add('active');
+}
+function showInnerTab(id, parentId) {
+  const parent = document.getElementById(parentId);
+  parent.querySelectorAll('.inner-panel').forEach(p => p.classList.remove('active'));
+  parent.querySelectorAll('.inner-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // find clicked button
+  parent.querySelectorAll('.inner-tab').forEach(b => {
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+id+"'")) b.classList.add('active');
+  });
+}
+
+/* ===== KaTeX AUTO-RENDER ===== */
+document.addEventListener("DOMContentLoaded", function() {
+  if(typeof renderMathInElement === 'function') {
+    renderMathInElement(document.body, { delimiters: [
+      {left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},
+      {left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}
+    ]});
+  }
+  initWaveSim();
+  initCrossSim();
+  initForceSim();
+  init3D();
+  updatePolyCalc();
+  updateStability();
+});
+
+/* ===== AUDIO / SPEECH ===== */
+let speechSynth = window.speechSynthesis;
+let currentUtterance = null;
+let pitchOpen = false;
+function toggleScript() {
+  pitchOpen = !pitchOpen;
+  document.getElementById('pitchScript').classList.toggle('open', pitchOpen);
+}
+function speakPitch() {
+  stopSpeech();
+  const segments = ['seg1','seg2','seg3','seg4','seg5','seg6'];
+  let fullText = segments.map(id => document.getElementById(id).textContent).join('\n\n');
+  currentUtterance = new SpeechSynthesisUtterance(fullText);
+  currentUtterance.lang = 'es-ES';
+  currentUtterance.rate = 0.92;
+  currentUtterance.pitch = 1.05;
+  currentUtterance.onstart = () => {
+    document.getElementById('audioPlayIcon').className = 'fa-solid fa-pause';
+    document.getElementById('audioTime').textContent = '▶ Reproduciendo narración del Pitch...';
+  };
+  currentUtterance.onend = () => {
+    document.getElementById('audioPlayIcon').className = 'fa-solid fa-play';
+    document.getElementById('audioTime').textContent = '✓ Pitch completado.';
+  };
+  speechSynth.speak(currentUtterance);
+}
+function stopSpeech() {
+  if(speechSynth.speaking) speechSynth.cancel();
+  document.getElementById('audioPlayIcon').className = 'fa-solid fa-play';
+}
+function toggleAudio() {
+  if(speechSynth.speaking) { stopSpeech(); }
+  else { speakPitch(); }
+}
+function seekAudio(e) {}
+
+/* ===== WAVE SIMULATOR ===== */
+let waveAnimId = null, waveRunning = false, waveN = 6, waveT = 0;
+function initWaveSim() { drawWaveFrame(0); }
+function toggleWaveSim() {
+  if(waveRunning) {
+    cancelAnimationFrame(waveAnimId); waveRunning = false;
+    document.getElementById('wavePlayBtn').innerHTML = '<i class="fa-solid fa-play"></i> Iniciar Simulación';
+  } else {
+    waveRunning = true;
+    document.getElementById('wavePlayBtn').innerHTML = '<i class="fa-solid fa-pause"></i> Pausar';
+    animateWave();
+  }
+}
+function animateWave() {
+  waveT += 0.03;
+  drawWaveFrame(waveT);
+  if(waveRunning) waveAnimId = requestAnimationFrame(animateWave);
+}
+function changePolygon(delta) {
+  waveN = Math.min(16, Math.max(3, waveN + delta));
+  const names = {3:'Triángulo',4:'Cuadrado',5:'Pentágono',6:'Hexágono',7:'Heptágono',8:'Octógono',9:'Nonágono',10:'Decágono',11:'Undecágono',12:'Dodecágono',13:'Tridecágono',14:'Tetradecágono',15:'Pentadecágono',16:'Hexadecágono'};
+  document.getElementById('polygonLabel').textContent = `n = ${waveN} lados (${names[waveN]||''})`;
+  drawWaveFrame(waveT);
+}
+function resetWaveSim() { cancelAnimationFrame(waveAnimId); waveRunning = false; waveT = 0; waveN = 6; document.getElementById('wavePlayBtn').innerHTML = '<i class="fa-solid fa-play"></i> Iniciar Simulación'; document.getElementById('polygonLabel').textContent = 'n = 6 lados (Hexágono)'; drawWaveFrame(0); }
+function drawWaveFrame(t) {
+  const canvas = document.getElementById('waveCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  // Sky gradient
+  let sky = ctx.createLinearGradient(0,0,0,H*0.45);
+  sky.addColorStop(0,'#020c1a'); sky.addColorStop(1,'#0a2540');
+  ctx.fillStyle = sky; ctx.fillRect(0,0,W,H*0.45);
+  // Water gradient
+  let water = ctx.createLinearGradient(0,H*0.45,0,H);
+  water.addColorStop(0,'#093059'); water.addColorStop(1,'#020c1a');
+  ctx.fillStyle = water; ctx.fillRect(0,H*0.45,W,H*0.55);
+  // Stars
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  for(let i=0;i<40;i++){const sx=(i*137)%W,sy=(i*97)%H*0.42;ctx.fillRect(sx,sy,1,1);}
+  // Wave surface
+  const seaY = H*0.45;
+  ctx.beginPath(); ctx.moveTo(0, seaY);
+  for(let x=0;x<=W;x++){
+    const y = seaY + 14*Math.sin(x/55 + t) + 7*Math.sin(x/30 - t*1.3) + 4*Math.cos(x/90 + t*0.6);
+    ctx.lineTo(x,y);
+  }
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  let wg = ctx.createLinearGradient(0,seaY,0,H);
+  wg.addColorStop(0,'rgba(0,200,255,0.4)'); wg.addColorStop(1,'rgba(0,100,150,0.2)');
+  ctx.fillStyle = wg; ctx.fill();
+  // Platform body
+  const cx = W/2, platY = seaY - 15 + 8*Math.sin(t*0.5);
+  const R = 70;
+  ctx.save();
+  ctx.translate(cx, platY);
+  // polygon
+  ctx.beginPath();
+  const angle0 = Math.PI/waveN;
+  for(let i=0;i<waveN;i++){
+    const a = (2*Math.PI*i/waveN) - Math.PI/2 + angle0;
+    const x = R*Math.cos(a), y = R*Math.sin(a)*0.25;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  let pg = ctx.createLinearGradient(-R,-20,R,20);
+  pg.addColorStop(0,'#1a3a6b'); pg.addColorStop(0.5,'#2a5a9b'); pg.addColorStop(1,'#1a3a6b');
+  ctx.fillStyle = pg; ctx.fill();
+  ctx.strokeStyle = '#00c8ff'; ctx.lineWidth = 2; ctx.stroke();
+  // Superstructure
+  ctx.fillStyle = '#2a5a9b'; ctx.fillRect(-25,-55,50,40);
+  ctx.fillStyle = '#00c8ff'; ctx.fillRect(-22,-50,44,2);
+  ctx.fillStyle = '#1a3a6b'; ctx.fillRect(-8,-80,16,28);
+  // Antenna
+  ctx.strokeStyle = '#00ffca'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0,-80); ctx.lineTo(0,-100); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-15,-95); ctx.lineTo(0,-80); ctx.lineTo(15,-95); ctx.stroke();
+  // Centroid G label
+  ctx.fillStyle = '#ffd700'; ctx.font = 'bold 11px Inter'; ctx.fillText('G', 4, 4);
+  ctx.beginPath(); ctx.arc(0,0,3,0,Math.PI*2); ctx.fillStyle = '#ffd700'; ctx.fill();
+  ctx.restore();
+  // Waterline label
+  ctx.fillStyle = 'rgba(0,200,255,0.7)'; ctx.font = '11px JetBrains Mono';
+  ctx.fillText(`Polígono n=${waveN} | Plataforma Offshore — Golfo de Guayaquil`, 20, seaY-22);
+}
+
+/* ===== CROSS SECTION SIMULATOR ===== */
+let crossAnimId = null, crossRunning = false, crossT = 0, crossN = 12, crossD = 3;
+function initCrossSim() { drawCrossFrame(0); }
+function toggleCrossSim() {
+  if(crossRunning){
+    cancelAnimationFrame(crossAnimId); crossRunning = false;
+    document.getElementById('crossPlayIcon').className = 'fa-solid fa-play';
+    document.getElementById('crossPlayText').textContent = 'Iniciar';
+  } else {
+    crossRunning = true;
+    document.getElementById('crossPlayIcon').className = 'fa-solid fa-pause';
+    document.getElementById('crossPlayText').textContent = 'Pausar';
+    animateCross();
+  }
+}
+function animateCross(){
+  crossT += 0.025; drawCrossFrame(crossT);
+  if(crossRunning) crossAnimId = requestAnimationFrame(animateCross);
+}
+function updateCrossN(v){crossN=parseInt(v);document.getElementById('crossNVal').textContent=v;drawCrossFrame(crossT);}
+function updateCrossD(v){crossD=parseFloat(v);document.getElementById('crossDVal').textContent=v+' m';drawCrossFrame(crossT);}
+function resetCrossSim(){cancelAnimationFrame(crossAnimId);crossRunning=false;crossT=0;crossN=12;crossD=3;document.getElementById('crossNSlider').value=12;document.getElementById('crossDSlider').value=3;document.getElementById('crossNVal').textContent=12;document.getElementById('crossDVal').textContent='3.0 m';document.getElementById('crossPlayIcon').className='fa-solid fa-play';document.getElementById('crossPlayText').textContent='Iniciar';drawCrossFrame(0);}
+function drawCrossFrame(t){
+  const canvas = document.getElementById('crossCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#020c1a'; ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='rgba(0,200,255,0.07)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  // Water oscillation
+  const waveOff = 12*Math.sin(t);
+  const waterY = H/2 + waveOff;
+  const cx = W/2, scalePx = 30;
+  const R_water = 1000; // area
+  const Rpx = 90; // visual radius
+  // Polygon cross section (front view)
+  ctx.save();
+  ctx.translate(cx, waterY - crossD*scalePx/2);
+  // Draw polygon top view
+  ctx.beginPath();
+  for(let i=0;i<crossN;i++){
+    const a = 2*Math.PI*i/crossN - Math.PI/2;
+    const x = Rpx*Math.cos(a), y = crossD*scalePx*0.15*Math.sin(a);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle='rgba(26,58,107,0.9)'; ctx.fill();
+  ctx.strokeStyle='#00c8ff'; ctx.lineWidth=2; ctx.stroke();
+  // Side rect (cross section)
+  const halfB = Rpx;
+  const dPx = crossD*scalePx;
+  ctx.fillStyle='rgba(10,37,80,0.95)'; ctx.fillRect(-halfB, y||0, halfB*2, dPx*0.7);
+  ctx.strokeStyle='#0a8fbf'; ctx.lineWidth=1.5; ctx.strokeRect(-halfB, y||0, halfB*2, dPx*0.7);
+  // Waterline on body
+  ctx.strokeStyle='rgba(0,255,202,0.8)'; ctx.lineWidth=2; ctx.setLineDash([8,4]);
+  ctx.beginPath(); ctx.moveTo(-halfB-20,dPx*0.35); ctx.lineTo(halfB+20,dPx*0.35); ctx.stroke();
+  ctx.setLineDash([]);
+  // Labels
+  ctx.fillStyle='#00ffca'; ctx.font='bold 11px Inter';
+  ctx.fillText('B = '+( Rpx*2/scalePx*2 ).toFixed(1)+' m', halfB+5, dPx*0.35+4);
+  ctx.fillStyle='#ffd700'; ctx.fillText('d = '+crossD+' m', 5, dPx*0.6);
+  // KB point
+  const KBpx = dPx*0.35/2;
+  ctx.beginPath(); ctx.arc(0,KBpx,5,0,Math.PI*2);
+  ctx.fillStyle='#ff4d6d'; ctx.fill();
+  ctx.fillStyle='#ff4d6d'; ctx.fillText('B',6,KBpx+4);
+  // KG
+  const KGpx = -15;
+  ctx.beginPath(); ctx.arc(0,KGpx,5,0,Math.PI*2);
+  ctx.fillStyle='#ffd700'; ctx.fill();
+  ctx.fillStyle='#ffd700'; ctx.fillText('G',6,KGpx+4);
+  ctx.restore();
+  // Water surface
+  ctx.beginPath(); ctx.moveTo(0,waterY);
+  for(let x=0;x<=W;x++){
+    ctx.lineTo(x, waterY + 10*Math.sin(x/60+t) + 5*Math.sin(x/35-t*1.2));
+  }
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  let wg=ctx.createLinearGradient(0,waterY,0,H);
+  wg.addColorStop(0,'rgba(0,150,200,0.3)'); wg.addColorStop(1,'rgba(0,50,80,0.2)');
+  ctx.fillStyle=wg; ctx.fill();
+  ctx.strokeStyle='rgba(0,200,255,0.5)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(0,waterY);
+  for(let x=0;x<=W;x++) ctx.lineTo(x,waterY+10*Math.sin(x/60+t)+5*Math.sin(x/35-t*1.2));
+  ctx.stroke();
+  // BM formula overlay
+  const B2 = (Rpx*2*2/scalePx);
+  const BM = (B2*B2)/(12*crossD);
+  ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(12,12,240,52); ctx.strokeStyle='rgba(0,200,255,0.2)'; ctx.strokeRect(12,12,240,52);
+  ctx.fillStyle='#00ffca'; ctx.font='bold 12px JetBrains Mono';
+  ctx.fillText(`n = ${crossN} lados | d = ${crossD} m`, 20, 32);
+  ctx.fillStyle='#8db4cc'; ctx.font='11px JetBrains Mono';
+  ctx.fillText(`BM = B²/(12·d) ≈ ${BM.toFixed(2)} m`, 20, 52);
+}
+
+/* ===== FORCE DISTRIBUTION SIMULATOR ===== */
+let forceAnimId=null,forceRunning=false,forceT=0,forceAngle=45,forcePoly=12;
+function initForceSim(){drawForceFrame(0);}
+function toggleForceSim(){
+  if(forceRunning){cancelAnimationFrame(forceAnimId);forceRunning=false;document.getElementById('forcePlayBtn').innerHTML='<i class="fa-solid fa-play"></i> Iniciar';}
+  else{forceRunning=true;document.getElementById('forcePlayBtn').innerHTML='<i class="fa-solid fa-pause"></i> Pausar';animateForce();}
+}
+function animateForce(){forceT+=0.03;drawForceFrame(forceT);if(forceRunning)forceAnimId=requestAnimationFrame(animateForce);}
+function setWaveAngle(v){forceAngle=parseInt(v);document.getElementById('waveAngleVal').textContent=v+'°';drawForceFrame(forceT);}
+function setForcePoly(v){forcePoly=parseInt(v);drawForceFrame(forceT);}
+function resetForceSim(){cancelAnimationFrame(forceAnimId);forceRunning=false;forceT=0;forceAngle=45;forcePoly=12;document.getElementById('waveAngle').value=45;document.getElementById('waveAngleVal').textContent='45°';document.getElementById('forcePoly').value=12;document.getElementById('forcePlayBtn').innerHTML='<i class="fa-solid fa-play"></i> Iniciar';drawForceFrame(0);}
+function drawForceFrame(t){
+  const canvas=document.getElementById('forceCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#020c1a';ctx.fillRect(0,0,W,H);
+  const cx=W/2,cy=H/2,R=110;
+  // Draw polygon
+  ctx.beginPath();
+  for(let i=0;i<forcePoly;i++){
+    const a=2*Math.PI*i/forcePoly-Math.PI/2;
+    const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle='rgba(7,22,40,0.9)';ctx.fill();
+  ctx.strokeStyle='#00c8ff';ctx.lineWidth=2;ctx.stroke();
+  // Wave direction arrow
+  const waveRad=forceAngle*Math.PI/180;
+  const arrowLen=130;
+  const ax=cx-arrowLen*Math.cos(waveRad)+6*Math.sin(t)*Math.cos(waveRad+Math.PI/2);
+  const ay=cy-arrowLen*Math.sin(waveRad)+6*Math.sin(t)*Math.sin(waveRad+Math.PI/2);
+  ctx.strokeStyle='rgba(0,200,255,0.6)';ctx.lineWidth=1;ctx.setLineDash([6,3]);
+  ctx.beginPath();ctx.moveTo(W*0.05,cy-100*Math.sin(waveRad));ctx.lineTo(cx+20*Math.cos(waveRad),cy+20*Math.sin(waveRad));ctx.stroke();ctx.setLineDash([]);
+  // Wave force on nearest side/vertex
+  const impactAngle=waveRad;
+  // Find nearest vertex to impact direction
+  let nearestV=-1,minDist=1e9;
+  for(let i=0;i<forcePoly;i++){
+    const a=2*Math.PI*i/forcePoly-Math.PI/2;
+    const dx=Math.cos(a)-Math.cos(impactAngle),dy=Math.sin(a)-Math.sin(impactAngle);
+    const d=dx*dx+dy*dy;
+    if(d<minDist){minDist=d;nearestV=i;}
+  }
+  const na=2*Math.PI*nearestV/forcePoly-Math.PI/2;
+  const vx=cx+R*Math.cos(na),vy=cy+R*Math.sin(na);
+  // Draw force arrow at vertex
+  const fLen=60+10*Math.sin(t*2);
+  ctx.strokeStyle='#ff4d6d';ctx.lineWidth=2.5;ctx.fillStyle='#ff4d6d';
+  ctx.beginPath();ctx.moveTo(vx-fLen*Math.cos(na),vy-fLen*Math.sin(na));ctx.lineTo(vx,vy);ctx.stroke();
+  // arrowhead
+  const ah=10,aw=6;
+  ctx.save();ctx.translate(vx,vy);ctx.rotate(na);
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-ah,-aw);ctx.lineTo(-ah,aw);ctx.closePath();ctx.fill();ctx.restore();
+  // Moment arm label
+  const armLen=R*Math.cos(na-impactAngle);
+  ctx.strokeStyle='rgba(255,215,0,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(vx,vy);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#ffd700';ctx.font='bold 12px JetBrains Mono';
+  ctx.fillText(`R = ${(R*2/110).toFixed(2)}×scale`,cx+5,cy+15);
+  // G point
+  ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);
+  ctx.fillStyle='#ffd700';ctx.fill();
+  ctx.fillStyle='#ffd700';ctx.font='bold 11px Inter';ctx.fillText('G',cx+8,cy+5);
+  // Info box
+  ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(8,8,230,56);ctx.strokeStyle='rgba(255,77,109,0.3)';ctx.strokeRect(8,8,230,56);
+  ctx.fillStyle='#ff4d6d';ctx.font='bold 12px JetBrains Mono';
+  ctx.fillText(`Polígono n=${forcePoly} | Ola: ${forceAngle}°`,16,28);
+  ctx.fillStyle='#ffd700';ctx.font='11px JetBrains Mono';
+  ctx.fillText(`Vértice impactado: V${nearestV+1} de ${forcePoly}`,16,50);
+}
+
+/* ===== 3D VIEWER (Three.js) ===== */
+let scene3D,camera3D,renderer3D,platformMesh,waterMesh,waveMesh,anim3DId,wavesOn=false,wireframe3D=false,current3DN=6;
+function init3D(){
+  const container=document.getElementById('threejsContainer');
+  if(!container||typeof THREE==='undefined')return;
+  scene3D=new THREE.Scene();
+  scene3D.background=new THREE.Color(0x020c1a);
+  scene3D.fog=new THREE.FogExp2(0x020c1a,0.018);
+  camera3D=new THREE.PerspectiveCamera(45,container.clientWidth/container.clientHeight,0.1,500);
+  camera3D.position.set(40,30,55);camera3D.lookAt(0,0,0);
+  renderer3D=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer3D.setSize(container.clientWidth,450);
+  renderer3D.shadowMap.enabled=true;
+  container.appendChild(renderer3D.domElement);
+  // Lights
+  const ambient=new THREE.AmbientLight(0x102030,0.8);scene3D.add(ambient);
+  const dir=new THREE.DirectionalLight(0x00c8ff,1.5);dir.position.set(30,50,20);dir.castShadow=true;scene3D.add(dir);
+  const point=new THREE.PointLight(0x00ffca,1,80);point.position.set(-20,15,0);scene3D.add(point);
+  const point2=new THREE.PointLight(0xffd700,0.5,60);point2.position.set(20,-5,-20);scene3D.add(point2);
+  // Water plane
+  const waterGeo=new THREE.PlaneGeometry(200,200,40,40);
+  const waterMat=new THREE.MeshPhongMaterial({color:0x072040,transparent:true,opacity:0.7,wireframe:false,side:THREE.DoubleSide});
+  waterMesh=new THREE.Mesh(waterGeo,waterMat);waterMesh.rotation.x=-Math.PI/2;waterMesh.position.y=0;scene3D.add(waterMesh);
+  // Grid
+  const grid=new THREE.GridHelper(160,20,0x0a3060,0x061530);scene3D.add(grid);
+  show3DPolygon(6);
+  // Axes
+  const axesHelper=new THREE.AxesHelper(15);scene3D.add(axesHelper);
+  // Mouse orbit (simple)
+  let isDragging=false,prevX=0,prevY=0,camTheta=0.8,camPhi=0.5,camDist=70;
+  renderer3D.domElement.addEventListener('mousedown',e=>{isDragging=true;prevX=e.clientX;prevY=e.clientY;});
+  renderer3D.domElement.addEventListener('mouseup',()=>isDragging=false);
+  renderer3D.domElement.addEventListener('mousemove',e=>{
+    if(!isDragging)return;
+    camTheta-=(e.clientX-prevX)*0.008;camPhi-=(e.clientY-prevY)*0.008;
+    camPhi=Math.max(0.1,Math.min(1.4,camPhi));
+    camera3D.position.x=camDist*Math.sin(camPhi)*Math.sin(camTheta);
+    camera3D.position.y=camDist*Math.cos(camPhi);
+    camera3D.position.z=camDist*Math.sin(camPhi)*Math.cos(camTheta);
+    camera3D.lookAt(0,0,0);prevX=e.clientX;prevY=e.clientY;
+  });
+  renderer3D.domElement.addEventListener('wheel',e=>{
+    camDist=Math.max(20,Math.min(150,camDist+e.deltaY*0.05));
+    camera3D.position.setLength(camDist);e.preventDefault();
+  },{passive:false});
+  // Touch
+  renderer3D.domElement.addEventListener('touchstart',e=>{isDragging=true;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;});
+  renderer3D.domElement.addEventListener('touchend',()=>isDragging=false);
+  renderer3D.domElement.addEventListener('touchmove',e=>{
+    if(!isDragging)return;
+    camTheta-=(e.touches[0].clientX-prevX)*0.008;camPhi-=(e.touches[0].clientY-prevY)*0.008;
+    camPhi=Math.max(0.1,Math.min(1.4,camPhi));
+    camera3D.position.x=camDist*Math.sin(camPhi)*Math.sin(camTheta);
+    camera3D.position.y=camDist*Math.cos(camPhi);
+    camera3D.position.z=camDist*Math.sin(camPhi)*Math.cos(camTheta);
+    camera3D.lookAt(0,0,0);prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;e.preventDefault();
+  },{passive:false});
+  animate3D();
+}
+function show3DPolygon(n){
+  current3DN=n;
+  if(!scene3D)return;
+  if(platformMesh){scene3D.remove(platformMesh);platformMesh.geometry.dispose();}
+  const shape=new THREE.Shape();
+  for(let i=0;i<n;i++){
+    const a=2*Math.PI*i/n-Math.PI/2;
+    const x=18*Math.cos(a),y=18*Math.sin(a);
+    i===0?shape.moveTo(x,y):shape.lineTo(x,y);
+  }
+  shape.closePath();
+  const extrudeSettings={depth:4,bevelEnabled:true,bevelThickness:0.3,bevelSize:0.2,bevelSegments:3};
+  const geo=new THREE.ExtrudeGeometry(shape,extrudeSettings);
+  const colors={6:0x1a3a6b,8:0x1a2a5b,12:0x0a3060};
+  const edgeColors={6:0x00c8ff,8:0x00aaff,12:0x00ffca};
+  const mat=new THREE.MeshPhongMaterial({color:colors[n]||0x0a3060,transparent:false,opacity:1,wireframe:wireframe3D,emissive:edgeColors[n]||0x00c8ff,emissiveIntensity:0.08,shininess:80,side:THREE.DoubleSide});
+  platformMesh=new THREE.Mesh(geo,mat);
+  platformMesh.rotation.x=-Math.PI/2;platformMesh.position.y=1;platformMesh.castShadow=true;scene3D.add(platformMesh);
+  // Edge highlight
+  const edges=new THREE.EdgesGeometry(geo,15);
+  const lineMat=new THREE.LineBasicMaterial({color:edgeColors[n]||0x00c8ff,linewidth:2});
+  const lineSegs=new THREE.LineSegments(edges,lineMat);
+  lineSegs.rotation.x=-Math.PI/2;lineSegs.position.y=1.02;scene3D.add(lineSegs);
+  // Superstructure box
+  const deckGeo=new THREE.BoxGeometry(6,3,6);
+  const deckMat=new THREE.MeshPhongMaterial({color:0x2a5a9b,emissive:0x00c8ff,emissiveIntensity:0.05});
+  const deck=new THREE.Mesh(deckGeo,deckMat);deck.position.set(0,7,0);scene3D.add(deck);
+  // G center sphere
+  const gGeo=new THREE.SphereGeometry(0.8,16,16);
+  const gMat=new THREE.MeshPhongMaterial({color:0xffd700,emissive:0xffd700,emissiveIntensity:0.5});
+  const gMesh=new THREE.Mesh(gGeo,gMat);gMesh.position.set(0,4,0);scene3D.add(gMesh);
+  // Update buttons
+  ['btn3d-hex','btn3d-oct','btn3d-dod'].forEach(b=>document.getElementById(b).classList.remove('active'));
+  const btnMap={6:'btn3d-hex',8:'btn3d-oct',12:'btn3d-dod'};
+  if(btnMap[n])document.getElementById(btnMap[n]).classList.add('active');
+  const nameMap={6:'Hexágono (n=6)',8:'Octógono (n=8)',12:'Dodecágono (n=12)'};
+  document.getElementById('label3D').textContent='Mostrando: '+(nameMap[n]||`n=${n}`);
+}
+let wavesT=0;
+function animate3D(){
+  anim3DId=requestAnimationFrame(animate3D);
+  if(wavesOn && waterMesh){
+    wavesT+=0.03;
+    const pos=waterMesh.geometry.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const x=pos.getX(i),z=pos.getZ(i);
+      pos.setY(i,2*Math.sin(x/10+wavesT)+1.5*Math.sin(z/8+wavesT*0.7));
+    }
+    pos.needsUpdate=true;waterMesh.geometry.computeVertexNormals();
+  }
+  if(platformMesh && wavesOn){
+    platformMesh.position.y=1+0.8*Math.sin(wavesT*0.6);
+    platformMesh.rotation.z=0.04*Math.sin(wavesT*0.5);
+  }
+  if(renderer3D && scene3D && camera3D) renderer3D.render(scene3D,camera3D);
+}
+function toggle3DWaves(){wavesOn=!wavesOn;if(!wavesOn&&waterMesh){const pos=waterMesh.geometry.attributes.position;for(let i=0;i<pos.count;i++)pos.setY(i,0);pos.needsUpdate=true;}if(platformMesh){platformMesh.position.y=1;platformMesh.rotation.z=0;}}
+function toggle3DWireframe(){wireframe3D=!wireframe3D;show3DPolygon(current3DN);}
+function reset3DCamera(){if(camera3D){camera3D.position.set(40,30,55);camera3D.lookAt(0,0,0);}}
+
+/* ===== PASSWORD ===== */
+function checkPassword(){
+  const pw=document.getElementById('stabPassword').value;
+  if(pw==='1980'){
+    document.getElementById('stabilityGate').style.display='none';
+    document.getElementById('stabilityContent').style.display='block';
+    updateStability();
+  } else {
+    document.getElementById('pwError').style.display='block';
+    document.getElementById('stabPassword').style.borderColor='var(--accent-red)';
+    setTimeout(()=>{document.getElementById('stabPassword').style.borderColor='';},2000);
+  }
+}
+
+/* ===== STABILITY SIMULATOR ===== */
+let stabAnimId=null;
+function updateStability(){
+  const theta=parseFloat(document.getElementById('thetaSlider').value);
+  const B=parseFloat(document.getElementById('bSlider').value);
+  const d=parseFloat(document.getElementById('dSlider').value);
+  const KG=parseFloat(document.getElementById('kgSlider').value);
+  document.getElementById('thetaVal').textContent=theta+'°';
+  document.getElementById('bVal').textContent=B+' m';
+  document.getElementById('dVal').textContent=d+' m';
+  document.getElementById('kgVal').textContent=KG+' m';
+  const KB=d/2;
+  const BM=(B*B)/(12*d);
+  const GM=KB+BM-KG;
+  const GZ=GM*Math.sin(theta*Math.PI/180);
+  document.getElementById('metKB').textContent=KB.toFixed(2);
+  document.getElementById('metBM').textContent=BM.toFixed(2);
+  const gmEl=document.getElementById('metGM');
+  gmEl.textContent=GM.toFixed(2);
+  gmEl.className='stab-metric-val '+(GM>0?'stab-positive':'stab-negative');
+  const gzEl=document.getElementById('metGZ');
+  gzEl.textContent=GZ.toFixed(2);
+  gzEl.className='stab-metric-val '+(GZ>0?'stab-positive':(GZ<0?'stab-negative':'stab-neutral'));
+  const status=document.getElementById('stabStatus');
+  if(GM>0){status.className='success-box';status.innerHTML='<i class="fa-solid fa-check-circle"></i> ESTABLE — GM = '+GM.toFixed(2)+' m > 0. La plataforma retorna a vertical.';}
+  else{status.className='alert-box';status.innerHTML='<i class="fa-solid fa-triangle-exclamation"></i> INESTABLE — GM = '+GM.toFixed(2)+' m < 0. Riesgo de vuelco.';}
+  drawStability(theta,B,d,KG,KB,BM,GM,GZ);
+}
+function drawStability(theta,B,d,KG,KB,BM,GM,GZ){
+  const canvas=document.getElementById('stabilityCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#020c1a';ctx.fillRect(0,0,W,H);
+  const scale=12,cx=W/2,waterY=H*0.52;
+  const rad=theta*Math.PI/180;
+  // Water
+  ctx.fillStyle='rgba(0,80,160,0.3)';ctx.fillRect(0,waterY,W,H-waterY);
+  ctx.strokeStyle='rgba(0,200,255,0.4)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,waterY);ctx.lineTo(W,waterY);ctx.stroke();
+  // Hull (rotated rectangle)
+  const bPx=B*scale,dPx=d*scale;
+  ctx.save();
+  ctx.translate(cx,waterY-dPx*0.3);
+  ctx.rotate(rad);
+  ctx.fillStyle='rgba(10,40,90,0.95)';ctx.fillRect(-bPx/2,-dPx/2,bPx,dPx);
+  ctx.strokeStyle='#00c8ff';ctx.lineWidth=2;ctx.strokeRect(-bPx/2,-dPx/2,bPx,dPx);
+  // Waterline on hull
+  ctx.strokeStyle='rgba(0,255,202,0.7)';ctx.lineWidth=1.5;ctx.setLineDash([5,3]);
+  ctx.beginPath();ctx.moveTo(-bPx/2,0);ctx.lineTo(bPx/2,0);ctx.stroke();ctx.setLineDash([]);
+  ctx.restore();
+  // Key points
+  const Kpx={x:cx,y:waterY+dPx*0.3};
+  const Bpx={x:cx+KB*scale*Math.sin(rad),y:waterY-KB*scale*Math.cos(rad)+dPx*0.3};
+  const Mpx={x:cx+(KB+BM)*scale*Math.sin(rad),y:waterY-(KB+BM)*scale*Math.cos(rad)+dPx*0.3};
+  const Gpx={x:cx+KG*scale*Math.sin(rad),y:waterY-KG*scale*Math.cos(rad)+dPx*0.3};
+  function drawPoint(pt,color,label){
+    ctx.beginPath();ctx.arc(pt.x,pt.y,5,0,Math.PI*2);
+    ctx.fillStyle=color;ctx.fill();
+    ctx.fillStyle=color;ctx.font='bold 12px Inter';ctx.fillText(label,pt.x+8,pt.y+4);
+  }
+  // GZ arm
+  if(Math.abs(GZ)>0.05){
+    ctx.strokeStyle='rgba(255,215,0,0.7)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(Gpx.x,Gpx.y);
+    ctx.lineTo(Gpx.x+GZ*scale*Math.cos(rad),Gpx.y+GZ*scale*Math.sin(rad));
+    ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#ffd700';ctx.font='10px JetBrains Mono';
+    ctx.fillText('GZ='+GZ.toFixed(2)+'m',Gpx.x+GZ*scale*Math.cos(rad)+4,Gpx.y+GZ*scale*Math.sin(rad));
+  }
+  // KBM line
+  ctx.strokeStyle='rgba(0,200,255,0.4)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(Kpx.x,Kpx.y);ctx.lineTo(Mpx.x,Mpx.y);ctx.stroke();ctx.setLineDash([]);
+  drawPoint({x:cx,y:waterY+dPx*0.3},'#888','K');
+  drawPoint(Bpx,'#4488ff','B');
+  drawPoint(Mpx,'#00ffca','M');
+  drawPoint(Gpx,'#ffd700','G');
+  // GM label
+  ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(8,8,200,42);
+  ctx.fillStyle=GM>0?'#00ffca':'#ff4d6d';ctx.font='bold 11px JetBrains Mono';
+  ctx.fillText(`GM = ${GM.toFixed(2)} m | θ = ${theta}°`,14,26);
+  ctx.fillStyle='#8db4cc';ctx.font='10px JetBrains Mono';
+  ctx.fillText(`KB=${KB.toFixed(1)} BM=${BM.toFixed(1)} KG=${KG.toFixed(1)}`,14,42);
+}
+
+/* ===== PYTHON IDE ===== */
+function runPython(){
+  const code=document.getElementById('pyCode').value;
+  const consoleEl=document.getElementById('pyConsole');
+  const canvas=document.getElementById('matplotCanvas');
+  let output='';
+  // Execute "print" statements
+  const printRegex=/print\(([^)]+)\)/g;
+  let match;
+  const scope={n:12,A:1000};
+  try{
+    const nMatch=code.match(/^n\s*=\s*(\d+)/m);const aMatch=code.match(/^A\s*=\s*(\d+)/m);
+    if(nMatch)scope.n=parseInt(nMatch[1]);if(aMatch)scope.A=parseInt(aMatch[1]);
+  }catch(e){}
+  const n=scope.n,A=scope.A;
+  const Rv=Math.sqrt(2*A/(n*Math.sin(2*Math.PI/n)));
+  const a=Rv*Math.cos(Math.PI/n);
+  const L=2*Rv*Math.sin(Math.PI/n);
+  const P=n*L;
+  const e=(1-Math.cos(Math.PI/n))*100;
+  output+='▶ Ejecutando offshore_polygon.py...\n';
+  output+='─'.repeat(45)+'\n';
+  output+=`  PLATAFORMA OFFSHORE — Polígono n=${n}\n`;
+  output+='─'.repeat(45)+'\n';
+  output+=`  Área (A)         = ${A.toFixed(2)} m²\n`;
+  output+=`  Circunradio (R)  = ${Rv.toFixed(4)} m\n`;
+  output+=`  Apotema (a)      = ${a.toFixed(4)} m\n`;
+  output+=`  Lado (L)         = ${L.toFixed(4)} m\n`;
+  output+=`  Perímetro (P)    = ${P.toFixed(4)} m\n`;
+  output+=`  Excentricidad    = ${e.toFixed(2)}%\n`;
+  output+='─'.repeat(45)+'\n';
+  output+='✓ Gráfico generado exitosamente.\n';
+  output+=`✓ Script completado — ${new Date().toLocaleTimeString()}`;
+  consoleEl.textContent=output;
+  // Draw matplotlib simulation
+  canvas.style.display='block';
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#0a1628';ctx.fillRect(0,0,W,H);
+  // Left: polygon
+  const cx=W*0.28,cy=H*0.5,R2=Math.min(W*0.18,H*0.38);
+  ctx.beginPath();
+  for(let i=0;i<n;i++){
+    const ang=2*Math.PI*i/n-Math.PI/2;
+    const px=cx+R2*Math.cos(ang),py=cy+R2*Math.sin(ang);
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  ctx.fillStyle='rgba(0,200,255,0.15)';ctx.fill();
+  ctx.strokeStyle='#00ffca';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#ffd700';ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='rgba(168,85,247,0.7)';ctx.lineWidth=1.5;ctx.setLineDash([5,3]);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R2,cy);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='white';ctx.font='bold 10px JetBrains Mono';ctx.fillText(`Planta n=${n}`,cx-30,cy-R2-8);
+  ctx.fillStyle='#a855f7';ctx.fillText(`R=${Rv.toFixed(2)}m`,cx+R2+4,cy+4);
+  // Right: bar chart comparison
+  const polys=[{n:6,c:'#ff4d6d'},{n:8,c:'#00c8ff'},{n:12,c:'#00ffca'}];
+  const barW=30,barGap=20,bx0=W*0.55;
+  const maxR=22;
+  polys.forEach((p,i)=>{
+    const Ri=Math.sqrt(2*A/(p.n*Math.sin(2*Math.PI/p.n)));
+    const bx=bx0+i*(barW+barGap);
+    const barH=(Ri/maxR)*(H*0.55);
+    const by=H*0.78-barH;
+    ctx.fillStyle=p.c;ctx.fillRect(bx,by,barW,barH);
+    ctx.fillStyle='white';ctx.font='9px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText(`n=${p.n}`,bx+barW/2,H*0.82);
+    ctx.fillText(`${Ri.toFixed(1)}m`,bx+barW/2,by-4);
+  });
+  ctx.textAlign='left';
+  ctx.fillStyle='white';ctx.font='bold 10px JetBrains Mono';ctx.fillText('Circunradios',bx0,H*0.12);
+}
+function resetPython(){
+  document.getElementById('pyConsole').textContent='▶ Listo. Presione "Ejecutar Script" para iniciar el análisis...';
+  document.getElementById('matplotCanvas').style.display='none';
+}
+
+/* ===== POLYGON CALCULATOR ===== */
+const polyNames={3:'Triángulo',4:'Cuadrado',5:'Pentágono',6:'Hexágono',7:'Heptágono',8:'Octógono',9:'Nonágono',10:'Decágono',11:'Undecágono',12:'Dodecágono',13:'Tridecágono',14:'Tetradecágono',15:'Pentadecágono',16:'Hexadecágono'};
+function updatePolyCalc(){
+  const n=parseInt(document.getElementById('polyN').value);
+  const A=parseFloat(document.getElementById('polyArea').value)||1000;
+  document.getElementById('polyNVal').textContent=`n = ${n} — ${polyNames[n]||'Polígono'}`;
+  const R=Math.sqrt(2*A/(n*Math.sin(2*Math.PI/n)));
+  const a=R*Math.cos(Math.PI/n);
+  const L=2*R*Math.sin(Math.PI/n);
+  const P=n*L;
+  const e=(1-Math.cos(Math.PI/n))*100;
+  const I=(A*A)/(Math.tan(Math.PI/n)*6);
+  const results=[
+    ['Circunradio R',R.toFixed(3)+' m'],['Apotema a',a.toFixed(3)+' m'],
+    ['Lado L',L.toFixed(3)+' m'],['Perímetro P',P.toFixed(3)+' m'],
+    ['Excentricidad e',e.toFixed(2)+'%'],['Inercia I_x',I.toFixed(1)+' m⁴']
+  ];
+  document.getElementById('polyResults').innerHTML=results.map(([k,v])=>
+    `<div class="poly-result-item"><span class="poly-result-key">${k}</span><span class="poly-result-val">${v}</span></div>`
+  ).join('');
+  // Draw polygon on canvas
+  const canvas=document.getElementById('polyCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#020c1a';ctx.fillRect(0,0,W,H);
+  const cx=W/2,cy=H/2,Rpx=Math.min(W,H)*0.42;
+  ctx.beginPath();
+  for(let i=0;i<n;i++){
+    const ang=2*Math.PI*i/n-Math.PI/2;
+    const x=cx+Rpx*Math.cos(ang),y=cy+Rpx*Math.sin(ang);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle='rgba(0,200,255,0.12)';ctx.fill();
+  ctx.strokeStyle='#00ffca';ctx.lineWidth=2;ctx.stroke();
+  // R line
+  ctx.strokeStyle='rgba(168,85,247,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Rpx,cy);ctx.stroke();ctx.setLineDash([]);
+  // a line
+  const aPx=Rpx*(a/R);
+  ctx.strokeStyle='rgba(255,77,109,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy-aPx);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fillStyle='#ffd700';ctx.fill();
+}
+
+// Init calls
+window.addEventListener('DOMContentLoaded',()=>{updatePolyCalc();});
+</script>
+</body>
+</html>
