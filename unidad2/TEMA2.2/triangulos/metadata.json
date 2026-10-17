@@ -1,0 +1,6 @@
+{
+  "name": "Teoremas de Triángulos - UPSE Preuniversitario",
+  "description": "Aplicación interactiva didáctica sobre teoremas fundamentales de triángulos con simuladores dinámicos, ejercicios resueltos y banco de problemas para estudiantes del preuniversitario UPSE.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
